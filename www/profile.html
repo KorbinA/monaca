@@ -262,6 +262,12 @@
 			document.addEventListener("deviceready", onDeviceReady, false);
 
 			function onDeviceReady() {
+				if (window.cordova && window.StatusBar) {
+					window.StatusBar.overlaysWebView(false);
+					window.StatusBar.styleDefault();
+					window.StatusBar.backgroundColorByHexString("#ffffff");
+				}
+
 				if (!window.localStorage.getItem("deviceID")) {
 					if (navigator.app) {
 						navigator.app.exitApp();

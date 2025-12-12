@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -43,14 +44,8 @@
         <div class="field">
           <label for="deviceID">Email</label>
           <div class="control">
-            <input
-              class="input"
-              id="deviceID"
-              type="text"
-              inputmode="email"
-              autocomplete="email"
-              placeholder="you@example.com"
-            />
+            <input class="input" id="deviceID" type="text" inputmode="email" autocomplete="email"
+              placeholder="you@example.com" />
           </div>
         </div>
 
@@ -58,13 +53,8 @@
         <div class="field">
           <label for="password">Password</label>
           <div class="control">
-            <input
-              class="input"
-              id="password"
-              type="password"
-              autocomplete="current-password"
-              placeholder="Your password"
-            />
+            <input class="input" id="password" type="password" autocomplete="current-password"
+              placeholder="Your password" />
           </div>
         </div>
 
@@ -80,10 +70,8 @@
           <hr style="border: solid #e8e8e8 0.25px; width:100%; margin:20px 0px;" />
 
           <!-- Inline-styled link buttons -->
-          <div class="links"
-               style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-            <a class="link" href="createAccount.html" role="button"
-               style="
+          <div class="links" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
+            <a class="link" href="createAccount.html" role="button" style="
                  display:inline-block; padding:10px 14px; border-radius:12px;
                  text-decoration:none !important; outline:none !important; box-shadow:none !important;
                  -webkit-tap-highlight-color:transparent;
@@ -91,8 +79,7 @@
                  color:#2066c7; font-weight:800; line-height:1; z-index:2;
                ">Create Account</a>
 
-            <a class="link" href="forgotPassword.html" role="button"
-               style="
+            <a class="link" href="forgotPassword.html" role="button" style="
                  display:inline-block; padding:10px 14px; border-radius:12px;
                  text-decoration:none !important; outline:none !important; box-shadow:none !important;
                  -webkit-tap-highlight-color:transparent;
@@ -114,16 +101,16 @@
   <script>
     // Surface unexpected JS errors in the styled dialog
     window.onerror = function (message, source, lineno, colno) {
-      try { if (typeof displayMessage === "function") displayMessage("Error", String(message) + " @ " + lineno + ":" + colno, "OK"); } catch (e) {}
+      try { if (typeof displayMessage === "function") displayMessage("Error", String(message) + " @ " + lineno + ":" + colno, "OK"); } catch (e) { }
       return false;
     };
 
     // --- Helpers ---
-    function trimVal(sel){ var v = $(sel).val(); return v ? String(v).trim() : ""; }
-    function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email); }
+    function trimVal(sel) { var v = $(sel).val(); return v ? String(v).trim() : ""; }
+    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email); }
 
     // RSA encrypt (same as original)
-    function encrypt(textToEncrypt){
+    function encrypt(textToEncrypt) {
       var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
       var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
       rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
@@ -132,13 +119,13 @@
     }
 
     // Update-required dialog (uses your styled popup)
-    function showUpdateRequired(){
+    function showUpdateRequired() {
       var url;
       try {
         url = (window.device && device.platform === "iOS")
           ? "https://itunes.apple.com/app/id1211084888"
           : "https://play.google.com/store/apps/details?id=org.glasscard.glasscard";
-      } catch(e) { url = "https://glasscard.org/update"; }
+      } catch (e) { url = "https://glasscard.org/update"; }
       var body = "<div style='margin-top:6px'>Please install the latest Glass Card app.</div>";
       if (typeof displayMessage === "function") {
         displayMessage("Update required", body, "Update", url);
@@ -148,9 +135,9 @@
     }
 
     // Version gate identical to original
-    function versionGate(next){
+    function versionGate(next) {
       var version = (window.AppVersion && AppVersion.version) || window.localStorage.getItem("userAppVersion") || "";
-      try { if (window.AppVersion && AppVersion.version) window.localStorage.setItem("userAppVersion", AppVersion.version); } catch(e){}
+      try { if (window.AppVersion && AppVersion.version) window.localStorage.setItem("userAppVersion", AppVersion.version); } catch (e) { }
 
       // Ensure jQuery knows we intend to do CORS (for older jQuery)
       $.support.cors = true;
@@ -162,22 +149,22 @@
         dataType: "text",
         crossDomain: true,          // <-- fixed casing
         timeout: 20000,
-        success: function(data){
+        success: function (data) {
           if (data === "Invalid") { showUpdateRequired(); }
           else { next && next(); }
         },
-        error: function(_jq, textStatus, errorThrown){
+        error: function (_jq, textStatus, errorThrown) {
           if (typeof displayMessage === "function") {
-            displayMessage("System Error", "Could not connect to server. " + (errorThrown||textStatus||"Unknown"), "Close");
+            displayMessage("System Error", "Could not connect to server. " + (errorThrown || textStatus || "Unknown"), "Close");
           } else {
-            alert("System Error: Could not connect to server. " + (errorThrown||textStatus||"Unknown"));
+            alert("System Error: Could not connect to server. " + (errorThrown || textStatus || "Unknown"));
           }
         }
       });
     }
 
     // Login using the same encrypted Token contract
-    function doLogin(){
+    function doLogin() {
       var email = trimVal("#deviceID");
       var password = $("#password").val() || "";
 
@@ -186,11 +173,11 @@
       else if (!isValidEmail(email)) errors.push("Please enter a valid email (e.g., <em>name@domain.com</em>).");
       if (!password) errors.push("Please enter your password.");
 
-      if (errors.length){
+      if (errors.length) {
         if (typeof displayMessage === "function") {
           displayMessage(
             "Fix Errors",
-            "<ul style='margin:8px 0 0 18px'>" + errors.map(function(e){return "<li>"+e+"</li>";}).join("") + "</ul>",
+            "<ul style='margin:8px 0 0 18px'>" + errors.map(function (e) { return "<li>" + e + "</li>"; }).join("") + "</ul>",
             "OK"
           );
         } else {
@@ -208,27 +195,27 @@
         dataType: "text",
         crossDomain: true,          // <-- fixed casing
         timeout: 20000,
-        success: function(_data){
-          var data; try { data = JSON.parse(_data); } catch(e){ data = {}; }
+        success: function (_data) {
+          var data; try { data = JSON.parse(_data); } catch (e) { data = {}; }
 
-          if (data.status === "AccountConnected"){
-            try{
+          if (data.status === "AccountConnected") {
+            try {
               window.localStorage.setItem("deviceID", email);
               window.localStorage.setItem("password", password);
               window.localStorage.setItem("isPremium", data.isPremium);
               window.localStorage.setItem("premiumUntil", data.premiumUntil);
               window.localStorage.setItem("accountId", data.accountId);
-            } catch(e){}
+            } catch (e) { }
             var loc = window.localStorage.getItem("locationName");
             window.location.href = loc ? ("home.html?LocationName=" + encodeURIComponent(loc)) : "home.html";
-          } else if (data.status === "IncorrectPassword"){
+          } else if (data.status === "IncorrectPassword") {
             // Keep your new copy: generic message
             if (typeof displayMessage === "function") {
               displayMessage("Incorrect Password", "Please check your password and try again.", "OK");
             } else {
               alert("Sorry, we couldn't find your account. Please try again.");
             }
-          } else if (data.status === "UpdateRequired"){
+          } else if (data.status === "UpdateRequired") {
             showUpdateRequired();
           } else {
             if (typeof displayMessage === "function") {
@@ -238,10 +225,10 @@
             }
           }
         },
-        error: function(_jq, textStatus, errorThrown){
+        error: function (_jq, textStatus, errorThrown) {
           var msg = (textStatus === "timeout")
             ? "The request timed out while signing you in. Please try again."
-            : "An error occurred." + (errorThrown ? " ("+errorThrown+")" : "");
+            : "An error occurred." + (errorThrown ? " (" + errorThrown + ")" : "");
           if (typeof displayMessage === "function") {
             displayMessage("System Error", msg, "Close");
           } else {
@@ -251,13 +238,17 @@
       });
     }
 
-    // Boot: prefer Cordova deviceready (same as original), fallback to DOM ready for web
-    function boot(){
-      versionGate(function(){
+    function boot() {
+      if (window.cordova && window.StatusBar) {
+        window.StatusBar.overlaysWebView(false);
+        window.StatusBar.styleDefault();
+        window.StatusBar.backgroundColorByHexString("#ffffff");
+      }
+      versionGate(function () {
         // (Optional) auto-login like the original:
         var deviceID = window.localStorage.getItem("deviceID") || "";
         var password = window.localStorage.getItem("password") || "";
-        if (deviceID && password){
+        if (deviceID && password) {
           var token = encrypt(JSON.stringify({ DeviceID: deviceID, Password: password }));
           $.ajax({
             url: "https://glasscard.org/dataaccessprod4/appLogin.ashx",
@@ -265,28 +256,29 @@
             data: "Token=" + encodeURIComponent(token),
             dataType: "text",
             crossDomain: true,      // <-- fixed casing
-            success: function(_data){
-              var data = {}; try{ data = JSON.parse(_data); } catch(e){}
-              if (data.status === "AccountConnected"){
+            success: function (_data) {
+              var data = {}; try { data = JSON.parse(_data); } catch (e) { }
+              if (data.status === "AccountConnected") {
                 var loc = window.localStorage.getItem("locationName");
                 window.location.href = loc ? ("home.html?LocationName=" + encodeURIComponent(loc)) : "home.html";
               }
               // else show the form (no blackout)
             },
-            error: function(){ /* show the form; no blackout */ }
+            error: function () { /* show the form; no blackout */ }
           });
         }
         // Bind button
-        $("#signInBtn").off("click").on("click", function(e){ e.preventDefault(); doLogin(); });
+        $("#signInBtn").off("click").on("click", function (e) { e.preventDefault(); doLogin(); });
       });
     }
 
     document.addEventListener("deviceready", boot, false);
-    $(document).ready(function(){
+    $(document).ready(function () {
       // In browser (no Cordova), still allow login testing
       if (!window.cordova) boot();
     });
   </script>
 
 </body>
+
 </html>

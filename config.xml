@@ -19,7 +19,7 @@
   <preference name="stay-in-webview" value="false"/>
   <preference name="StatusBarOverlaysWebView" value="false"/>
   <preference name="StatusBarBackgroundColor" value="#ffffff"/>
-  <preference name="StatusBarStyle" value="darkcontent"/>
+  <preference name="StatusBarStyle" value="default"/>
   <preference name="NavigationBarBackgroundColor" value="#ffffff"/>
   <preference name="detect-data-types" value="true"/>
   <preference name="exit-on-suspend" value="false"/>

@@ -150,8 +150,7 @@ div.circle_amountSaved {
 
 div.tutorial {
 	max-height: 100vh;
-	file: ///C:/Users/Korbin/Downloads/korbins%20Changes/www/buy.html?DealID=2578
-		overflow:hidden;
+	overflow: hidden;
 }
 
 div#imageName {
@@ -365,7 +364,7 @@ div.details {
 	width: 90%;
 	height: 7%;
 	margin-top: 0%;
-	margin-bottom: %;
+	margin-bottom: ;
 	box-shadow: ;
 	color: red;
 }

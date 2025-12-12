@@ -43,8 +43,10 @@ body {
 
 	html,
 	body {
-		height: -webkit-fill-available;
+		height: 100vh;
 		min-height: 100vh;
+		/* legacy fallback */
+		min-height: -webkit-fill-available;
 	}
 }
 
@@ -52,6 +54,7 @@ div.container {
 	margin-top: 0;
 	/*The height of header and some*/
 	width: 100%;
+	min-height: 100%;
 	padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
@@ -248,6 +251,7 @@ footer.menu {
 	bottom: 0;
 	/* visual height of the bar (without the safe-area) */
 	height: 64px;
+	min-height: 64px;
 	box-shadow: 0 0 4px 1px rgba(0, 0, 0, .3);
 	display: flex;
 	align-items: center;

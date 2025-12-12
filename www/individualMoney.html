@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:#f5f5f5">
+	<head>
+		<title>Individuals</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
+<script src="js/jquery.counterup.min.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+		</script>
+	</head>
+	<body style="margin-bottom:60px;">
+       <br>
+            <center>
+                    <h1>Who are you?</h1>
+                    <br>
+                    <br>
+                    <table style="width:86%; margin:auto; table-layout:fixed; text-align: center;">
+                        <tr>
+                            <td><a href="individualMoney.html"><button class="rounded" style="background:#27dd82; width:120px;">Individual</button></a></td>
+                            <td><a href="individualMoney.html"><button class="rounded" style="background:white; width:120px;">Group</button></a></td>
+                        </tr>
+                    </table>
+            </center>
+        <div class="card" style="background:#27dd82">
+        <h1 style="color:white; font-size:18pt; margin:15px; margin-bottom:0; font-weight: bold;">App Promoter Opportunities</h1>
+        <p style="color:white; margin:15px; margin-bottom:0; font-size:14pt;">
+        Contact us for a more full time position.</p>
+        <button class="rounded" style="margin:15px; background:white;"><a href="mailto:hiring@glasscard.org" style="color:black;">Hiring &rarr;</a></button>
+        
+        </div>
+
+        <div class="card">
+                <h1 style="color:#2c2c2c; font-size:18pt; margin:15px; margin-bottom:0; font-weight: bold;">Make money with no limits.</h1>
+                <p style="color:#2c2c2c; margin:15px; margin-bottom:15px; font-size:14pt;">Share the benefits of Glass Card Premium with a friend. They will get $5 off their premium card and you will make $5 cash- paid through Venmo.
+                <br>
+                <br>
+                There are no limits to the amount of money you can make by helping us grow in your community.</p>
+                
+                <p style="color:#2c2c2c; margin:15px; margin-bottom:0; font-size:18pt;"><b>Get Started</b></p>
+                
+                <center>
+                    <p style="color:grey; font-size: 14pt;">Just create your referral code and start telling your friends!</p>
+                    <input style="margin:15px; margin-bottom:0; width:200px;" class="form" type="text" id="Name" maxlength="100" placeholder="Your Name">
+                
+                    <input style="margin:15px; margin-bottom:0; width:200px;" class="form" type="text" id="referralCode" maxlength="100" placeholder="Your Referral Code">
+
+                    <input style="margin:15px; margin-bottom:0; width:200px;" class="form" type="text" id="referralCode" maxlength="100" placeholder="Your Venmo Username*">
+
+                    <button class="form" style="width:220px; margin:15px;">Go!</button>
+
+                    <p style="color:grey; font-size: 10pt;">*Paid out each Monday with a balance over $5. Double check your Venmo username. We cannot retract an incorrect payment. </p>
+                </center>
+                <br>
+                
+        </div>
+
+        <footer class="menu">
+            <center>
+                <table>
+                    <tr>
+						<td class="footer"><a href="home.html"><img class="footer" src="images/icon_home.png"></a></td>
+						<td class="footer"><a href="live.html"><img class="footer" src="images/icon_live.png"></a></td>
+						<td class="footer"><a href="premium.html"><img class="footer" src="images/icon_premium.png"></a></td>
+                        <td class="footer"><a href="profile.html"><img class="footer" src="images/icon_profile.png"></a></td>
+                    </tr>
+                </table>
+            </center>
+        </footer>
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+        </div>
+            
+		<script type="text/javascript">
+			
+			$('.counter').counterUp({
+    delay: 10,
+    time: 700,
+    offset: 100,
+    beginAt: 1,
+
+});
+			$(document).ready(function() {
+			
+				
+
+				var offset = "?LocationName=".length;
+				var locationName = window.location.search.substring(offset);
+
+				if (locationName) {
+					window.localStorage.setItem("locationName", locationName);
+				} else {
+					locationName = window.localStorage.getItem("locationName");
+				}
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var deviceID = window.localStorage.getItem("deviceID");
+				var token = {DeviceID:deviceID};
+				
+				token = JSON.stringify(token);
+				token = encrypt(token);
+				$.ajax({
+					url : "http://www.glasscard.org/dataaccesstest/getSavings.ashx",
+					type: "POST",
+					data: "Token=" + token,
+					dataType: "text",
+					crossdomain: true,
+					success: function(_data, textStatus, jqXHR)
+					{
+						var data = JSON.parse(_data);
+						$('#savings').html(data.Savings);
+//						$('#creationDate').html(data.CreationDate);
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					console.log(errorThrown);
+					console.log(textStatus);
+					console.log(jqXHR);
+						displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});					
+
+				$('#distance').change(function(e){
+					onDeviceReady()
+				});
+				
+				$('#category').change(function(e){
+					onDeviceReady()
+				});
+				
+				document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+					window.navigator.geolocation.getCurrentPosition(function(pos) {
+						function getMerchants(category) {
+							$.ajax({
+								// Would need to choose a state first.
+								url : "https://glasscard.org/dataaccessprod4/getMerchants.ashx",
+								type: "POST",
+							data: "Latitude=" + pos.coords.latitude +
+								"&Longitude=" + pos.coords.longitude +
+								"&Category=" + $('#category option:selected').text() +
+								"&Radius=" + $('#distance option:selected').text().substring(0, 2),
+								dataType: "text",
+								crossdomain: true,
+								success: function(data, textStatus, jqXHR)
+								{
+									$('#merchants').empty();
+									$('#merchants').append(data);
+								},
+								error: function (jqXHR, textStatus, errorThrown)
+								{
+									displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+									//log(jqXHR, textStatus, errorThrown);
+								}
+							});
+						}
+					});
+				}
+				
+/*				getMerchants("all deals");
+				
+				$("#category").change(function () {
+					switch ($(this).val()) {
+//						case "5": // Limited time deals
+//							window.location.href = "limited-time.html?LocationName=" + locationName;
+//							break;
+						case "1": // Food deals
+							getMerchants("food");
+							break;
+						case "2": // Service deals
+							getMerchants("services");
+							break;
+						case "3": // Activity deals
+							getMerchants("activities");
+							break;
+						default: // All deals
+							getMerchants("all deals");
+					}
+            });
+*/
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);//doOaepPadding);
+					return(System.Convert.ToBase64String(encryptedBytes));
+				}
+			});
+		</script>
+	</body>
+</html>

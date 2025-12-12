@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Agreement</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+	</head>
+	<body>
+		<h1 style="background:black; color:white; width:100%;  padding:2% 0%;  margin:0;font-size:10vw; text-align:center;">Proud Sponsor</h1>
+		<p>Glass Card promotes fundraisers for any group. Choose a group and give back to your community.
+		<br>
+		<br>
+		<span style="font-size:4vw; font-style:italic;">For more information or to start your own fundraiser visit glasscard.org.</span></p>
+		<hr>
+		<br>
+		<div id="groups">
+			<!--center>
+				<table class="fundraiser">
+					<tr>
+						<td class="fundraiser"><input id="a1" type="radio" name="fundraiser">Claire's Cause</td>
+						<td class="fundraiser"><input id="a2" type="radio" name="fundraiser">Crestwood High School</td>
+					</tr>
+					<tr>
+						<td class="fundraiser"><input id="a3" type="radio" name="fundraiser">Mustang Basketball</td>
+						<td class="fundraiser"><input id="a4" type="radio" name="fundraiser">North Swim</td>
+					</tr>
+					<tr>
+						<td class="fundraiser"><input id="a5" type="radio" name="fundraiser">SOHS Football</td>
+						<td class="fundraiser"><input id="a6" type="radio" name="fundraiser">Team Ryan</td>
+					</tr>
+				</table>
+			</center-->
+		</div>
+		<form class="account" id="ccform">
+			<input type="number" id="donation" placeholder="Amount">
+		</form>
+		<center><a href="#" id="donate"><button class="login">Donate</button></a></center>
+		<a href="#" id="skip"><p style="margin-top:7px; text-decoration:underline;">No thanks</p>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var offset = "?LocationName=".length;
+				var locationName = window.location.search.substring(offset);
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+				}
+
+				$("#donation").keypress(function (e) {
+					// If the key is not a digit, space or ['.', '-', '(', ')'] then don't type anything.
+					//if (e.which != 8 && e.which != 32 && e.which != 40 && e.which != 41 && e.which != 45 && e.which != 46 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+					// If the key is not a digit, then don't type anything.
+					if (e.which != 8 && e.which != 46 && (e.which < 48 || e.which > 57)) {
+						return false;
+					}
+				});
+
+				$.ajax({
+					// Would need to choose a state first.
+					url : "https://glasscard.org/dataaccessprod4/getFundraisers.ashx",
+					type: "POST",
+					data: "Location=" + locationName,
+					dataType: "text",
+					crossdomain: true,
+					success: function(data, textStatus, jqXHR)
+					{
+						$('#groups').empty();
+						$('#groups').append(data);
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+						log(jqXHR, textStatus, errorThrown);
+					}
+				});
+
+				$(document).on("click", "a[id='skip']", function (event) {
+					event.preventDefault();
+					window.location.href = "home.html?LocationName=" + locationName;
+				});
+				
+				$(document).on("click", "a[id='donate']", function (event) {
+					event.preventDefault();
+					
+					function getSelectedFundraiser() {
+						var radioButtons = document.getElementsByTagName('input');
+						for (var i = 0; i < radioButtons.length - 1; i++) {
+							if (radioButtons[i].checked)
+								return(radioButtons[i].id);
+						}
+						return('none');
+					}
+					
+					var fundraiserID = getSelectedFundraiser();
+					
+					if (fundraiserID == 'none') {
+//						displayMessage("Selection Required", "Please select a fundraiser for your donation.", "OK");
+						displayMessage("Entry Required", "To donate, please select a fundraiser and enter a dollar amount.", "OK");
+				} else {
+						var amount = $('#donation').val();
+						if ((amount.length == 0) || (amount == '.')) {
+//							displayMessage("Entry Required", "Please enter an amount for your donation.", "OK");
+							displayMessage("Entry Required", "To donate, please select a fundraiser and enter a dollar amount.", "OK");
+						} else {
+							fundraiserID = fundraiserID.substring(2);
+							var token = {Location:locationName,FundraiserID:fundraiserID,Amount:amount};
+							token = JSON.stringify(token);
+							token = btoa(token);
+							window.location.href = "donate.html?Token=" + token;
+//							token = atob(token);
+//							var data = JSON.parse(token);
+//							window.location.href = "billinginfo.html?Token=" + token;
+						}
+					}
+				});
+
+				function encode(src) { 
+					var bytes = "";
+					for (var i = 0; i < src.length; i += 2) {
+						bytes += String.fromCharCode((((src.substring(i, i + 1) * 1) << 4) + (src.substring(i + 1, i + 2) * 1)));
+					}
+					return(bytes);
+				}
+				
+				function decode(src) {
+					var dest = "";
+					var temp = 0;
+					for (var i = 0; i < src.length; i++) {
+						temp = (src.charCodeAt(i) & 0xF0) >> 4;
+						dest += (temp + "");
+						temp = src.charCodeAt(i) & 0x0F;
+						dest += (temp + "");
+					}
+					return(dest);
+				}
+				
+			});
+		</script>
+	</body>
+</html>
+

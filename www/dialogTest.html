@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html class="redeem">
+	<head>
+		<title>Buy</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/jquery-1.12.1.ui.js"></script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/jquery-ui.js" type="text/javascript"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+	</head>
+	<body>
+		<div class="header2">	
+			<table class="header">
+				<tr>
+					<td class="Lside"><a href="javascript:history.back()"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:5% 1%;"></a></td>
+					<td class="middle"><h1><label id="businessName" /></h1></td>
+					<td class="Rside"> &nbsp; </td> // Share
+				</tr>
+			</table>
+			<hr>
+			<p style="font-family:bebas; font-size:6vw; margin:2%; margin-bottom:.5%;"><label id="title" /></p>
+		</div>
+		<div class="container2">
+			<div id="imageName"><img src=""></div>
+			<p style="color:black; font-size: 5vw;"><b>Details: </b><label id="discount" /></p>
+			<table style="color:black; layout:fixed; width:70%; margin:auto; text-align:center;">
+				<tr>
+					<td style="font-family:bebas; width:35%; font-size:5.5vw;" >Was: <strike>$<label id="price" /></strike></td>
+					<td style="color:#0BC106; font-family:bebas; font-size:5.5vw; width:35%;">Now: $<label id="discountPrice" /></td>
+				</tr>
+			</table>
+			<table style="color:black; text-align:center;">
+				<tr>
+					<td id="phone"><img src="images/phone.png" class="icon"></td>
+					<td id="address"><img src="images/location.png" class="icon"></td>
+					<td id="url"><img src="images/website.png" class="icon"></td>
+				</tr>
+				<tr>
+					<td>Phone</td>
+					<td>Location</td>
+					<td>Website</td>
+				</tr>
+			</table>
+			<br>
+			<hr style="color:black;">
+			<p style="color:black; font-size: 5vw;"><b>Terms: </b><span style="font-style:italic;"><label id="terms" /></span></p>
+			<br>
+			<br>
+			<p class="purpose">The main purpose of Glass Card is to bring people together. We aim to build relationships between users, businesses, and local fundraisers. Thank you for inviting us into your community!<br>
+			<br>
+			-GLASS CARD TEAM</p>
+		</div>
+		<br>
+		<br>
+		<footer>
+			<center><a href="#" id="purchase"><button>USE NOW</button></a></center>
+		</footer>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+ <div id="dialog" style="display: none; " align="center">
+    Do you want to delete this record?
+</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				var offset = "?DealID=".length;
+				var dealID = window.location.search.substring(offset);
+				var latitude = 0.0;
+				var longitude = 0.0;
+				var useCount = 0;
+     $(function () {
+        $("#dialog").dialog({
+            modal: true,
+            title: "",
+            width: 350,
+            height: 160,
+						open: function(event, ui) {
+							$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+						},
+            buttons: [
+            {
+                id: "Delete",
+                text: "Delete",
+                click: function () {
+                    alert("Deleted");
+                }
+            },
+            {
+                id: "Cancel",
+                text: "Cancel",
+                click: function () {
+                    $(this).dialog('close');
+                }
+            }
+            ]
+        });
+    });
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+console.log("Navigation to " + url);								
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				$.ajax({
+					url : "http://www.glasscard.org/dataaccesstest/getNewDeal.ashx",
+					type: "POST",
+					data: "DealID=" + dealID,
+					dataType: "text",
+					crossdomain: true,
+					success: function(data, textStatus, jqXHR)
+					{
+						var d = JSON.parse(data);
+						$('#businessName').html(d.businessName);
+						$('#title').html(d.title);
+						$('#price').html(d.price);
+						$('#discountPrice').html(d.discountPrice);
+						$('#terms').html(d.terms);
+						$('#discount').html(d.discount);
+						$('#imageName').empty();
+						$('#imageName').append("<img src=\"https://glasscard.org/theapp/images/" + d.imageName + "\">");
+						$('#phone').empty();
+						$('#phone').append(d.phone);
+						$('#address').empty();
+						$('#address').append(d.address);
+						$('#url').empty();
+						$('#url').append(d.url);
+						latitude = d.latitude;
+						longitude = d.longitude;
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					console.log(errorThrown);
+					console.log(textStatus);
+					console.log(jqXHR);
+						displayMessage("", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});
+	
+				function distance(lat1, lon1, lat2, lon2) {
+				  var p = 0.017453292519943295;    // Math.PI / 180
+				  var c = Math.cos;
+				  var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+
+				  return((12742.0 * Math.asin(Math.sqrt(a))) / 1.6); // (2 * R; R = 6371 km) / 1.6 = mi
+				}
+//Lxd/yvwM3+bmv5+0H0083nKFHtH0kAMafKBDVb59jm9eygHsK2JXej1BYTMLLpzj6pzMnbrCyQ3PEHjyW+W6x5Be5B2kP2WaykLoPIp9u/b+BrgIYtOk+Xf/ylYnh9tATGBlh1tdf0vALlQDF5s8SsSvKg9xyNS1JDAtu6lmdgrWHVMOdsnMlF6eV3incJWW6ZSCvQaotLiVXRrqpszFyReNNpWl5tPdQfJNvcDGx34iNEhe2tqSmtBBrwKobUmqIAVop9bB7X6IX1LwXOubYz8G8DMGEdbBmkxmeKgTRQY4pk3i1L6bkvy2ytK70DF3Zz3g0ZdulZkf5YwILf5n2g==
+
+				$(document).on("click","a[id='purchase']", function (event) {
+					event.preventDefault();
+					
+					window.navigator.geolocation.getCurrentPosition(function(pos) {
+						// If the distance is less than a tenth of a mile (0.16 kilometers)...
+						if ((distance(pos.coords.latitude, pos.coords.longitude, latitude, longitude) < 0.1) || (useCount > 1)) { 
+                                                                     // 38.5815719, -121.4943995
+
+							var deviceID = window.localStorage.getItem("deviceID");
+							var password = window.localStorage.getItem("password");
+							var token = {DeviceID:deviceID,Password:password,DealID:dealID};
+							token = JSON.stringify(token);
+		//	displayMessage("3", token, "Close");
+							token = encrypt(token);
+		console.log(token);					
+							$.ajax({
+								url : "https://glasscard.org/dataaccessprod4/useNow.ashx",
+								type: "POST",
+								data: "Token=" + token,
+								dataType: "text",
+								crossdomain: true,
+								success: function(_data, textStatus, jqXHR)
+								{
+									window.location.href = "redeem.html?DealID=" + dealID;
+								},
+								error: function (jqXHR, textStatus, errorThrown)
+								{
+									//log(jqXHR, textStatus, errorThrown);
+									displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+								}
+							});
+						} else {
+							useCount++;
+							displayMessage("Notice", 'You must be at the purchase location in order to "use" the discount.', "OK");
+						}
+					});
+				});
+
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);//doOaepPadding);
+					return(System.Convert.ToBase64String(encryptedBytes));
+				}
+			});
+		</script>
+	</body>
+</html>

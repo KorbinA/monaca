@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Iphone Settings</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div class="location">
+		
+		<br>
+		
+			<center>
+			
+			<br>
+			<br>
+				<img src="images/iphone-settings.png" style="width:75px; ">
+			
+			</center>
+			
+			<br>
+			<br>
+			
+			<p>Open your iPhone's <b>Settings.</b></p>
+			<br>
+			<p>Tap <b>Privacy.</b></p>
+			<br>
+			<p>Select <b>Location Services.</b></p>
+			<br>
+			<p>Ensure both <b>Location Services</b> and <b>Glass Card</b> are turned <b>on.</b></p>
+			
+			<center>
+				<a href="unlock.html"><h1 style="background:#57e5e1; color:white; font-size:32px;position:absolute; margin:auto; bottom:50px; left:7%; padding:0; letter-spacing:1.1pt; border-radius:25px; height: 45px; width:86%; padding-top:7px; box-shadow: 1px 1px 2px .5px rgba(0,0,0,0.2);">Next<h1>
+			</center>
+		</div>
+	</body>
+</html>

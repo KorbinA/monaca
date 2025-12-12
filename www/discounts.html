@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Discounts</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="js/spin.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			
+			<div id="discounts" style="margin-bottom: 40px;"></div>
+
+		</div>
+        		
+<footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				var offset = "?MerchantID=".length;
+				var merchantID = window.location.search.substring(offset);
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				$.ajax({
+					url : "https://glasscard.org/dataaccessprod4/getBusinessName.ashx",
+					type: "POST",
+					data: "MerchantID=" + merchantID,
+					dataType: "text",
+					crossdomain: true,
+					success: function(data, textStatus, jqXHR)
+					{
+						$('#businessName').html(data);
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					console.log(errorThrown);
+					console.log(textStatus);
+					console.log(jqXHR);
+						displayMessage("", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});	
+				
+				var opts = {
+					  lines: 13 // The number of lines to draw
+					, length: 25 // The length of each line
+					, width: 1 // The line thickness
+					, radius: 5 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#1fab89' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+				
+				//document.addEventListener("deviceready", onDeviceReady, false);
+				
+				//function onDeviceReady() {
+					var now = new Date();
+					var release = now;
+
+					$.ajax({
+						url : "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
+						type: "POST",
+						data: "AppType=UserApp" +
+							"&Version=" + window.localStorage.getItem("userAppVersion") +
+							"&ID=" + merchantID +
+							"&ID_Type=Merchant",
+						dataType: "text",
+						crossdomain: true,
+						success: function(data, textStatus, jqXHR)
+						{
+							release = new Date(data); // data is in the form of '2017-09-16 09:34:30'.
+							getDiscounts();
+						},
+						error: function (jqXHR, textStatus, errorThrown)
+						{
+						}
+					});
+
+					var target = document.getElementById('discounts');
+					var spinner = new Spinner(opts).spin(target);
+					
+					function getDiscounts() {
+						$.ajax({
+							url : "https://glasscard.org/dataaccessprod4/discounts" + ((now < release) ? "2" : "") + ".ashx",
+							type: "POST",
+							data: "MerchantID=" + merchantID + "&AccountId=" + window.localStorage.getItem("accountId") +
+								"&Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
+								"&Longitude=" + window.localStorage.getItem("longitude"),     // pos.coords.longitude,
+							dataType: "text",
+							crossdomain: true,
+							success: function(data, textStatus, jqXHR)
+							{
+								$('#discounts').empty();
+								$('#discounts').append(data);
+								spinner.stop();
+							},
+							error: function (jqXHR, textStatus, errorThrown)
+							{
+								spinner.stop();
+								displayMessage("", "An unrecoverable error was encountered.", "Close");
+								//log(jqXHR, textStatus, errorThrown);
+							}
+						});
+					}
+				//}
+			});
+		</script>
+	</body>
+</html>
+

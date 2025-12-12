@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:black;">
+	<head>
+		<title>Locations</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+	</head>
+	<body>
+<br />
+		<div class="header" style="z-index:1;>
+			<table class="header">
+				<tr>
+					<td class="Lside">
+						<a href="home.html"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:4% 3%;"> 
+					</td>
+					<td class="middle"><h1>Location</h1></td>
+					<td class="Rside"></td>
+				</tr>
+			</table>
+		</div>
+		<div id="list">
+			<!--a href="home.html">
+			<div class="location" style="margin-top:14%;">
+				<img src="images/Sacramento.png" class="location" style="top:-35%;">
+				<p style="position:absolute; top:50%; margin:0 7%;">American River College, CA</p>
+			</div>
+			</a>
+			
+			<a href="home.html">
+			<div class="location">
+				<img src="images/vegas.png" class="location" style="top:-45%;">
+				<p style="position:absolute; top:50%; margin:0 7%;">Las Vegas, NV</p>
+			</div>
+			</a>
+			
+			<a href="home.html">
+			<div class="location">
+				<img src="images/loomis.png" class="location" style="top:-35%;">
+				<p style="position:absolute; top:50%; margin:0 7%;">Loomis, CA</p>
+			</div>
+			</a>
+			
+			<a href="home.html">
+			<div class="location">
+				<img src="images/Rocklin.png" class="location" style="top:-30%;">
+				<p style="position:absolute; top:50%; margin:0 7%;">Rocklin, CA</p>
+			</div>
+			</a>
+			
+			<a href="home.html">
+			<div class="location">
+				<img src="images/Sierra.png" class="location" style="top:-55%;">
+				<p style="position:absolute; top:50%; margin:0 7%;">Sierra, CA</p>
+			</div>
+			</a>
+			</div-->
+		</div>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+console.log("Navigation to " + url);								
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				$.ajax({
+					// Would need to choose a state first.
+					//url : "https://glasscard.org/dataaccessprod4/getStateLocations.ashx",
+					url : "https://glasscard.org/dataaccessprod4/getLocations.ashx",
+					type: "POST",
+//					data: "StateName=" + window.localStorage.getItem("stateName"),
+					dataType: "text",
+					crossdomain: true,
+					success: function(data, textStatus, jqXHR)
+					{
+						$('#list').empty();
+						$('#list').append(data);
+						//$('#list').enhanceWithin();
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+						displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

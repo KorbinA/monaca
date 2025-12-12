@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:#3e3e3e; background-image:url(images/darkfancypizza.jpg); background-size:cover;height:100%; background-position:top; background-repeat:no-repeat;">
+	<head>
+		<title>Go Premium</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+	</head>
+	<body>
+
+		<div class="card" id="activate" style="width:86%; height:275px; margin:auto; position:absolute; top:0; bottom:0; right:0;  left:0; display:block;">
+			<div id="activate_content"> LOADING CONTENT </div>
+				
+			<form>
+					<input class="billingForm" style="width:80%; text-align:center;" data-clear-btn="true" name="accessCode" id="accesstoken" value="" type="text" maxlength="35" placeholder="Access Code">
+					<br>
+					<br>
+					<button type="button" id="activatebutton" class="form" style="width:85%; box-shadow: 0px 1px 1px 01px rgba(0,0,0,0.3);">Activate</button>
+					<br>
+					<p style="color:black; font-size:10pt; text-decoration: underline;"><a href="getPremium.html" style="color:black;">Don't have an access code?</a></p>
+					<br>
+			</form>
+		</div>
+
+		<div class="card" id="renew" style="width:86%; height:310px; margin:auto; position:absolute; top:0; bottom:0; right:0;  left:0; display:none;">
+			<div id="renew_content"> LOADING CONTENT</div>
+					<br>
+		</div>
+				
+<footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+        </div>
+
+		<script type="text/javascript">
+
+			function displayMessage(title, message, buttonText, url) {
+				$('#messageText').html(message);
+				$('#messagePopup').dialog({
+					//title: title,
+					closeOnEscape: false,
+					open: function(event, ui) {
+						//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+						$(this).siblings('.ui-dialog-titlebar').remove();
+					},
+					buttons:[{
+						text:buttonText,
+						click:function(){
+							$(this).dialog("close");
+							if ((url != undefined) && (url.length > 0)) {
+								window.location.href = url;
+							}
+						}
+					}]
+				});
+			}
+
+			if(JSON.parse(window.localStorage.getItem("isPremium"))) {
+				$('#renew').show();
+				$('#activate').hide();
+				loadRenew();
+			} else if(window.localStorage.getItem("premiumUntil")) {
+				$('#renew').hide();
+				$('#activate').show();
+				loadActivateExMember();
+			} else {
+				$('#renew').hide();
+				$('#activate').show();
+				loadActivate();
+			}
+
+			function loadActivate() {
+				var parameterCache = window.localStorage.getItem("gopremium.activate");
+				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+						{Name: 'gopremium', Key: 'activate'},
+						function(data) {
+							window.localStorage.setItem("gopremium.activate", data);
+							$("#activate_content").html(data);
+						})
+				$("#activate_content").html(parameterCache);
+
+
+				$("#activatebutton").click(function(e) {
+					var accesstoken = $("#accesstoken").val();
+					var accountid = window.localStorage.getItem("accountId");
+					$.get("https://glasscard.org/dataaccessprod4/activateAccessToken.ashx",
+							{accesstoken: accesstoken, accountid: accountid},
+							function(_data) {
+								var data = JSON.parse(_data);
+								if(data.ok) {
+									console.log("worked!");
+									window.localStorage.setItem("isPremium", true);
+									window.location.href = "home.html";
+								} else {
+									console.log("did not work");
+									displayMessage("Access Token Activation Error", data.message, "OK");
+								}
+							})
+				});
+				return false;
+			}
+
+			function loadActivateExMember() {
+				var parameterCache = window.localStorage.getItem("gopremium.activate.exmember");
+				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+						{Name: 'gopremium', Key: 'activate.exmember'},
+						function(data) {
+							window.localStorage.setItem("gopremium.activate.exmember", data);
+							$("#activate_content").html(data);
+						})
+				$("#activate_content").html(parameterCache);
+
+
+				$("#activatebutton").click(function(e) {
+					var accesstoken = $("#accesstoken").val();
+					var accountid = window.localStorage.getItem("accountId");
+					$.get("https://glasscard.org/dataaccessprod4/activateAccessToken.ashx",
+							{accesstoken: accesstoken, accountid: accountid},
+							function(_data) {
+								var data = JSON.parse(_data);
+								if(data.ok) {
+									console.log("worked!");
+									window.localStorage.setItem("isPremium", true);
+									window.location.href = "home.html";
+								} else {
+									console.log("did not work");
+									displayMessage("Access Token Activation Error", data.message, "OK");
+								}
+							})
+				});
+				return false;
+			}
+
+			function loadRenew() {
+				var premiumBanner = window.localStorage.getItem("premium.banner");
+				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+						{Name: 'gopremium', Key: 'renew'},
+						function(data) {
+							var newData = data.replace('{%active_until%}', window.localStorage.getItem('premiumUntil'))
+							window.localStorage.setItem("gopremium.renew", newData);
+							$("#renew_content").html(newData);
+						})
+				$("#renew_content").html(premiumBanner);
+			}
+
+			document.addEventListener("deviceready", onDeviceReady, false);
+
+			function onDeviceReady() {
+
+			}
+		</script>
+	</body>
+</html>

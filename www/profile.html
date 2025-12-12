@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background-color:white; background-image:url(images/fancyfood.jpg); background-size:cover; background-position:25%; background-repeat:no-repeat; ">
+	<head>
+		<title>Profile</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, viewport-fit=cover"/>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/jquery.waypoints.min.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/jquery.counterup.min.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+		</script>
+		<style>
+			/* Nuke default table gaps and borders */
+			/* Glass look for the list table */
+table.profile {
+  /* make radius & clipping work on tables */
+  border-collapse: separate;
+  border-spacing: 0;
+  display: block;            /* helps clip children on iOS */
+  overflow: hidden;          /* clips blur + row borders */
+  border-radius: 16px;
+
+  /* glass layer */
+  background: rgba(255,255,255,0.6);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+
+  /* hairline fix some WebKit builds show at the bottom */
+  transform: translateZ(0);
+}
+
+/* remove any default borders */
+table.profile tr,
+table.profile td {
+  border: 0;
+}
+
+/* optional: subtle separators between rows (not at the bottom) */
+table.profile tr + tr td {
+  border-top: 1px solid rgb(14, 14, 14);
+}
+
+/* spacing inside cells */
+table.profile td {
+  padding: 14px 16px;
+}
+
+		  
+			/* If you add row separators elsewhere, ensure the last one is removed */
+			table.profile tr:last-child td {
+			  border-bottom: 0 !important;
+			}
+		  
+			/* Anti-aliasing hairline fix on some WebKit builds */
+			table.profile {
+			  transform: translateZ(0);
+			  -webkit-font-smoothing: antialiased;
+			  backface-visibility: hidden;
+			}
+		  </style>
+		  
+	</head>
+	<body>
+		<br>
+		<center>
+			<div  style="background: rgba(255,255,255,1); border-radius:20px; width:90%; padding:5% 0; margin-top:15%; box-shadow:1px 1px 2px 1px rgba(0,0,0,0.3);">
+				<!--img src="images/white-glass.png" style="width:75px;"-->
+				<p style="color:#393e46; font-size:150%; letter-spacing:1.1pt; font-weight:bold;">Total Savings</p>
+				<br>
+				<!--The total amount saved goes where the 20.21 is-->
+				<p style="color:#1fab89; font-size:175%; padding:0; text-align:center; margin:0; font-weight:600;">$<span class="counter"></span></p>
+			</div>
+		</center>
+		
+		<br>
+		<br>
+		<br>
+        <table class="profile">
+			<tr class="profile">
+			  <td class="profile">
+				<a id="fundraisersLink" href="https://glasscardapp.com" target="_system" style="display:block; color:#222831;">
+					Fundraiser Opportunities
+				  </a>
+			  </td>
+			  <td class="profile_icon" style="color:#1fab89;">$</td>
+			</tr>
+		  
+			<tr class="profile">
+			  <td class="profile">
+				<a href="how-to-redeem.html" style="display:block; color:#222831;">How To Redeem & FAQs</a>
+			  </td>
+			  <td class="profile_icon" style="color:#1fab89;">?</td>
+			</tr>
+		  
+			<tr class="profile">
+			  <td class="profile">
+				<a href="mailto:support@glasscardapp.com?Subject=App%20Support" style="display:block; color:#222831;" target="_top">
+				  Contact Us
+				</a>
+			  </td>
+			  <td class="profile_icon" style="color:#1fab89;">&#x270E;</td>
+			</tr>
+		  
+			<!-- NEW: Delete Account -->
+			<tr class="profile">
+				<td class="profile">
+					<a id="deleteAccountLink" href="https://glasscard.org/deleteAccount.aspx" target="_system" style="display:block; color:#222831;">
+						Delete Account
+					  </a>
+				</td>
+				<td class="profile_icon">
+					<svg class="icon" xmlns="http://www.w3.org/2000/svg"
+						 viewBox="0 0 24 24" fill="none"
+						 stroke="currentColor" stroke-width="2"
+						 stroke-linecap="round" stroke-linejoin="round"
+						 aria-hidden="true">
+					  <path d="M3 6h18"/>
+					  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+					  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+					  <path d="M10 11v6"/>
+					  <path d="M14 11v6"/>
+					</svg>
+				  </td>
+			  </tr>
+		  </table>
+		
+		<a href="#" id="signout" style="display:block; color:white; width:90%; background:#222831; border-radius:20px; text-align:center; box-shadow:0px 1px 2px 1px rgba(0,0,0,0.3); margin-left:5%; margin-top:5%; padding:3% 0; font-size:125%;">Sign Out</a>
+
+   <footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab is-active" href="profile.html" aria-label="Account">
+    <img src="images/account-gradient.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+        </div>
+            
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var offset = "?LocationName=".length;
+				var locationName = window.location.search.substring(offset);
+
+				if (locationName) {
+					window.localStorage.setItem("locationName", locationName);
+				} else {
+					locationName = window.localStorage.getItem("locationName");
+				}
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var deviceID = window.localStorage.getItem("deviceID");
+				var token = {DeviceID:deviceID};
+				
+				token = JSON.stringify(token);
+				token = encrypt(token);
+				$.ajax({
+					url : "https://glasscard.org/dataaccessprod4/getSavings.ashx",
+					type: "POST",
+					data: "Token=" + token,
+					dataType: "text",
+					crossdomain: true,
+					success: function(_data, textStatus, jqXHR)
+					{
+						var data = JSON.parse(_data);
+						$('.counter').html(data.Savings);
+						$('.counter').counterUp({
+							delay: 10,
+							time: 700,
+							offset: 100,
+							beginAt: 1,
+
+						});
+//						$('#creationDate').html(data.CreationDate);
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					console.log(errorThrown);
+					console.log(textStatus);
+					console.log(jqXHR);
+						displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});					
+
+				$('#distance').change(function(e){
+					onDeviceReady()
+				});
+				
+				$('#category').change(function(e){
+					onDeviceReady()
+				});
+				
+				document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+					if(!window.localStorage.getItem("deviceID")) {
+						if (navigator.app) {
+							navigator.app.exitApp();
+						} else if (navigator.device) {
+							navigator.device.exitApp();
+						} else {
+							window.close();
+						}
+						return;
+					}
+					window.navigator.geolocation.getCurrentPosition(function(pos) {
+						function getMerchants(category) {
+							$.ajax({
+								// Would need to choose a state first.
+								url : "https://glasscard.org/dataaccessprod4/getMerchants.ashx",
+								type: "POST",
+							data: "Latitude=" + pos.coords.latitude +
+								"&Longitude=" + pos.coords.longitude +
+								"&Category=" + $('#category option:selected').text() +
+								"&Radius=" + $('#distance option:selected').text().substring(0, 2),
+								dataType: "text",
+								crossdomain: true,
+								success: function(data, textStatus, jqXHR)
+								{
+									$('#merchants').empty();
+									$('#merchants').append(data);
+								},
+								error: function (jqXHR, textStatus, errorThrown)
+								{
+									displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+									//log(jqXHR, textStatus, errorThrown);
+								}
+							});
+						}
+					});
+				}
+				
+/*				getMerchants("all deals");
+				
+				$("#category").change(function () {
+					switch ($(this).val()) {
+//						case "5": // Limited time deals
+//							window.location.href = "limited-time.html?LocationName=" + locationName;
+//							break;
+						case "1": // Food deals
+							getMerchants("food");
+							break;
+						case "2": // Service deals
+							getMerchants("services");
+							break;
+						case "3": // Activity deals
+							getMerchants("activities");
+							break;
+						default: // All deals
+							getMerchants("all deals");
+					}
+            });
+*/
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);//doOaepPadding);
+					return(System.Convert.ToBase64String(encryptedBytes));
+				}
+
+				$(document).on("click","a[id='signout']", function (event) {
+					event.preventDefault();
+					// window.localStorage.removeItem("deviceID");
+					// window.localStorage.removeItem("password");
+					// window.localStorage.removeItem("isPremium");
+					window.localStorage.removeItem("deviceID");
+					window.localStorage.clear();
+					window.location.href = "login.html";
+				});
+				// NEW external link handler
+				document.addEventListener("deviceready", function () {
+				function openExternal(e) {
+					e.preventDefault();
+					cordova.InAppBrowser.open(this.href, "_system");
+				}
+				$(document).on("click", "#fundraisersLink, #deleteAccountLink", openExternal);
+				});
+			});
+		</script>
+	</body>
+</html>

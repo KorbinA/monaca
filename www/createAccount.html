@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Create Account</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="color-scheme" content="light">
+
+    <!-- Use the same externalized body + form styles as login.html -->
+    <link rel="stylesheet" href="css/newStyle.css" />
+
+    <!-- Cordova & libs (unchanged) -->
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+
+    <!-- Crypto libs (unchanged) -->
+    <script type="text/javascript" src="js/System.debug.js"></script>
+    <script type="text/javascript" src="js/System.IO.debug.js"></script>
+    <script type="text/javascript" src="js/System.Text.debug.js"></script>
+    <script type="text/javascript" src="js/System.Convert.debug.js"></script>
+    <script type="text/javascript" src="js/System.BitConverter.debug.js"></script>
+    <script type="text/javascript" src="js/System.BigInt.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+  </head>
+
+  <body class="gradient">
+    <main <main class="container">
+      <section class="card" role="form" aria-labelledby="createTitle">
+
+        <!-- ✅ Back button moved inside the card and right-aligned -->
+        <div class="card-top">
+          <a href="login.html" class="back-btn" aria-label="Back to Sign In">
+            <span>Back to Sign In</span>
+          </a>
+        </div>
+
+        <h2 id="createTitle" style="margin:0 0 6px; font-size:18px;">Create an account</h2>
+
+        <form id="ccform" novalidate>
+          <!-- Email -->
+          <div class="field">
+            <label for="deviceID">Email</label>
+            <div class="control">
+              <input class="input" data-clear-btn="true" id="deviceID" type="text" inputmode="email" autocomplete="email" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <!-- Birth Year + Gender (row) -->
+          <div class="row" style="gap:10px;">
+            <div class="field" style="flex:1;">
+              <label for="birthYear">Birth Year</label>
+              <div class="control">
+                <input class="input" data-clear-btn="true" id="birthYear" maxlength="4" type="text" inputmode="numeric" autocomplete="bday-year" placeholder="YYYY" />
+              </div>
+            </div>
+            <div class="field" style="flex:1;">
+              <label for="gender">Gender</label>
+              <div class="control">
+                <!-- style as an input for consistent look -->
+                <select id="gender" class="input" autocomplete="sex">
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="P">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="control">
+              <input class="input" data-clear-btn="true" id="password" maxlength="15" type="password" autocomplete="new-password" placeholder="8–15 characters" />
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="field">
+            <label for="password2">Confirm Password</label>
+            <div class="control">
+              <input class="input" data-clear-btn="true" id="password2" maxlength="15" type="password" autocomplete="new-password" placeholder="Re-enter password" />
+            </div>
+          </div>
+
+          <p class="footer" style="margin-top:8px;">
+            By using the services you agree to the
+            <a class="link" href="https://glasscard.org/Privacy.html">Privacy Policy</a> and
+            <a class="link" href="https://glasscard.org/Terms.html">Terms and Conditions</a>.
+          </p>
+
+          <!-- Keep anchor + id for existing click handler -->
+          <div style="margin-top:14px">
+            <a href="#" id="createAccount" class="link" style="display:block;text-decoration:none;">
+              <button type="button" class="btn createAccount">Create Account</button>
+            </a>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- jQuery UI dialog host (UNCHANGED per your request) -->
+    <div id="messagePopup" title=""><label id="messageText"></label></div>
+
+    <!-- Script block (functionality and dialogs UNCHANGED) -->
+    <script type="text/javascript">
+      $(document).ready(function() {
+
+        // Show unexpected JS errors so the app doesn't appear to "freeze"
+        window.onerror = function(message, source, lineno, colno, error) {
+          try { displayMessage("Error", String(message) + " @ " + lineno + ":" + colno, "OK"); } catch(e) {}
+          return false;
+        };
+
+        // (UNCHANGED) dialog helper
+        function displayMessage(title, message, buttonText, url) {
+          var iconSVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 7.75a.75.75 0 0 1 .75.75v6a.75.75 0 0 1-1.5 0V8.5a.75.75 0 0 1 .75-.75Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" fill="#fff"/><path d="M12 2.5c-5.247 0-9.5 4.253-9.5 9.5s4.253 9.5 9.5 9.5 9.5-4.253 9.5-9.5-4.253-9.5-9.5-9.5Z" stroke="rgba(255,255,255,.7)" stroke-opacity=".35"/></svg>';
+          var html =
+            '<div class="gc-dialog__body">' +
+              '<div class="gc-dialog__icon">'+ iconSVG +'</div>' +
+              '<div>' +
+                (title ? '<div class="gc-dialog__title">'+ title +'</div>' : '') +
+                '<div class="gc-dialog__text">'+ message +'</div>' +
+              '</div>' +
+            '</div>';
+
+          $('#messagePopup').html(html).dialog({
+            modal: true,
+            resizable: false,
+            draggable: false,
+            closeOnEscape: true,
+            width: Math.min($(window).width() - 32, 560),
+            dialogClass: 'gc-dialog',
+            open: function() { $(this).siblings('.ui-dialog-titlebar').hide(); },
+            buttons:[{
+              text: buttonText || "OK",
+              click:function(){
+                $(this).dialog("close");
+                if ((url != undefined) && (url.length > 0)) window.location.href = url;
+              }
+            }]
+          });
+        }
+
+        // Helpers
+        function trimVal(sel){ return $(sel).val() ? $(sel).val().toString().trim() : ""; }
+        function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email); }
+        function hasWhitespace(str){ return /\s/.test(str); }
+
+        document.addEventListener("deviceready", onDeviceReady, false);
+        function onDeviceReady() { /* no-op */ }
+
+        // Keypress guards
+        $("#birthYear").keypress(function (e) {
+          if (e.which != 8 && (e.which < 48 || e.which > 57)) return false;
+        });
+        $("#deviceID, #referrer").keypress(function (e) {
+          if (e.which == 32) return false;
+        });
+
+        $(document).on("click", "a[id='createAccount']", function (event) {
+          event.preventDefault();
+
+          var email = trimVal('#deviceID');
+          var birthYear = trimVal('#birthYear');
+          var gender = $('select[id=gender]').val();
+          var password = $('#password').val() || "";
+          var password2 = $('#password2').val() || "";
+          var referrer = ($('#referrer').length ? trimVal('#referrer') : "");
+
+          var errors = [];
+          if (email.length === 0) {
+            errors.push("Please enter your email address.");
+          } else {
+            if (hasWhitespace(email)) email = email.split(" ").join("");
+            if (!isValidEmail(email)) errors.push("Please enter a valid email (e.g., <em>name@domain.com</em>).");
+            if (email.length < 6) errors.push("Email looks too short. Please double-check it.");
+          }
+
+          if (password.length < 8 || password.length > 15) errors.push("Your password must be between 8 and 15 characters.");
+          if (hasWhitespace(password)) errors.push("Passwords cannot contain spaces.");
+          if (password.length >= 8 && password2 !== password) errors.push("Password and Confirm Password must match.");
+
+          var nowYear = (new Date()).getFullYear();
+          if (birthYear.length > 0) {
+            if (!/^\d{4}$/.test(birthYear)) {
+              errors.push("Birth Year must be exactly 4 digits (e.g., 1995).");
+            } else {
+              var by = parseInt(birthYear, 10);
+              var age = nowYear - by;
+              if (by < 1900 || by > nowYear) errors.push("Birth Year must be between 1900 and " + nowYear + ".");
+              else if (age < 10) errors.push("Minimum age to use Glass Card is 10 years.");
+              else if (age > 100) errors.push("Birth Year suggests an age over 100. Please verify.");
+            }
+          }
+
+          if (["M","F","P"].indexOf(gender) === -1) errors.push("Please select a valid gender option.");
+          if ($('#referrer').length && referrer.length > 0 && !isValidEmail(referrer)) errors.push("Referral email format doesn't look valid.");
+
+          if (errors.length > 0) {
+            displayMessage("Fix Errors",
+              "<ul style='margin:8px 0 0 18px'>" + errors.map(function(e){ return "<li>"+ e +"</li>"; }).join("") + "</ul>",
+              "OK"
+            );
+            return;
+          }
+
+          var tokenObj = { DeviceID: email, Password: password, Password2: password2, Gender: gender, BirthYear: birthYear, Referrer: referrer };
+          var token;
+          try {
+            token = encrypt(JSON.stringify(tokenObj));
+          } catch (encErr) {
+            displayMessage("Security Error", "We couldn't secure your request. Please fully close and reopen the app, then try again.", "OK");
+            return;
+          }
+
+          var now = new Date();
+          var release = now;
+
+          $.ajax({
+            url : "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
+            type: "POST",
+            data: "AppType=UserApp" +
+                  "&Version=" + window.localStorage.getItem("userAppVersion") +
+                  "&ID=0" +
+                  "&ID_Type=CreateAcct",
+            dataType: "text",
+            crossdomain: true,
+            timeout: 20000,
+            success: function(data) {
+              var parsed = new Date(data);
+              if (isNaN(parsed.getTime())) {
+                displayMessage("Server Error", "Received an unexpected response while verifying app version. Please try again shortly.", "OK");
+                return;
+              }
+              release = parsed;
+              createAcct();
+            },
+            error: function (_jqXHR, textStatus, errorThrown) {
+              var msg = "We couldn't reach the server to verify release settings. Please check your internet connection and try again.";
+              if (textStatus === "timeout") msg = "The request timed out while verifying app version. Please try again.";
+              displayMessage("Connection Error", msg, "OK");
+            }
+          });
+
+          function createAcct() {
+            $.ajax({
+              url : "https://glasscard.org/dataaccessprod4/createAppAccount" + ((now < release) ? "2" : "") + ".ashx",
+              type: "POST",
+              data: "Token=" + token,
+              dataType: "text",
+              crossdomain: true,
+              timeout: 20000,
+              success: function(data) {
+                if (data === "IncorrectPassword") {
+                  displayMessage("Incorrect Password", "The password is not correct.", "Close");
+                } else if (data === "PasswordMismatch") {
+                  displayMessage("Password Mismatch", "Sorry, your passwords didn't match. Please try again.", "OK");
+                } else if (data === "AccountConnected") {
+                  loginTo(token, email, password, "home.html");
+                } else if (typeof data === "string" && data.length > 0) {
+                  sendWelcomeEMail(email);
+                  loginTo(token, email, password, "location-services.html");
+                } else {
+                  displayMessage("Unexpected Response", "We couldn't complete your account setup. Please try again in a minute.", "OK");
+                }
+              },
+              error: function (_jqXHR, textStatus, errorThrown) {
+                var msg = "An unrecoverable error occurred.";
+                if (textStatus === "timeout") msg = "The request timed out while creating your account. Please try again.";
+                else if (errorThrown) msg += " (" + errorThrown + ")";
+                displayMessage("System Error", msg, "Close");
+              }
+            });
+          }
+
+          function sendWelcomeEMail(deviceID) {
+            $.ajax({
+              url : "https://glasscard.org/dataaccessprod4/userWelcome.ashx",
+              type: "POST",
+              data: "DeviceID=" + deviceID,
+              dataType: "text",
+              crossdomain: true,
+              timeout: 15000
+            });
+          }
+
+          function loginTo(token, deviceID, password, targetPage) {
+            $.ajax({
+              url : "https://glasscard.org/dataaccessprod4/appLogin.ashx",
+              type: "POST",
+              data: "Token=" + token,
+              dataType: "text",
+              crossdomain: true,
+              timeout: 20000,
+              success: function(_data) {
+                var data;
+                try { data = JSON.parse(_data); }
+                catch(_){ displayMessage("System Error", "We couldn't process the server response. Please try again.", "Close"); return; }
+
+                if (data.status == "AccountConnected") {
+                  try {
+                    window.localStorage.setItem("deviceID", deviceID);
+                    window.localStorage.setItem("password", password);
+                    window.localStorage.setItem("isPremium", data.isPremium);
+                    window.localStorage.setItem("premiumUntil", data.premiumUntil);
+                    window.localStorage.setItem("accountId", data.accountId);
+                  } catch (e) { /* continue */ }
+                  window.location.href = targetPage;
+                } else {
+                  displayMessage("Account Not Found", "Sorry, we couldn't find your account. Please try again.", "OK");
+                }
+              },
+              error: function (_jqXHR, textStatus, errorThrown) {
+                var msg = "An unrecoverable error occurred.";
+                if (textStatus === "timeout") msg = "The request timed out while signing you in. Please try again.";
+                else if (errorThrown) msg += " (" + errorThrown + ")";
+                displayMessage("System Error", msg, "Close");
+              }
+            });
+          }
+        });
+
+        // --- Crypto helpers (unchanged logic) ---
+        function encrypt(textToEncrypt) {
+          var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+          var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+          rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+          var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);
+          return(System.Convert.ToBase64String(encryptedBytes));
+        }
+
+        function Guid() {
+          var random1 = Math.random() + "";
+          random1 = random1.substring(random1.length - 12);
+          var random2 = Math.random() + "";
+          random2 = random2.substring(random2.length - 12);
+          return(random1 + random2);
+        }
+
+        function packInteger(src) {
+          var bytes = "";
+          for (var i = 0; i < src.length; i += 2) {
+            bytes += String.fromCharCode(((src.substring(i, i + 1) * 1) << 4) +
+              (((i + 1) < src.length) ? (src.substring(i + 1, i + 2) * 1) : 0x0F));
+          }
+          return(bytes);
+        }
+
+        function unpackInteger(src) {
+          var dest = "";
+          var temp = 0;
+          for (var i = 0; i < src.length; i++) {
+            temp = (src.charCodeAt(i) & 0xF0) >> 4; dest += (temp + "");
+            temp = src.charCodeAt(i) & 0x0F; if (temp != 0x0F) dest += (temp + "");
+          }
+          return(dest);
+        }
+
+        (function(){
+          var el = document.querySelector('.back-btn');
+          if(!el) return;
+          el.addEventListener('click', function(e){
+            var canGoBack = (window.history.length > 1);
+            var ref = document.referrer || "";
+            var cameFromLogin = /\/login\.html(\?|#|$)/i.test(ref);
+            if (canGoBack && !cameFromLogin) {
+              e.preventDefault();
+              history.back();
+            }
+          }, {passive:true});
+        })();
+      });
+    </script>
+  </body>
+</html>

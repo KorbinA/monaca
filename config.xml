@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="org.glasscard.app" version="2.0.10">
+  <name>Glass Card</name>
+  <description>
+		Product and service discounts.
+	</description>
+  <author email="support@glasscardapp.com" href="https://glasscardapp.com">
+		Glass Card
+	</author>
+  <!-- Xcode 16 requires iOS 12+ -->
+  <preference name="deployment-target" value="12.0"/>
+  <!-- Keep Cordova/iOS tooling current and compatible with Xcode 15/16 -->
+  <engine name="ios" spec="7.1.1"/>
+  <plugin name="cordova-plugin-statusbar" spec="^3.0.0"/>
+  <preference name="permissions" value="none"/>
+  <preference name="phonegap-version" value="cli-7.1.0"/>
+  <preference name="webviewbounce" value="true"/>
+  <preference name="prerendered-icon" value="true"/>
+  <preference name="stay-in-webview" value="false"/>
+  <preference name="StatusBarOverlaysWebView" value="true"/>
+  <preference name="StatusBarBackgroundColor" value="#ffffff"/>
+  <preference name="StatusBarStyle" value="darkcontent"/>
+  <preference name="NavigationBarBackgroundColor" value="#ffffff"/>
+  <preference name="detect-data-types" value="true"/>
+  <preference name="exit-on-suspend" value="false"/>
+  <preference name="show-splash-screen-spinner" value="true"/>
+  <preference name="auto-hide-splash-screen" value="true"/>
+  <preference name="disable-cursor" value="false"/>
+  <preference name="android-build-tool" value="gradle"/>
+  <preference name="android-minSdkVersion" value="21"/>
+  <preference name="android-targetSdkVersion" value="35"/>
+  <preference name="android-installLocation" value="auto"/>
+  <plugin name="cordova-plugin-geolocation" spec="~5.0.0">
+    <variable name="NSLocationWhenInUseUsageDescription" value="We use your location to show nearby discounts while you’re using Glass Card."/>
+    <variable name="NSLocationAlwaysAndWhenInUseUsageDescription" value="We use your location to show nearby discounts while you’re using Glass Card. We do not collect or track your location in the background."/>
+  </plugin>
+  <plugin name="cordova-plugin-appversion" spec="~1.0.0"/>
+  <plugin name="cordova-plugin-device" spec="~1.0.0"/>
+  <platform name="android">
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+      <application android:usesCleartextTraffic="true"/>
+    </edit-config>
+    <icon src="res/android/icon/googleappicon.png"/>
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
+      <application android:exported="true"/>
+    </edit-config>
+    <preference name="AndroidWindowSplashScreenBackground" value="#fff"/>
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/screen/window_splashscreen_icon.png"/>
+  </platform>
+  <platform name="ios">
+    <edit-config file="*-Info.plist" mode="merge" overwrite="true" target="NSLocationWhenInUseUsageDescription">
+      <string>We use your location to show nearby discounts while you’re using Glass Card.</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" overwrite="true" target="NSLocationAlwaysAndWhenInUseUsageDescription">
+      <string>We use your location to show nearby discounts while you’re using Glass Card. We do not collect or track your location in the background.</string>
+    </edit-config>
+    <icon height="120" src="www/GlassCard/Resources/Icon-60@2x.png" width="120"/>
+    <icon height="180" src="www/GlassCard/Resources/Icon-60@3x.png" width="180"/>
+    <icon height="72" src="www/GlassCard/Resources/Icon-72.png" width="72"/>
+    <icon height="144" src="www/GlassCard/Resources/Icon-72@2x.png" width="144"/>
+    <icon height="76" src="www/GlassCard/Resources/Icon-76.png" width="76"/>
+    <icon height="152" src="www/GlassCard/Resources/Icon-76@2x.png" width="152"/>
+    <icon height="167" src="www/GlassCard/Resources/Icon-83.5@2x.png" width="167"/>
+    <icon height="50" src="www/GlassCard/Resources/Icon-50.png" width="50"/>
+    <icon height="100" src="www/GlassCard/Resources/Icon-50@2x.png" width="100"/>
+    <icon height="57" src="www/GlassCard/Resources/Icon-57.png" width="57"/>
+    <icon height="114" src="www/GlassCard/Resources/Icon-57@2x.png" width="114"/>
+    <icon height="29" src="www/GlassCard/Resources/Icon-small.png" width="29"/>
+    <icon height="58" src="www/GlassCard/Resources/Icon-small@2x.png" width="58"/>
+    <icon height="87" src="www/GlassCard/Resources/Icon-small@3x.png" width="87"/>
+    <icon height="40" src="www/GlassCard/Resources/Icon-small-40.png" width="40"/>
+    <icon height="80" src="www/GlassCard/Resources/Icon-small-40@2x.png" width="80"/>
+    <icon height="1024" src="www/GlassCard/Resources/appicon1024.png" width="1024"/>
+    <splash src="res/ios/screen/Default@2x~universal~anyany.png"/>
+    <preference name="orientation" value="portrait"/>
+    <allow-intent href="*"/>
+    <preference name="scheme" value="monaca-app"/>
+    <preference name="hostname" value="localhost"/>
+    <icon src="/res/ios/icon/icon-60.png" width="60" height="60"/>
+    <icon src="/res/ios/icon/icon-20.png" width="20" height="20"/>
+  </platform>
+  <engine name="android" spec="^11.0.0"/>
+  <preference name="WindowsStorePublisherName" value="My Name"/>
+  <preference name="WindowsStoreIdentityName" value="8307e5ad-ac63-0caa-dfc1-390f6300e436"/>
+  <allow-intent href="*"/>
+  <allow-navigation href="*"/>
+  <preference name="FadeSplashScreen" value="true"/>
+  <preference name="KeepRunning" value="false"/>
+  <preference name="monaca:AndroidIsPackageNameSeparate" value="false"/>
+  <preference name="Orientation" value="portrait"/>
+  <preference name="SplashScreenDelay" value="3000"/>
+  <preference name="Fullscreen" value="false"/>
+  <preference name="target-device" value="universal"/>
+  <preference name="AutoHideSplashScreen" value="true"/>
+  <preference name="FadeSplashScreen" value="true"/>
+  <preference name="ShowSplashScreenSpinner" value="false"/>
+  <access origin="https://glasscard.org"/>
+  <access origin="http://glasscard.org"/>
+  <access origin="http://maps.google.com"/>
+  <access origin="*"/>
+  <access origin="http://*"/>
+  <access origin="https://*"/>
+  <access origin="geo:*"/>
+  <preference name="DisallowOverscroll" value="false"/>
+  <preference name="EnableViewportScale" value="false"/>
+</widget>

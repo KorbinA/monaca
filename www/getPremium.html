@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background-color:black; background-image:url(images/darkfancypizza.jpg); background-size:cover;height:100%;">
+	<head>
+		<title>Get Premium</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+		<script src="js/jquery.inputmask.bundle.js"></script>
+		<script src="js/spin.min.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div style="background:none;">
+			<div id="descriptiontext"></div>
+       
+        <div class="card" id="paymentcard" style="margin-bottom:75px;">
+            <!--This first input is just aesthetic-->
+			<div id="optiontext"></div>
+
+			<form class="account" id="ccform">
+					<input class="billingForm" data-clear-btn="true" name="name" id="name" value="" type="text" maxlength="35" placeholder="Name on Card">
+					<input class="billingForm" data-clear-btn="true" name="cardNumber" id="cardNumber" value="" type="tel" maxlength="20" placeholder="Card Number">
+					<select style="width:41.5%; margin-left:0; background:#f5f5f5; " name="expirationMonth" id="expirationMonth">
+						<option value="">Exp. Month</option>
+						<option value="01">01 - January</option>
+						<option value="02">02 - February</option>
+						<option value="03">03 - March</option>
+						<option value="04">04 - April</option>
+						<option value="05">05 - May</option>
+						<option value="06">06 - June</option>
+						<option value="07">07 - July</option>
+						<option value="08">08 - August</option>
+						<option value="09">09 - September</option>
+						<option value="10">10 - October</option>
+						<option value="11">11 - November</option>
+						<option value="12">12 - December</option>
+					</select>
+					<select style="width:41.5%; background:#f5f5f5;" name="expirationYear" id="expirationYear">
+						<option value="">Exp. Year</option>
+						<option value="2019">2019</option>
+						<option value="2020">2020</option>
+						<option value="2021">2021</option>
+						<option value="2022">2022</option>
+						<option value="2023">2023</option>
+						<option value="2024">2024</option>
+						<option value="2025">2025</option>
+						<option value="2026">2026</option>
+						<option value="2027">2027</option>
+						<option value="2028">2028</option>
+						<option value="2029">2029</option>
+						<option value="2030">2030</option>
+						<option value="2031">2031</option>
+						<option value="2032">2032</option>
+						<option value="2033">2033</option>
+						<option value="2034">2034</option>
+						<option value="2035">2035</option>
+						<option value="2036">2036</option>
+						<option value="2037">2037</option>
+						<option value="2038">2038</option>
+					</select>
+					<input class="billingForm" data-clear-btn="true" name="cvvNumber" id="cvvNumber" value="" type="tel" maxlength="4" placeholder="CVV Number">
+					<input class="billingForm" data-clear-btn="true" name="zipCode" id="zipCode" value="" type="number" maxlength="5" placeholder="Billing Zip Code">
+					<input class="billingForm" data-clear-btn="true" name="referral" id="referral" value="" type="text" maxlength="30" placeholder="Referral Code (optional)">
+                    <br>
+                    <input type="checkbox" id="agree" style="margin-left:7%; height:25px;width:25px; display:inline-block;" /><p style="font-size:12pt; text-align:left; color:#161616; display:inline-block; width:75%; margin:15px;"> I agree to the Glass Card <a id="policybutton" style="text-decoration:underline; color:#161616"> purchase and refund policy.</a></p>
+                </form>
+                <center>
+                        
+                    <a href="#" id="submit"><button class="login" style="box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.3); margin-bottom:7%;">Confirm Payment</button></a>
+                
+                </center>
+		</div>
+	    </div>
+        
+        <div id="popup" class="popup" style="display:none; width:100%; height:100%; position:fixed; top:0; left:0; background:white;overflow-y:auto;">
+        <a href="#" id="closepopup" style="position:fixed; top:0; right:0;"><img src="images/icon_X.png" style="width:25px; padding:15px;"></a>
+			<div id="policytext"></div>
+
+        
+        </div>
+    
+  <footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+        </div>
+            
+		<script type="text/javascript">
+			
+			
+			$(document).ready(function() {
+
+				$("#cardNumber").inputmask("9999 9999 9999 9999",{ "clearIncomplete": true });
+				$("#cvvNumber").inputmask("999",{ "clearIncomplete": true });
+				$("#policybutton").click(function() {
+					//displayMessage('oi', 'lula', 'by');
+					$("#popup").show();
+				});
+				$("#closepopup").click(function() {
+					$("#popup").hide();
+				});
+				$("#submit").click(function() {
+
+					if(formValidation()) {
+						submit();
+					}
+					return false;
+				});
+
+
+				if(window.localStorage.getItem("premiumUntil")) {
+					loadDescriptionTextExMember();
+					loadOptionTextExMember();
+					loadPolicyTextExMember();
+				} else {
+					loadDescriptionText();
+					loadOptionText();
+					loadPolicyText();
+				}
+
+				function submit() {
+					var spinner = getSpinner(document.getElementById("paymentcard"));
+					var data = {};
+					data["cardname"] = $("#name").val();
+					data["cardnumber"] = $("#cardNumber").val();
+					data["billingzipcode"] = $("#zipCode").val();
+					data["expirationmonth"] = $("#expirationMonth").val();
+					data["expirationyear"] = $("#expirationYear").val();
+					data["cvvnumber"] = $("#cvvNumber").val();
+					data["referralcode"] = $("#referral").val();
+					data["accountid"] = window.localStorage.getItem("accountId");
+					data["customeremail"] = window.localStorage.getItem("deviceID");
+
+					$.post("https://glasscard.org/dataaccessprod4/createTransactionRequest.ashx",
+						data,
+						function(res) {
+							var resObj = JSON.parse(res);
+							if(resObj.ok) {
+								window.localStorage.setItem("isPremium", true);
+								window.location.href = "premium.html";
+							} else if(resObj.payment) {
+								displayMessage("Error During Account Setup", "Your payment was received but there was an error changing your account to premium. If your account isn't updated in the next hour, please contact us.", "OK");
+								spinner.stop();
+							} else {
+								displayMessage("Error During Payment", "There was an error validating your payment. Check your card or try again later.", "OK");
+								spinner.stop();
+							}
+						})
+				}
+				function loadDescriptionText() {
+					var text = window.localStorage.getItem("getpremium.descriptiontext");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'descriptiontext'},
+							function(data) {
+								window.localStorage.setItem("gopremium.descriptiontext", data);
+								$("#descriptiontext").html(data);
+							})
+					$("#descriptiontext").html(text);
+				}
+
+				function loadDescriptionTextExMember() {
+					var text = window.localStorage.getItem("getpremium.descriptiontext.exmember");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'descriptiontext.exmember'},
+							function(data) {
+								window.localStorage.setItem("getpremium.descriptiontext.exmember", data);
+								$("#descriptiontext").html(data);
+							})
+					$("#descriptiontext").html(text);
+				}
+
+				function loadOptionText() {
+					var text = window.localStorage.getItem("getpremium.optiontext");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'optiontext'},
+							function(data) {
+								window.localStorage.setItem("gopremium.optiontext", data);
+								$("#optiontext").html(data);
+							})
+					$("#optiontext").html(text);
+				}
+
+				function loadOptionTextExMember() {
+					var text = window.localStorage.getItem("getpremium.optiontext.exmember");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'optiontext.exmember'},
+							function(data) {
+								window.localStorage.setItem("getpremium.optiontext.exmember", data);
+								$("#optiontext").html(data);
+							})
+					$("#optiontext").html(text);
+				}
+
+				function loadPolicyText() {
+					var text = window.localStorage.getItem("getpremium.policytext");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'policytext'},
+							function(data) {
+								window.localStorage.setItem("gopremium.policytext", data);
+								$("#policytext").html(data);
+							})
+					$("#policytext").html(text);
+				}
+
+				function loadPolicyTextExMember() {
+					var text = window.localStorage.getItem("getpremium.policytext.exmember");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'getpremium', Key: 'policytext.exmember'},
+							function(data) {
+								window.localStorage.setItem("gopremium.policytext.exmember", data);
+								$("#policytext").html(data);
+							})
+					$("#policytext").html(text);
+				}
+
+				function formValidation() {
+					if(!$("#name").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide a Name", "Ok");
+						return false;
+					} else if(!$("#cardNumber").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide a Card Number", "Ok");
+						return false;
+					} else if(!$("#expirationMonth").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide an Expiration Month", "Ok");
+						return false;
+					} else if(!$("#expirationYear").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide an Expiration Year", "Ok");
+						return false;
+					} else if(!$("#cvvNumber").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide a Security Code", "Ok");
+						return false;
+					} else if(!$("#zipCode").val().trim()) {
+						displayMessage("Form Validation Error", "Please provide a Zip Code", "Ok");
+						return false;
+					} else if(!$("#agree").is(':checked')) {
+						displayMessage("Form Validation Error", "Please agree to the purchase and refund policy", "Ok");
+						return false;
+					}
+					return true;
+				}
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				document.addEventListener("deviceready", function(){}, false);
+				
+			});
+
+			function getSpinner(target) {
+				var opts = {
+					lines: 13 // The number of lines to draw
+					, length: 18 // The length of each line
+					, width: 10 // The line thickness
+					, radius: 28 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#ccc' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+				return new Spinner(opts).spin(target);
+			}
+		</script>
+	</body>
+</html>

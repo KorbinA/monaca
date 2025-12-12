@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Activate Your Digital Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link href="css/index.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+  <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+  <style>
+    :root{
+      --accent:#0b5fff;
+      --ok:#1fab89;
+      --text:#0b1b34;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text); background:#fff;
+    }
+    .wrap{
+      max-width: 720px; padding: 24px; margin: 0 auto;
+    }
+    header{
+      text-align:center; margin: 32px 0 18px 0;
+    }
+    header h1{
+      margin:0 0 8px 0; font-size: clamp(22px, 6vw, 28px); letter-spacing:.4px;
+    }
+    header p{
+      margin:0; color:var(--muted); font-size:14px;
+    }
+
+    .card{
+      border:1px solid var(--border); border-radius:14px; padding:18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.04);
+    }
+
+    .input-row{
+      display:flex; gap:10px; align-items:center; margin-top:8px;
+    }
+    .code-input{
+      flex:1; font-size:18px; padding:14px 14px; border-radius:12px;
+      border:1px solid var(--border); outline:none;
+      letter-spacing: .5px;
+    }
+    .code-input:focus{
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(11,95,255,.12);
+    }
+    .btn{
+      appearance:none; border:none; border-radius:12px; padding:14px 16px; font-weight:600; cursor:pointer;
+      background:var(--accent); color:#fff; min-width:120px;
+    }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+    .hint{
+      margin-top:10px; color:var(--muted); font-size:13px;
+    }
+
+    .tips{
+  margin-top:18px; background:#fafafa; border:1px dashed var(--border);
+  border-radius:12px; padding:12px;
+}
+.tips summary{
+  list-style:none; cursor:pointer; font-weight:600; color:#374151;
+  font-size:13px;                    /* smaller title */
+}
+.tips summary::-webkit-details-marker{ display:none; }
+.tip-list{
+  margin:8px 0 0 0;  color:#374151; font-size:8px; line-height:1.35;
+}
+.tip-list li{ margin:8px 0; padding-left:0px; }
+
+
+    /* Inline dialog (reusing jQuery UI dialog styles already loaded elsewhere) */
+    #messagePopup .ui-dialog-content{ text-align:center; }
+
+    /* Tiny helper row below */
+    .footer-mini{
+      margin-top:18px; text-align:center; color:var(--muted); font-size:12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>ACTIVATE YOUR DIGITAL CARD</h1>
+      <p>Enter the access code that came with your purchase to unlock your account.</p>
+    </header>
+    <br>
+    <br>
+
+    <section class="card">
+      <label for="accessCode" style="font-size:14px; color:#374151; font-weight:600;">Access Code</label>
+      <div class="input-row">
+        <input
+  id="accessCode"
+  name="unlockCode"               
+  class="code-input"
+  type="text"
+  inputmode="text"
+  autocomplete="off"               
+  autocapitalize="none"     
+  autocorrect="off"
+  spellcheck="false"
+  maxlength="36"
+  placeholder="XXXXXX"
+/>
+
+        <button id="activateBtn" class="btn" disabled>Activate</button>
+      </div>
+
+      <details class="tips">
+        <summary>Where is my access code?</summary>
+        <ul class="tip-list" style="margin-left:0px; padding-left:0px;">
+          <li style="font-size:16px; text-align: left;"><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
+          <li style="font-size:16px; text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
+        </ul>
+      </details>
+
+      <div class="footer-mini">
+        Don’t have a code? <a href="home.html" style="color:var(--accent); text-decoration:none; font-weight:600;">SKIP.</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Lightweight dialog target reused by pages in the app -->
+  <div id="messagePopup" title="" style="display:none;">
+    <label id="messageText"></label>
+  </div>
+
+  <script type="text/javascript">
+    (function () {
+      // Minimal dialog helper to match your existing pattern
+      function displayMessage(title, message, buttonText, url) {
+        $('#messageText').html(message);
+        $('#messagePopup').dialog({
+          closeOnEscape: false,
+          open: function(event, ui) {
+            $(this).siblings('.ui-dialog-titlebar').remove();
+          },
+          buttons:[{
+            text: buttonText || "OK",
+            click: function(){
+              $(this).dialog("close");
+              if (url) window.location.href = url;
+            }
+          }]
+        });
+      }
+
+      // Utilities
+      function normalizeCode(s) {
+        // Trim, remove spaces and dashes; leave letters/digits untouched.
+        return (s || "").replace(/[\s\-]/g, "").trim();
+      }
+
+      function setBusy(isBusy) {
+        $('#activateBtn').prop('disabled', isBusy || !normalizeCode($('#accessCode').val()));
+        $('#activateBtn').text(isBusy ? 'Activating…' : 'Activate');
+      }
+
+      // Enable button only when something meaningful is typed
+      $('#accessCode').on('input', function(){
+        $('#activateBtn').prop('disabled', !normalizeCode(this.value));
+      });
+
+      // Submit via Enter
+      $('#accessCode').on('keydown', function(e){
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          $('#activateBtn').click();
+        }
+      });
+
+      // Autofocus the input
+      setTimeout(function(){ $('#accessCode').focus(); }, 50);
+
+      // Main activate handler (same endpoint as the old page)
+      $('#activateBtn').on('click', function(){
+        var raw = $('#accessCode').val();
+        var code = normalizeCode(raw);
+        if (!code) return;
+
+        var accountId = window.localStorage.getItem('accountId') || '';
+        if (!accountId) {
+          displayMessage('', 'Please sign in or create an account first.', 'OK', 'profile.html');
+          return;
+        }
+
+        setBusy(true);
+
+        // NOTE: exact same server call the existing page uses
+        $.get('https://glasscard.org/dataaccessprod4/activateAccessToken.ashx',
+          { accesstoken: code, accountid: accountId },
+          function (_data) {
+            var data = {};
+            try { data = (typeof _data === 'string') ? JSON.parse(_data) : _data; } catch(e){}
+
+            if (data && data.ok) {
+  try { window.localStorage.setItem('isPremium', true); } catch(_){}
+  window.location.href = "home.html";
+} else {
+  var msg = (data && data.message)
+    ? data.message
+    : "We couldn’t activate that code. Please check it and try again.";
+  displayMessage("Activation Error", msg, "OK");
+}
+
+          }
+        ).fail(function(){
+          displayMessage('Network Error', 'We couldn’t reach the server. Please check your connection and try again.', 'OK');
+        }).always(function(){
+          setBusy(false);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

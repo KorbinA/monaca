@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:black;">
+	<head>
+		<title>Home</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" href="css/jquery-1.12.1.ui.css">
+		<script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/jquery-1.12.1.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+	</head>
+	<body>
+		<div class="mycard" style="background:black;">
+			<a href="home.html"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:5% 3%;"></a>
+			<center>
+				<p style="font-family:bebas; font-size:5vw; margin-top:20px; ">Account</p>
+				<form class="account">
+					<input data-clear-btn="true" id="deviceID" value="" maxlength="12" type="text" placeholder="Email" style="width:35%; margin-right:1%; height:15%;">
+					<input data-clear-btn="true" id="deviceID2" value="" maxlength="12" type="text" placeholder="Confirm Email" style="width:35%; height:15%;">
+					<input data-clear-btn="true" id="password" value="" maxlength="12" type="password" placeholder="Password" style="width:35%; margin-right:1%; height:15%;">
+					<input data-clear-btn="true" id="password2" value="" maxlength="12" type="password" placeholder="Confirm Password" style="width:35%; height:15%;">
+					<br>
+					<br>
+					<a href="#" id="change" style="width:35%; margin:0; padding:4px 6px; font-size:6vw;">
+						<button class="login">Change</button>
+					</a>
+					<!--button class="login" style="width:35%; margin:0; padding:4px 6px; font-size:6vw;">Change</button-->
+				</form>
+			</center>
+		</div>
+		<a href="mycardsavings.html">
+			<div class="left" style="background:#F2F2F2;">
+				<center>
+					<br>
+					<img src="images/savings.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Savings</p>
+				<center>
+			</div>
+		</a>
+		<a href="mycardbilling.html">
+			<div class="right" style="background:white;">
+				<center>
+					<br>
+					<img src="images/billing.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Credit Card</p>
+				<center>
+			</div>
+		</a>
+		<a href="mycardaccount.html">
+			<div class="left" style="background:white;">
+				<center>
+					<br>
+					<img src="images/password.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Account</p>
+				<center>
+			</div>
+		</a>
+		<div class="right" style="background:#F2F2F2;">
+			<center>
+				<br>
+				<img src="images/signout.png" style="width:30%; ">
+				<br>
+				<p style="color:black;">Sign Out</p>
+			<center>
+		</div>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+        <script type="text/javascript">
+            //app.initialize();
+			$(document).ready(function() {
+			
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+console.log("Navigation to " + url);								
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				// From extensive testing, the following simple comparison appears to be the only sure-fire way
+				// to determine if the device ID already exists.
+				var value = window.localStorage.getItem("deviceID");
+				if (value) {
+					// Device ID exists.
+					console.log("Device ID exists.");
+				} else { 
+					// Device ID does not exist. Craete Account. //Request account confimation code.
+					console.log("Need to confirm account.");
+//window.localStorage.setItem("deviceID", "8002822882");
+					window.location.href = "login.html";	
+				}
+				
+				$(document).on("click","a[id='change']", function (event) {
+					var error = false;
+					event.preventDefault();
+
+					if ($('#deviceID').val().length < 6) {
+						error = true;
+						displayMessage("Invalid Format", "The format of the account e-mail doesn't appear to be valid. Please check and correct the entry.", "Close");
+					}
+
+					if ($('#deviceID').val().length > 0) {
+						var regex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+						if (!regex.test($('#deviceID').val())) {
+							error = true;
+							displayMessage('Invalid Format', "The format of the account e-mail doesn't appear to be valid. Please check and correct the entry.", "Close");
+						}
+					}
+					
+					if ($('#password').val().length < 8) {
+						error = true;
+						displayMessage("Invalid Entry", "The password must be from 8 to 12 characters. Please correct the entry.", "Close");
+					}
+
+					if (!error) {
+						var currentDeviceID = window.localStorage.getItem("deviceID");
+						var newDeviceID = $('#deviceID').val();
+						var newDeviceID2 = $('#deviceID2').val();
+						var newPassword = $('#password').val();
+						var newPassword2 = $('#password2').val();
+						var token = {CurrentDeviceID:currentDeviceID,
+							NewDeviceID:newDeviceID,
+							NewDeviceID2:newDeviceID2,
+							NewPassword:newPassword,
+							NewPassword2:newPassword2};
+						token = JSON.stringify(token);
+						token = encrypt(token);
+						$.ajax({
+							url : "https://glasscard.org/dataaccessprod4/changeAppAccountEmail.ashx",
+							type: "POST",
+							data: "Token=" + token,
+							dataType: "text",
+							crossdomain: true,
+							success: function(data, textStatus, jqXHR)
+							{
+								if (data == "EmailMismatch") {
+									displayMessage("Email Mismatch", "The contents of the e-mail and Confirm e-mail fields must match. Please re-enter the e-mail addresses.", "OK");
+								} else if (data == "PasswordMismatch") {
+									displayMessage("Password Mismatch", "The contents of the Password and Confirm Password fields must match. Please re-enter the passwords.", "OK");
+								} else if (data == "AccountCredentialsChanged") {
+									window.localStorage.setItem("deviceID", newDeviceID);
+									displayMessage("Success", "Your account credentials (e-mail, password) have been updated.", "Close");
+								} else {
+									displayMessage("System Error", "An unrecoverable error occurred.", "Close");
+								}
+							},
+							error: function (jqXHR, textStatus, errorThrown)
+							{
+							console.log(errorThrown);
+							console.log(textStatus);
+							console.log(jqXHR);
+								displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+								//log(jqXHR, textStatus, errorThrown);
+							}
+						});					
+					}
+				});					
+
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);//doOaepPadding);
+					return(System.Convert.ToBase64String(encryptedBytes));
+				}
+			});
+		</script>
+	</body>
+</html>

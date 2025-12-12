@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Redeem</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+          <link rel="stylesheet" href="css/newStyle.css" />
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="js/spin.min.js"></script>
+		<!--Stamp animation-->
+<!--		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+		<script>
+			$(document).ready(function(){
+				 $( document ).ready(function(){
+					  $("div.timestamp").animate({
+							opacity: '1'
+					  });
+				 });
+			});
+		</script> 
+        <style>
+            .labels{
+                font-size:16px;
+            }
+        </style>
+	</head>
+	<body class="gradient" style="min-height:100dvh; margin:0;
+  padding: max(32px, env(safe-area-inset-top)) 0px max(32px, env(safe-area-inset-bottom));
+  display:flex; align-items:center; justify-content:center;">
+			<center>
+		<!--<div class="circle"></div>
+		<div class="circle" style="right:0px;"></div>-->
+		<div class="card" style="text-align:left; max-height:100%; overflow:auto; -webkit-overflow-scrolling:touch; ">
+			<!--a href="javascript:history.back()"><img src="images/blackarrow.png" style="width:6%; position:absolute; top:12.55%; left:3%;"></a>-->
+			<center>
+				<!--img src="images/icon-greencheckcircle.png" style="width:25%; margin-top:-10%; "-->
+				<br>
+				<h1 style="color:black; font-size:5.5vw; text-align:center;">Thank You!</h1>
+				<p style="color:grey; font-size:4vw; margin:3% 7%;">Show this to a business employee and pay as usual.</p>
+				<br>
+				<br>
+				<hr style="width: 86%; color:black; border: dashed grey .5px;">
+				<br>
+				<h1 style="color:black; font-size:6.5vw; font-family:Bebas;"><label id="businessName" class="bebas" /></h1>
+				<br />
+				<p style="margin:0; margin-left:5px; color:grey;" ><label class="bebas" id="title" /></p>
+				<br>
+				<br>
+			</center>
+			
+			<p class="receipt-grey" style="width:45%;">DATE</p>
+			<p class="receipt-grey" style="text-align:right; width:25%;">TIME</p>
+			<br>
+			
+			<p class="receipt-black" style="width:45%; display:inline-block;"><label class="labels" id="redeemDate" ></label></p>
+			<p class="receipt-black" style="text-align:right; width:23.9%; display:inline-block;" ><label class="labels" id="redeemTime" ></label></p>
+			
+			<br>
+			<br>
+			
+			<!--<p class="receipt-grey" style="width:45%;" >AMOUNT SAVED</p>
+			<p class="receipt-grey" style="text-align:right; width:25%;">EXPIRES</p>
+			<br>
+			<p class="receipt-black" style="width:45%; display:inline-block;"><label class="labels" id="savings"></label></p>
+			<p class="receipt-black" style="text-align:right; width:23.9%; display:inline-block;" ><label class="labels" id="expires" ></label></p>
+			
+			<br>
+			<br>-->
+			
+			
+			<p class="receipt-grey">DESCRIPTION</p>
+			<p class="receipt-black"><label class="labels" id="discount" ></label></p>
+			
+			<br>
+			
+			<p class="receipt-grey" ></p>
+			<p class="receipt-black"><label class="labels" id="terms" ></label></p>
+			<br>
+		
+            <a href="home.html"><button class="btn" style="display:block; margin:10px auto; z-index:1; width:90%;">Close</button>
+</a>
+			
+		</div>
+		
+		<div id="messagePopup" title="">
+			<label class="labels" id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				var offset = "?DealID=".length;
+				var dealID = window.location.search.substring(offset);
+				var code = "";
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var opts = {
+					  lines: 13 // The number of lines to draw
+					, length: 18 // The length of each line
+					, width: 10 // The line thickness
+					, radius: 28 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#ccc' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+				
+				//document.addEventListener("deviceready", onDeviceReady, false);
+				
+				//function onDeviceReady() {
+					var target = document.getElementById('imageName');
+					var spinner = new Spinner(opts).spin(target);
+					var now = new Date();
+					var release = now;
+
+					$.ajax({
+						url : "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
+						type: "POST",
+						data: "AppType=UserApp" +
+							"&Version=" + window.localStorage.getItem("userAppVersion") +
+							"&ID=" + dealID +
+							"&ID_Type=Deal",
+						dataType: "text",
+						crossdomain: true,
+						success: function(data, textStatus, jqXHR)
+						{
+							release = new Date(data); // data is in the form of '2017-09-16 09:34:30'.
+							getDeal();
+						},
+						error: function (jqXHR, textStatus, errorThrown)
+						{
+						}
+					});
+				//}
+
+				function getDeal() {
+					$.ajax({
+						url : "https://glasscard.org/dataaccessprod4/getNewDeal" + ((now < release) ? "2" : "") + ".ashx",
+						type: "POST",
+						data: "DealID=" + dealID + "&AccountId=" + window.localStorage.getItem("accountId") +
+							"&Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
+							"&Longitude=" + window.localStorage.getItem("longitude"),     // pos.coords.longitude,
+						dataType: "text",
+						crossdomain: true,
+						success: function(data, textStatus, jqXHR)
+						{
+							var savings = "";
+							var d = JSON.parse(data);
+							$('#businessName').html(d.businessName);
+							$('#title').html(d.title);
+							$('#price').html(d.price);
+							$('#discountPrice').html(d.discountPrice);
+							$('#terms').html(d.smallTerms);
+							$('#expires').html(d.expires);
+							$('#discount').html(d.discount);
+							$('#imageName').empty();
+							$('#imageName').append("<img class=\"discount\" src=\"" + d.imageName + "\">");
+							$('#phone').empty();
+							$('#phone').append(d.phone);
+							$('#address').empty();
+							$('#address').append(d.address);
+							$('#url').empty();
+							$('#url').append(d.url);
+							/*var savings = (d.price * 1.0) - (d.discountPrice * 1.0);
+							savings = "" + savings;
+							if (savings.indexOf(".") < 0) {
+								savings += ".";
+							}
+							savings = savings + "00";
+							var idx = savings.indexOf(".");
+							savings = savings.substring(0, idx + 3);
+							$('#youSaved').empty();
+							$('#youSaved').append("You Saved: $" + savings + "!");*/
+							$('#savings').html(d.savings);
+							var now = new Date();
+							var month = now.getMonth() + 1;
+							var day = now.getDate();
+							var year = "" + now.getFullYear();
+							year = year.substring(2);
+							var hours = now.getHours();
+							var meridian = "AM";
+							if (hours > 11) {
+								hours -= 12;
+								meridian = "PM";
+							}
+							if (hours == 0) {
+								hours = 12;
+							}
+							var minutes = "" + now.getMinutes();
+							if (minutes.length < 2) {
+								minutes = "0" + minutes;
+							}
+							$('#redeemDate').empty();
+							$('#redeemDate').append(month + "." + day + "." + year);
+							$('#redeemTime').empty();
+							$('#redeemTime').append(hours + ":" + minutes + " " + meridian);
+							$('#btnText').html(((d.buttonText == "CHECK IN") ? "CHECKED IN" : "REDEEMED"));
+							spinner.stop();
+						},
+						error: function (jqXHR, textStatus, errorThrown)
+						{
+							spinner.stop();
+							displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+							//log(jqXHR, textStatus, errorThrown);
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

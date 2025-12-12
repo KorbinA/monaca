@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background: url(images/fancytable.jpg) no-repeat; background-size:150%; background-position: top center;">
+	<head>
+		<title>Welcome</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+			
+			$(document).delay(2000).ready(function(){
+   
+        $("#div1").fadeIn(2000);
+        $("#div2").delay(500).fadeIn(2000);
+		$("#div1").delay(4000).fadeOut(2000);
+		$("#div2").delay(4000).fadeOut(2000);
+		$("#div3").delay(8500).fadeIn(2000);
+		$("#div4").delay(9500).fadeIn(2000);
+		$("#div5").delay(10000).fadeIn(2000);
+		$("#tour").delay(10000).fadeIn(2000);
+		
+    });
+
+		</script>
+	</head>
+	<body>
+	
+		<center>
+		<div id="div1" style="display:none;"><h1 id="welcome" style="color:white; margin-top:30%;">Welcome to Glass Card</h1></div>
+		</center>
+		<br>
+		<center>
+		<div id="div2" style="display:none;"><p id="welcome" style="color:white;">Thanks for joining our community! Every time you use Glass Card you support your local school, group, or fundraiser who has partnered with us. </p></div>
+		<br>
+		<div id="div3" style="display:none; margin-top:15%;"><p id="welcome" style="color:white;">Our discounts are generously donated by our local sponsors. Though we are new to the area, we are actively working with local businesses every day to secure more discounts.</p></div>
+		<br>
+		<div id="div4" style="display:none;"><p id="welcome" style="color:white;">Thanks for joining early as we grow bigger, add exciting new app features, and expand throughout our community.</p></div>
+		<br>
+		<div id="div5" style="display:none;"><p id="welcome" style="color:white;">Your participation is appreciated!</p></div>
+		</center>
+		
+		<center>
+				<a href="pushNotifications.html"><tour id="tour" style="display:none;"><h1 style="background:#57e5e1; color:white; font-size:32px;position:absolute; margin:auto; bottom:50px; left:7%; padding:0; letter-spacing:1.1pt; border-radius:25px; height: 45px; width:86%; padding-top:7px; box-shadow: 1px 1px 2px .5px rgba(0,0,0,0.2);">Enter</h1></tour>
+			</center>
+	</body>
+</html>

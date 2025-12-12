@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Buy</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+		<script src="js/spin.min.js"></script>
+		<style>
+						/* Clean dialog look + centered content */
+			.ui-dialog { border-radius: 16px !important; overflow: hidden; }
+			.ui-dialog .ui-dialog-content { padding: 18px 18px !important; text-align:center; }
+
+			/* Buttons */
+			.trouble-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+			.btn-primary {
+			background:#1fab89; color:#fff; border:none; border-radius:12px;
+			padding:10px 16px; font-weight:600; cursor:pointer;
+			}
+			.btn-ghost {
+			background:#f2f2f2; color:#333; border:none; border-radius:12px;
+			padding:10px 16px; font-weight:600; cursor:pointer;
+			}
+			.btn-primary:active, .btn-ghost:active { transform: translateY(1px); }
+
+			/* Centered wrapper */
+			.checkmark-wrap{
+			width:64px; height:64px; margin:0 auto 8px;
+			display:grid; place-items:center;
+			}
+
+			/* SVG sizing + animations */
+			.checkmark-svg{ width:64px; height:64px; display:block; }
+			.checkmark-svg{ animation: pop 240ms ease-out; }
+
+			.checkmark-tick{
+			stroke-dasharray: 40;
+			stroke-dashoffset: 40;
+			animation: draw 320ms 140ms ease-out forwards;
+			}
+
+			@keyframes pop   { from { transform: scale(0.8); opacity:0; } to { transform: scale(1); opacity:1; } }
+			@keyframes draw  { to   { stroke-dashoffset: 0; } }
+
+
+
+			/* Optional: tidy up paragraphs inside modal */
+			#troubleDialog p { margin: 0 0 12px 0; font-size:16px; line-height:1.45; }
+			/* ===== GlassCard Confirm Modal (no jQuery UI) ===== */
+			.gc-modal-overlay{
+			position:fixed; inset:0; background:rgba(15,23,42,.45);
+			display:none; align-items:center; justify-content:center;
+			z-index:9999; backdrop-filter:saturate(140%) blur(2px);
+			}
+			.gc-modal{
+			width:min(92vw,420px); background:#fff; color:#0f172a;
+			border-radius:16px; box-shadow:0 20px 60px rgba(2,6,23,.24);
+			overflow:hidden; transform:translateY(6px); opacity:0;
+			transition:opacity .18s ease, transform .18s ease;
+			font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica;
+			}
+			.gc-modal.open{ opacity:1; transform:translateY(0); }
+			.gc-modal-header{
+			padding:18px 20px; font-weight:700; font-size:18px; border-bottom:1px solid rgba(15,23,42,.06);
+			}
+			.gc-modal-body{ padding:18px 20px; line-height:1.45; font-size:15px; color:#334155; }
+			.gc-modal-actions{
+			display:flex; gap:10px; justify-content:flex-end; padding:16px 20px; background:#f8fafc;
+			border-top:1px solid rgba(15,23,42,.06);
+			}
+			.gc-btn{
+			appearance:none; border:0; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer;
+			transition:transform .05s ease, box-shadow .2s ease, background .2s ease;
+			}
+			.gc-btn:active{ transform:translateY(1px); }
+			.gc-btn-primary{ background:#0b5fff; color:#fff; box-shadow:0 8px 18px rgba(11,95,255,.22); }
+			.gc-btn-primary[disabled]{ opacity:.7; cursor:default; box-shadow:none; }
+			.gc-btn-ghost{ background:#eef2f7; color:#0f172a; }
+			@media (prefers-color-scheme: dark){
+			.gc-modal{ background:#0b1220; color:#e6eaf2; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+			.gc-modal-header{ border-bottom:1px solid rgba(255,255,255,.06); }
+			.gc-modal-body{ color:#c7d2fe; }
+			.gc-modal-actions{ background:#0b1220; border-top:1px solid rgba(255,255,255,.06); }
+			.gc-btn-ghost{ background:#111827; color:#e5e7eb; }
+			}
+			/* ===== GlassCard Back Button ===== */
+.gc-back {
+  position: fixed;
+  /* iOS 11 fallback */
+top:  calc(constant(safe-area-inset-top, 0px) + 12px);
+left: calc(constant(safe-area-inset-left, 0px) + 12px);
+/* modern */
+top:  calc(env(safe-area-inset-top, 0px) + 12px);
+left: calc(env(safe-area-inset-left, 0px) + 12px);
+  z-index: 9000; /* below your modal overlay (9999), above content */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.5);
+  backdrop-filter: saturate(140%) blur(6px);
+  box-shadow: 0 8px 22px rgba(2,6,23,.12);
+  color: #0f172a;
+  text-decoration: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica;
+  font-weight: 600;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0); /* promote for smoother hover */
+}
+.gc-back:focus-visible {
+  outline: 2px solid #0b5fff;
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+.gc-back:hover { box-shadow: 0 10px 26px rgba(2,6,23,.16); }
+.gc-back:active { transform: translateY(1px); }
+
+.gc-back__icon {
+  width: 22px; height: 22px; flex: 0 0 22px;
+  display: inline-block;
+}
+.gc-back__label {
+  font-size: 14px; /* hidden on very small screens below */
+  white-space: nowrap;
+}
+
+@media (max-width: 390px) {
+  /* compact: icon-only on very small devices, but keeps big tap target */
+  .gc-back { padding: 10px; gap: 0; }
+  .gc-back__label { display: none; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .gc-back {
+    background: rgba(11,18,32,.85);
+    color: #e5e7eb;
+    box-shadow: 0 10px 28px rgba(0,0,0,.45);
+  }
+  .gc-back:focus-visible { outline-color: #84a9ff; }
+}
+
+
+		</style>
+	</head>
+	<body>
+		
+		<div class="container">
+
+			<a href="#" class="gc-back" id="gcBack" aria-label="Go back">
+				<!-- Inline SVG so it looks crisp everywhere -->
+				<svg class="gc-back__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				  <path d="M14.75 5.75L8.5 12l6.25 6.25" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span class="gc-back__label">Back</span>
+			  </a>
+
+				<div style="max-height:60vh; overflow:hidden;">
+					<div id="imageName"></div>
+				</div>
+
+				<!--p class="yousave">
+					<label id="savings" class="bebas" />
+				</p-->
+<!--ONLY SHOW THIS TAG IF THE DEAL IS PREMIUM. DELETE MY "3 USES" AND SHOW HOW MANY ACTUAL USES-->
+				<p class="premiumTag" style="display:none; margin-right:15px;"></p>
+
+				<br>
+				<br>
+
+				<p class="dealtitle"></p>
+
+				<p class="dealdetails"></p>
+
+				<center>
+				<table style="margin:5%; width:80%;">
+					<tr>
+						<td id="phone" style="color:grey; text-align:center;"><img class="businessicons" src="images/icon_phone.png"></td>
+						<td id="url" style="color:grey; text-align:center;"><img class="businessicons" src="images/icon_web.png"></td>
+						<td id="address" style="color:grey; text-align:center;"><img class="businessicons" src="images/icon_nav.png"></td>
+					</tr>
+					<tr>
+						<td style="color:grey; text-align:center;">Call</td>
+						<td style="color:grey; text-align:center;">Website</td>
+						<td style="color:grey; text-align:center;">Directions</td>
+					</tr>
+				</table>
+				</center>
+
+				<center><hr style="width:98%;"></center>
+
+
+				<p class="dealdescription" style="font-weight:bold; font-size:125%;">Description</p>
+
+
+
+				<p id="dealdescription" class="dealdescription"></p>
+				<br>
+
+				<center><a href="#" id="purchase"><button class="usenow" id="btnText">USE NOW</button></a></center>
+				<br>
+				<p class="dealterms">
+					<label id="terms" style="color:grey;"></label>
+				</p>
+
+				<center>
+					<p style="color:grey; font-size: 100%; font-family:Discreet;">
+					  Trouble Redeeming?
+					  <br><a id="troubleRedeemingLink" href="#" style="text-decoration:underline; color:grey;">Click here to report deal</a>
+					</p>
+				  </center>
+
+                  <br>
+                  <br>
+				  
+				  <!-- Trouble Redeeming modal -->
+<div id="troubleDialog" style="display:none;">
+	<!-- Step 1: location confirmation -->
+	<div id="troubleStepAsk">
+	  <p>
+		Did you try redeeming at <span id="dealAddressInline" style="font-weight:600;"></span>?
+	  </p>
+	  <div class="trouble-actions">
+		<button id="troubleYes" class="btn-primary">Yes</button>
+		<button id="troubleNo"  class="btn-ghost">No</button>
+	  </div>
+	</div>
+  
+	<!-- NEW Step 2: confirm reporting -->
+	<div id="troubleStepConfirm" style="display:none;">
+	  <p>
+		Do you want to report this business to Glass Card Support for not honoring your discount?
+	  </p>
+	  <div class="trouble-actions">
+		<button id="troubleReportYes" class="btn-primary">Yes, report it</button>
+		<button id="troubleReportNo"  class="btn-ghost">No</button>
+	  </div>
+	</div>
+  
+	<!-- Step 3a: success (after we send emails) -->
+	<div id="troubleStepYes" style="display:none;">
+		<div class="checkmark-wrap">
+			<svg class="checkmark-svg" viewBox="0 0 64 64" aria-hidden="true">
+			  <circle cx="32" cy="32" r="29" fill="none" stroke="#1fab89" stroke-width="3"/>
+			  <polyline points="18,34 28,44 46,24" fill="none" stroke="#1fab89" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="checkmark-tick"/>
+			</svg>
+		  </div>
+		  
+	  <p>
+		Thanks! We have a dedicated support team to resolve these issues quickly.
+		We’ll contact the business and update you shortly.<br><br>
+		In the meantime, we sent you an email with more information about why this happens and what we do to help.
+	  </p>
+	  <div class="trouble-actions"><button class="btn-primary closeDialog">OK</button></div>
+	</div>
+  
+	<!-- Step 3b: guidance (user said No on Step 1) -->
+	<div id="troubleStepNo" style="display:none;">
+	  <p>
+		Thanks for checking! Glass Card offers are honored by local sponsors at the
+		address(es) listed on each deal. Please visit <span id="dealAddressInlineNo" style="font-weight:600;"></span>
+		(or any other location listed on this deal) to redeem. If you still have trouble there,
+		let us know and we’ll help.
+	  </p>
+	  <div class="trouble-actions"><button class="btn-primary closeDialog">Got it</button></div>
+	</div>
+  
+	<!-- Step 3c: user backed out at the report confirm -->
+	<div id="troubleStepBackout" style="display:none;">
+	  <p>
+		No problem — we won’t submit a report. If you change your mind,
+		you can open this help dialog again from the “Trouble Redeeming? Contact us” link.
+	  </p>
+	  <div class="trouble-actions"><button class="btn-primary closeDialog">OK</button></div>
+	</div>
+  </div>
+  
+				  
+		</div>
+		<br>
+		<br>
+
+		<!-- Confirm Redeem Modal (no GPS; new flow) -->
+		<div id="redeemConfirmOverlay" class="gc-modal-overlay" aria-hidden="true">
+			<div id="redeemConfirmModal" class="gc-modal" role="dialog" aria-modal="true" aria-labelledby="redeemConfirmTitle" aria-describedby="redeemConfirmText">
+			<div class="gc-modal-header" id="redeemConfirmTitle">Redeem Discount?</div>
+			<div class="gc-modal-body" id="redeemConfirmText">
+				Do you want to redeem this discount now?<br/>
+				<strong>This will count as one of your allotted uses.</strong>
+			</div>
+			<div class="gc-modal-actions">
+				<button id="redeemCancel" class="gc-btn gc-btn-ghost" type="button">No</button>
+				<button id="redeemConfirmYes" class="gc-btn gc-btn-primary" type="button">Yes, redeem</button>
+			</div>
+			</div>
+		</div>
+
+<footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function () {
+		  
+			  // ------------------ Back button ------------------
+			  (function(){
+				var back = document.getElementById('gcBack');
+				if (!back) return;
+				back.addEventListener('click', function(e){
+				  e.preventDefault();
+				  if (window.history.length > 1) {
+					window.history.back();
+				  } else {
+					window.location.href = 'home.html';
+				  }
+				}, false);
+			  })();
+		  
+			  // ------------------ helpers / globals ------------------
+			  var currentBusinessName = '';
+			  var currentAddress = '';
+		  
+			  function getDealIdFromQuery() {
+				try {
+				  var p = new URLSearchParams(window.location.search);
+				  return p.get('DealID') || '';
+				} catch (_) {
+				  var qs = window.location.search || '';
+				  var ix = qs.indexOf('DealID=');
+				  return ix >= 0 ? qs.substring(ix + 7) : '';
+				}
+			  }
+			  var dealID = getDealIdFromQuery();
+		  
+			  var opts = {
+				lines: 13, length: 25, width: 1, radius: 5, scale: 1, corners: 1,
+				color: '#1fab89', opacity: 0.05, rotate: 0, direction: 1, speed: 1,
+				trail: 60, fps: 20, zIndex: 2e9, className: 'spinner',
+				top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute'
+			  };
+		  
+			  var target = document.getElementById('imageName');
+			  var spinner = new Spinner(opts).spin(target);
+			  var now = new Date();
+			  var release = now;
+		  
+			  function displayMessage(title, message, buttonText, url) {
+				$('#messageText').html(message);
+				$('#messagePopup').dialog({
+				  closeOnEscape: false,
+				  open: function () { $(this).siblings('.ui-dialog-titlebar').remove(); },
+				  buttons: [{
+					text: buttonText,
+					click: function () {
+					  $(this).dialog("close");
+					  if ((url != undefined) && (url.length > 0)) window.location.href = url;
+					}
+				  }]
+				});
+			  }
+		  
+			  $.ajax({
+				url: "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
+				type: "POST",
+				data: "AppType=UserApp" +
+					  "&Version=" + (window.localStorage.getItem("userAppVersion") || "") +
+					  "&ID=" + encodeURIComponent(dealID) +
+					  "&ID_Type=Deal",
+				dataType: "text",
+				crossdomain: true,
+				success: function (data) {
+				  if (data) { release = new Date(data); }
+				  getDeal();
+				},
+				error: function () {
+				  getDeal(); // still load
+				}
+			  });
+		  
+			  // ---------- Helpers ----------
+			  function safe(val){ return (val == null ? '' : String(val)).trim(); }
+		  
+			  function stripTags(html){
+				return safe(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+			  }
+		  
+			  function getField(obj, keys){
+				for (var i=0;i<keys.length;i++){
+				  var v = obj && obj[keys[i]];
+				  if (v != null && String(v).trim() !== '') return String(v).trim();
+				}
+				return '';
+			  }
+		  
+			  // Extract href if HTML anchor was sent; otherwise treat input as plain text
+			  function extractHref(maybeHtml) {
+				var raw = safe(maybeHtml);
+				if (!raw) return '';
+				var $tmp = $('<div>').html(raw);
+				var a = $tmp.find('a[href]').attr('href');
+				if (a) return safe(a);
+				return $tmp.text().trim();
+			  }
+		  
+			  // Fix common URL issues and validate
+			  function sanitizeUrl(input) {
+				var s = safe(input);
+				if (!s) return '';
+				s = s.replace(/&amp;/g, '&').trim();
+
+				// Collapse accidental double schemes like "http://https://example.com"
+				s = s.replace(/^(https?:\/\/)(https?:\/\/)/i, '$2');
+
+				// Ensure colon after protocol if it was stripped (https// -> https://)
+				s = s.replace(/^(https?)(\/\/)/i, '$1:$2');    // add ":" between scheme and "//"
+				s = s.replace(/^(https?)(?=\/\/)/i, '$1:');    // extra safety
+
+				// Fix "https:/example" -> "https://example"
+				s = s.replace(/^(https?:)\/(?!\/)/i, '$1//');
+
+				// Add https if completely missing any scheme
+				if (!/^https?:\/\//i.test(s)) s = 'https://' + s.replace(/^\/+/, '');
+
+				try { new URL(s); } catch (e) { return ''; }
+				return s;
+				}
+
+		  
+			  // Normalize phone for tel:
+			  function normalizePhone(p) {
+				var t = safe(p).replace(/[^\d+]/g, '');
+				if (!t) return '';
+				if (t[0] !== '+' && t.length === 10) t = '+1' + t;
+				return 'tel:' + t;
+			  }
+		  
+			  // Parse "City, ST ZIP" | "City ST ZIP" | "City, StateName ZIP"
+			  function parseCityStateZip(text) {
+				var s = safe(text).replace(/\s+/g,' ').trim();
+				if (!s) return null;
+		  
+				// Try with comma between city and state
+				var m1 = s.match(/^([^,]+),\s*([A-Za-z]{2}|[A-Za-z]+)\s+(\d{5}(?:-\d{4})?)$/);
+				if (m1) return { city: m1[1].trim(), state: m1[2].trim(), zip: m1[3].trim() };
+		  
+				// Try without comma
+				var m2 = s.match(/^(.+?)\s+([A-Za-z]{2}|[A-Za-z]+)\s+(\d{5}(?:-\d{4})?)$/);
+				if (m2) return { city: m2[1].trim(), state: m2[2].trim(), zip: m2[3].trim() };
+		  
+				// Try if there's an extra trailing comma before zip
+				var m3 = s.match(/^([^,]+),\s*([A-Za-z]{2}|[A-Za-z]+),?\s+(\d{5}(?:-\d{4})?)$/);
+				if (m3) return { city: m3[1].trim(), state: m3[2].trim(), zip: m3[3].trim() };
+		  
+				return null;
+			  }
+		  
+			  /**
+			   * Build "street, City, ST ZIP" as plain text (no HTML, no business name).
+			   * Handles:
+			   *  - Discrete fields (street/city/state/zip)
+			   *  - Address2/CityStateZip lines
+			   *  - <br>/newline separators
+			   *  - No-comma formats
+			   */
+			  function buildAddress(d){
+				// Prefer discrete fields first
+				var street = stripTags(getField(d, ['street','Street','address1','Address1','addr1','Addr1']));
+				var city   = stripTags(getField(d, ['city','City','cityName','CityName','town','Town']));
+				var state  = stripTags(getField(d, ['state','State','stateAbbrev','stateCode','province','Province','ST']));
+				var zip    = stripTags(getField(d, ['zip','Zip','zipCode','zipcode','postalCode','PostalCode']));
+		  
+				// Some APIs put "City, ST ZIP" in Address2/CityStateZip fields
+				var cszRaw = stripTags(getField(d, ['address2','Address2','addr2','Addr2','cityStateZip','CityStateZip','csz']));
+				var csz = parseCityStateZip(cszRaw) || null;
+		  
+				if (csz) {
+				  if (!city)  city  = csz.city;
+				  if (!state) state = csz.state;
+				  if (!zip)   zip   = csz.zip;
+				}
+		  
+				// If we now have at least street + (city/state or zip), compose
+				var haveCityStateOrZip = (city && state) || zip;
+				if (street && haveCityStateOrZip) {
+				  var cityState = [city, state].filter(Boolean).join(', ');
+				  if (zip) cityState = cityState ? (cityState + ' ' + zip) : zip;
+				  return [street, cityState].filter(Boolean).join(', ').replace(/\s+/g,' ').trim();
+				}
+		  
+				// Fallback: parse full address text (may include <br> or newlines)
+				var fullRaw = getField(d, ['address','Address']);
+				var full = safe(fullRaw)
+				  .replace(/<br\s*\/?>/ig, ',')   // convert <br> to comma
+				  .replace(/\r?\n+/g, ',')        // convert newlines to comma
+				  .replace(/\s*,\s*,+/g, ',')     // collapse duplicate commas
+				  .trim();
+		  
+				var cleaned = stripTags(full);
+		  
+				if (cleaned) {
+				  // Remove leading business name if present (text before first comma that isn't a street number)
+				  var firstComma = cleaned.indexOf(',');
+				  if (firstComma > -1) {
+					var lead = cleaned.slice(0, firstComma).trim();
+					if (!/^\d+/.test(lead)) cleaned = cleaned.slice(firstComma + 1).trim();
+				  }
+		  
+				  // Split into chunks by comma and try to interpret
+				  var parts = cleaned.split(/\s*,\s*/).filter(Boolean);
+		  
+				  // Common pattern: [street], [City ST ZIP]  OR  [street], [City], [ST ZIP]
+				  if (parts.length >= 2) {
+					var street2 = parts[0];
+					var rest1 = parts.slice(1).join(' ');
+					var parsed = parseCityStateZip(rest1);
+					if (!parsed && parts.length >= 3) {
+					  // Try "[City], [ST ZIP]"
+					  parsed = parseCityStateZip(parts.slice(1).join(' '));
+					}
+					if (parsed) {
+					  return (street2 + ', ' + parsed.city + ', ' + parsed.state + ' ' + parsed.zip)
+							  .replace(/\s+/g,' ').trim();
+					}
+					// If we couldn't parse, but we do have something meaningful, return "street, rest"
+					return (street2 + ', ' + parts.slice(1).join(' ')).replace(/\s+/g,' ').trim();
+				  }
+		  
+				  // If only one big chunk, see if it contains both street and csz pattern separated by spaces
+				  // e.g., "123 Main St Rexburg ID 83440"
+				  var spaceGuess = cleaned.match(/^(.+?)\s+(.+?\s+[A-Za-z]{2}\s+\d{5}(?:-\d{4})?)$/);
+				  if (spaceGuess) {
+					var parsed2 = parseCityStateZip(spaceGuess[2]);
+					if (parsed2) {
+					  return (spaceGuess[1].trim() + ', ' + parsed2.city + ', ' + parsed2.state + ' ' + parsed2.zip)
+							  .replace(/\s+/g,' ').trim();
+					}
+				  }
+		  
+				  // Last resort: if we had street earlier, append the best guess tail
+				  if (street) return cleaned.indexOf(street) === 0 ? cleaned : (street + ', ' + cleaned);
+				  return cleaned;
+				}
+		  
+				// Absolute last resort
+				return [street, [city, state].filter(Boolean).join(', '), zip].filter(Boolean).join(', ');
+			  }
+		  
+			  function getDeal() {
+				$.ajax({
+				  url: "https://glasscard.org/dataaccessprod4/getNewDeal" + ((now < release) ? "2" : "") + ".ashx",
+				  type: "POST",
+				  data: "DealID=" + encodeURIComponent(dealID) +
+						"&AccountId=" + encodeURIComponent(window.localStorage.getItem("accountId") || "") +
+						"&Latitude=" + encodeURIComponent(window.localStorage.getItem("latitude") || "") +
+						"&Longitude=" + encodeURIComponent(window.localStorage.getItem("longitude") || ""),
+				  dataType: "text",
+				  crossdomain: true,
+				  success: function (data) {
+					var d;
+					try { d = JSON.parse(data); }
+					catch (e) {
+					  spinner.stop();
+					  $('.dealtitle').text('Deal temporarily unavailable');
+					  $('.dealdetails').text('Please try again in a moment.');
+					  $('#imageName').empty();
+					  return;
+					}
+					if (!d || !d.title) {
+					  spinner.stop();
+					  $('.dealtitle').text('Deal temporarily unavailable');
+					  $('.dealdetails').text('Please try again in a moment.');
+					  $('#imageName').empty();
+					  return;
+					}
+		  
+					// ---------- Titles / details ----------
+					var fullAddr = (function(){
+						var ea = safe(d.errorAddress);
+						return ea ? ea : buildAddress(d);
+						})();
+					currentBusinessName = d.businessName || '';
+					currentAddress      = fullAddr;
+		  
+					// Show ONLY the address in p.dealdetails
+					var namePart = safe(d.businessName || currentBusinessName);
+					var displayLine = [namePart, fullAddr].filter(Boolean).join(' | ');
+					$('.dealdetails').text(displayLine);
+		  
+					// Keep title as-is
+					$('.dealtitle').text(d.title);
+		  
+					$('#price').text(d.price || '');
+					$('#discountPrice').text(d.discountPrice || '');
+					$('#dealdescription').text(d.discount || '');
+					$('#savings').text((d.savings || '') + ' off');
+					$('#timeLeft').text(d.timeLeft || '');
+					$('#btnText').text(d.buttonText || '');
+		  
+					// Terms are HTML from server
+					$('#terms').html(d.terms || '');
+		  
+					// ---------- KEEP ICONS; store data on cells ----------
+					// Phone
+					var telHref = normalizePhone(extractHref(d.phone));
+					$('#phone')
+					  .attr('data-phone', telHref)
+					  .css('cursor', telHref ? 'pointer' : 'default');
+		  
+					// Website
+					var hrefRaw  = extractHref(d.url);
+					var hrefNorm = sanitizeUrl(hrefRaw);
+					$('#url')
+					  .attr('data-href', hrefNorm)
+					  .attr('title', hrefNorm ? ('Open ' + hrefNorm) : 'No website provided')
+					  .css('cursor', hrefNorm ? 'pointer' : 'default');
+		  
+					// Directions — use ONLY the clean address text (no business name)
+					$('#address')
+					  .attr('data-address', fullAddr)
+					  .attr('title', fullAddr ? ('Directions to ' + fullAddr) : 'No address provided')
+					  .css('cursor', fullAddr ? 'pointer' : 'default');
+		  
+					// ---------- Image ----------
+					$('#imageName').empty().append($('<img>', { 'class': 'discount', src: d.imageName || '' }));
+		  
+					// ---------- Premium uses (singular/plural) ----------
+					var count = parseInt(d.uses, 10) || 0;
+					var usesText = count + (count === 1 ? ' USE LEFT' : ' USES LEFT');
+					$('.premiumTag').text(usesText);
+					if (d.isPremium) { $('.premiumTag').show(); } else { $('.premiumTag').hide(); }
+		  
+					// ---------- Enable/disable Use Now ----------
+					if (!d.active) {
+					  $('#btnText').removeClass('usenow').addClass('usenowgray');
+					  $('#btnText').prop('disabled', true);
+					  $('#purchase').prop('disabled', true);
+					}
+		  
+					spinner.stop();
+				  },
+				  error: function () {
+					spinner.stop();
+					$('.dealtitle').text('Deal temporarily unavailable');
+					$('.dealdetails').text('Please try again in a moment.');
+					$('#imageName').html('');
+				  }
+				});
+			  }
+		  
+			  // ---------- Click: Phone (keeps icon) ----------
+			  $(document).on('click', '#phone', function () {
+				var tel = $(this).attr('data-phone');
+				if (!tel) return;
+				try {
+				  if (window.cordova && window.cordova.InAppBrowser) {
+					window.cordova.InAppBrowser.open(tel, '_system');
+				  } else {
+					window.location.href = tel;
+				  }
+				} catch (e) {
+				  window.location.href = tel;
+				}
+			  });
+		  
+			  // ---------- Click: Website (keeps icon) ----------
+			  $(document).on('click', '#url', function () {
+				var href = $(this).attr('data-href');
+				if (!href) return;
+				try {
+				  if (window.cordova && window.cordova.InAppBrowser) {
+					window.cordova.InAppBrowser.open(href, '_system');
+				  } else {
+					window.open(href, '_blank', 'noopener');
+				  }
+				} catch (e) {
+				  window.open(href, '_blank', 'noopener');
+				}
+			  });
+		  
+			  // ---------- Click: Directions (full address) ----------
+			  $(document).on('click', '#address', function () {
+				var addr = $(this).attr('data-address');
+				if (!addr) return;
+				var mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(addr);
+				try {
+				  if (window.cordova && window.cordova.InAppBrowser) {
+					window.cordova.InAppBrowser.open(mapsUrl, '_system');
+				  } else {
+					window.open(mapsUrl, '_blank', 'noopener');
+				  }
+				} catch (e) {
+				  window.open(mapsUrl, '_blank', 'noopener');
+				}
+			  });
+		  
+			  // =========================================================
+			  //               NEW REDEEM FLOW (no GPS)
+			  // =========================================================
+		  
+			  var $overlay = $('#redeemConfirmOverlay');
+			  var $modal   = $('#redeemConfirmModal');
+			  var $btnYes  = $('#redeemConfirmYes');
+			  var $btnNo   = $('#redeemCancel');
+		  
+			  function openRedeemConfirm() {
+				$overlay.css('display','flex');
+				requestAnimationFrame(function() {
+				  $modal.addClass('open');
+				});
+				$overlay.attr('aria-hidden', 'false');
+				$btnYes.prop('disabled', false).text('Yes, redeem').focus();
+				document.body.style.overflow = 'hidden';
+			  }
+		  
+			  function closeRedeemConfirm() {
+				$modal.removeClass('open');
+				setTimeout(function(){
+				  $overlay.css('display','none').attr('aria-hidden','true');
+				  document.body.style.overflow = '';
+				}, 160);
+			  }
+		  
+			  $(document).on("click", "a[id='purchase']", function (event) {
+				event.preventDefault();
+				if ($('#btnText').is(':disabled')) return;
+				openRedeemConfirm();
+			  });
+		  
+			  $btnYes.on('click', function(){
+				$btnYes.prop('disabled', true).text('Processing…');
+				recordSale();
+			  });
+		  
+			  $btnNo.on('click', function(){ closeRedeemConfirm(); });
+		  
+			  $overlay.on('click', function(e){
+				if (e.target === this) closeRedeemConfirm();
+			  });
+		  
+			  $(document).on('keydown', function(e){
+				if (e.key === 'Escape' && $overlay.is(':visible')) closeRedeemConfirm();
+			  });
+		  
+			  function recordSale() {
+				var deviceID = window.localStorage.getItem("deviceID");
+				var password = window.localStorage.getItem("password");
+				var token = { DeviceID: deviceID, Password: password, DealID: dealID };
+				token = JSON.stringify(token);
+				token = encrypt(token);
+				$.ajax({
+				  url: "https://glasscard.org/dataaccessprod4/useNow.ashx",
+				  type: "POST",
+				  data: "Token=" + token,
+				  dataType: "text",
+				  crossdomain: true,
+				  success: function () {
+					window.location.href = "redeem.html?DealID=" + encodeURIComponent(dealID);
+				  },
+				  error: function () {
+					closeRedeemConfirm();
+					displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+				  }
+				});
+			  }
+		  
+			  function encrypt(textToEncrypt) {
+				var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+				var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+				rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+				var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);
+				return (System.Convert.ToBase64String(encryptedBytes));
+			  }
+		  
+			  // =========================================================
+			  //          Trouble Redeeming (unchanged functionality)
+			  // =========================================================
+			  function openTroubleDialog(addressText) {
+				$('#dealAddressInline').text(addressText || '');
+				$('#dealAddressInlineNo').text(addressText || '');
+		  
+				$('#troubleStepAsk').show();
+				$('#troubleStepConfirm').hide();
+				$('#troubleStepYes').hide();
+				$('#troubleStepNo').hide();
+				$('#troubleStepBackout').hide();
+		  
+				$('#troubleDialog').dialog({
+				  modal: true,
+				  resizable: false,
+				  draggable: false,
+				  width: Math.min(window.innerWidth - 40, 420),
+				  create: function () { $('.ui-dialog-titlebar').hide(); },
+				  closeOnEscape: true
+				});
+			  }
+		  
+			  function getDealContext() {
+				return {
+				  businessName: currentBusinessName,
+				  address: currentAddress,
+				  deviceID: window.localStorage.getItem('deviceID') || '',
+				  dealID: dealID
+				};
+			  }
+		  
+			  $(document).on('click', '#troubleRedeemingLink', function (e) {
+				e.preventDefault();
+				var ctx = getDealContext();
+				openTroubleDialog(ctx.address);
+			  });
+		  
+			  $(document).on('click', '#troubleYes', function () {
+				$('#troubleStepAsk').hide();
+				$('#troubleStepConfirm').show();
+			  });
+		  
+			  $(document).on('click', '#troubleNo', function () {
+				$('#troubleStepAsk').hide();
+				$('#troubleStepNo').show();
+			  });
+		  
+			  $(document).on('click', '#troubleReportYes', function () {
+				var ctx = getDealContext();
+				var payload = {
+				  DeviceID: ctx.deviceID,
+				  DealID: ctx.dealID,
+				  BusinessName: ctx.businessName,
+				  Address: ctx.address,
+				  SubmittedAt: new Date().toISOString()
+				};
+				$.ajax({
+				  url: 'https://glasscard.org/dataaccessprod4/supportTroubleRedeeming.ashx',
+				  type: 'POST',
+				  data: payload,
+				  dataType: 'text'
+				}).always(function () {
+				  $('#troubleStepConfirm').hide();
+				  $('#troubleStepYes').show();
+				});
+			  });
+		  
+			  $(document).on('click', '#troubleReportNo', function () {
+				$('#troubleStepConfirm').hide();
+				$('#troubleStepBackout').show();
+			  });
+		  
+			  $(document).on('click', '.closeDialog', function () {
+				$('#troubleDialog').dialog('close');
+			  });
+		  
+			});
+		  </script>
+		  
+		  
+		  
+		  
+			
+	</body>
+</html>

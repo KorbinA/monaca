@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="white">
+  <head> 
+    <title>How To Redeem</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+   
+
+    <style type="text/css">
+      :root{
+        --bg:#f5f7fb;
+        --ink:#0f172a;
+        --muted:#55607a;
+        --accent:#0b5fff;
+        --accent-2:#0044ff;
+        --card:#ffffff;
+        --ring:rgba(15,23,42,.08);
+        --radius:16px;
+        --radius-sm:12px;
+      }
+      footer {
+	background: linear-gradient(to top, rgba(255,255,255,.96), rgba(255,255,255,.85) 100%, transparent);
+      backdrop-filter: blur(8px);
+	width: 100%;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;                /* Always anchor to the visual bottom */
+	z-index: 5;
+}
+
+img.footer {
+width:40px;
+height:auto;
+margin:0;
+padding:0;
+}
+
+/* Footer bar */
+footer.menu{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  /* visual height of the bar (without the safe-area) */
+  height: 64px;
+  box-shadow: 0 0 4px 1px rgba(0,0,0,.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  /* prevent unexpected growth */
+  box-sizing: content-box;
+	padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
+
+}
+
+/* Each tab */
+footer.menu .tab{
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Icons + label */
+footer.menu .tab img{
+  width: 45px; height: 45px;
+  display: block;
+}
+footer.menu .tab span{
+  font: 12px/1.1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #9aa0a6;
+  margin-top: 4px;
+}
+
+table.footer {
+	width:100%;
+	margin:auto;
+	text-align:center;
+	padding:1.5% 1.5%;
+	color:white;
+	table-layout:fixed;
+}
+
+/* Label styling (you already have this, included here for clarity) */
+footer.menu .tab span{
+  font: 12px/1.1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #888888;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* Keep icons comfortably within the 64px bar with label */
+footer.menu .tab img{
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+/* Optional: active tab state */
+footer.menu .tab.is-active span{
+  color: #05A0FA; /* or your brand blue */
+  font-weight: 600;
+}
+
+/* Make space so content never hides behind the fixed footer */
+:root{
+  --footer-h: 64px;
+}
+
+      *{box-sizing:border-box}
+    
+      body{
+        margin:0;
+        background:
+          radial-gradient(1200px 600px at 90% -10%, #e6efff 0%, rgba(230,239,255,0) 60%),
+          radial-gradient(900px 500px at -20% 30%, #eff8ff 0%, rgba(239,248,255,0) 55%),
+          var(--bg);
+        color:var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica;
+        line-height:1.55;
+      }
+
+      .wrap{
+        max-width:760px;
+        margin:0 auto;
+        padding:16px;
+        padding: 16px;
+        padding-top: calc(16px + env(safe-area-inset-top));
+        padding-bottom: calc(140px + env(safe-area-inset-bottom));
+      }
+
+      .hero{text-align:center;margin:12px 0 20px;}
+      .hero h1{margin:0;font-size:24px;letter-spacing:.2px}
+      .hero p{margin:6px 0 0;color:var(--muted);font-size:14px}
+
+      .card{
+        background:var(--card);
+        border-radius:var(--radius);
+        border:1px solid rgba(15,23,42,.06);
+        box-shadow:0 12px 28px var(--ring);
+        overflow:hidden;
+        animation: pop .35s cubic-bezier(.2,.8,.2,1);
+      }
+      @keyframes pop{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+      .card-section{padding:18px 20px}
+      .card-section + .card-section{border-top:1px solid rgba(15,23,42,.06)}
+
+      .steps{list-style:none; padding:0; margin:0; display:grid; gap:12px}
+      .step{
+        display:grid; grid-template-columns:40px 1fr; gap:12px;
+        background:linear-gradient(0deg,#fff,#fff), radial-gradient(160px 70px at 0% 0%, #eef4ff 0%, transparent 70%);
+        border:1px solid rgba(15,23,42,.06);
+        border-radius:var(--radius-sm);
+        padding:12px;
+        align-items:center;
+      }
+      .chip{
+        width:40px;height:40px;border-radius:14px;
+        display:grid; place-items:center; font-weight:800;
+        background:#eef4ff; color:#1340ff;
+        box-shadow: inset 0 0 0 1px rgba(19,64,255,.18);
+      }
+      .step p{margin:0}
+
+      .usenow{
+        display:inline-block; height:34px; min-width:110px; padding:0 14px;
+        border:0; border-radius:12px;
+        background:linear-gradient(180deg,var(--accent) 0%, var(--accent-2) 100%);
+        color:#fff; font-weight:800; font-size:14px; letter-spacing:.2px;
+        box-shadow:0 10px 20px rgba(11,95,255,.28);
+        cursor:default;
+      }
+
+      .note{
+        background:#f2f6ff; border:1px dashed rgba(0,68,255,.25);
+        padding:12px 14px; border-radius:12px; color:var(--muted);
+      }
+      .note b{color:#2b3670}
+
+      /* FAQ accordion */
+      .faq{display:grid; gap:10px}
+      .faq-title{
+        margin:0 0 12px;
+        font-size:18px;
+        font-weight:700;
+        color:var(--ink);
+        text-align:center;
+      }
+      .faq details{
+        background:#ffffff;
+        border:1px solid rgba(15,23,42,.08);
+        border-radius:12px;
+        padding:10px 12px;
+      }
+      .faq summary{
+        cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px;
+        font-weight:700;
+      }
+      .faq summary::-webkit-details-marker{display:none}
+      .faq .qicon{
+        width:22px;height:22px; border-radius:7px; background:#eef2ff; color:#2b44ff;
+        display:grid; place-items:center; font-size:12px; font-weight:800;
+      }
+      .faq .answer{margin:10px 2px 2px; color:var(--muted); font-size:14px}
+      body {margin:0px;
+	padding:0px;
+	padding-top: env(safe-area-inset-top);
+	padding-top: constant(safe-area-inset-top);
+	box-sizing: border-box;
+ min-height: 100vh;   /* legacy fallback */
+  min-height: 100svh;  /* stable size (no jump) if supported */
+  min-height: 100dvh;         /* small viewport height */
+	}
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1>How to Redeem Discounts</h1>
+        <p>Three quick steps. Works best while you’re at the business.</p>
+      </div>
+
+      <!-- Main Card -->
+      <div class="card">
+        <div class="card-section">
+          <ol class="steps">
+            <li class="step">
+              <div class="chip">1</div>
+              <p>Open the discount you want to redeem in the app.</p>
+            </li>
+            <li class="step">
+              <div class="chip">2</div>
+              <p>
+                When you’re ready to pay, tap
+                <button class="usenow" type="button" aria-disabled="true">USE NOW</button>
+                while an employee is present.
+              </p>
+            </li>
+            <li class="step">
+              <div class="chip">3</div>
+              <p>Show the redeemed screen to the employee and pay the business directly as usual.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="card-section">
+          <div class="note">
+            <b>Reminder:</b> Make sure your <b>Location Services</b> are turned on.
+            Deals are intended to work only while you’re physically at the business location.
+          </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="card-section">
+          <h2 class="faq-title">Frequently Asked Questions</h2>
+          <div class="faq">
+            <details>
+              <summary><span class="qicon">?</span>What deals are national?</summary>
+              <div class="answer">
+                Our national discount network is made up of deals we get for new fundraisers all across the country and it grows with every new fundraiser we host.<br><br>
+                When you travel to a new town and launch the app the app will search for discounts in that new city. So, say you travel to Hawaii and launch the app. It will find all discounts for any participating fundraiser groups in Hawaii. In that way, it’s like having hundreds of fundraiser cards combined into one.
+              </div>
+            </details>
+            <details>
+              <summary><span class="qicon">?</span>When does my card expire?</summary>
+              <div class="answer">
+                Your card will expire one year from the day you activated your account with your unlock code.
+              </div>
+            </details>
+            <details>
+              <summary><span class="qicon">?</span>What do I do if an employee doesn't honor my discount?</summary>
+              <div class="answer">
+                We can guarantee our discounts are real and legitimate because we never steal deals from other cards and we work with all business merchants ourselves. When a business owner agrees to sponsor a fundraiser card we send them training materials and resources to help them train their employees to recognize the cards and app.<br><br>
+                Occasionally, a new or untrained employee will not recognize the card or know how to redeem the discount. If this happens click the button at the bottom of the discount screen to report that this happened. We will reach out to our contact(s) at that business to sort things out. 9/10 times the owner apologizes and assures us they will train that new employee or day manager to honor the discount.<br><br>
+                We will also quickly follow up with you with the resolution of the matter.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+  </body>
+</html>

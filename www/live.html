@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Live Feed</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<!--link rel="stylesheet" href="css/jquery-1.12.1.ui.css">
+		<script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/jquery-1.12.1.ui.js"></script-->
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="js/spin.min.js"></script>
+	</head>
+	<body>
+		
+		<div class="container categoryContainer">
+                <center>
+                    <p style="font-size:150%; color:#222831; margin:0; padding:0;">Newest Deals</p>
+                </center>
+                <table class="header">
+                    <tr>
+                        <td class="header">
+                            <select class="category" id="category" style="">
+                                <option value="4">all deals</option>
+                                <option value="1">food</option>
+                                <option value="2">services</option>
+                                <option value="3">activities</option>
+                                <option value="5">retail</option>
+                                <option value="6">Exclude Premium Deals</option>
+                            </select>
+                        </td>
+                        <td class="header">
+                        </td>
+                        <td class="header">
+                            <select class="category" id="radius" style="">
+                            <option value="1" selected="selected">60 mi</option>
+                            <option value="2">30 mi</option>
+                            <option value="3">15 mi</option>
+                            <option value="4">5 mi</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+		<div id="deals" class="container" style="margin-top:0%;margin-bottom:50px;"></div>
+        
+        <footer class="menu">
+                <center>
+                    <table>
+                        <tr>
+                            <td class="footer"><a href="home.html"><img class="footer" src="images/icon_home.png"></a></td>
+                            <!--
+							<td class="footer"><a href="live.html"><img class="footer" src="images/icon_live.png"></a></td>
+							<td class="footer"><a href="premium.html"><img class="footer" src="images/icon_premium.png"></a></td>
+                            -->
+                            <td class="footer"><a href="profile.html"><img class="footer" src="images/icon_profile.png"></a></td>
+                        </tr>
+                    </table>
+                </center>
+            </footer>
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+//				var offset = "?LocationName=".length;
+//				var locationName = window.location.search.substring(offset);
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+				
+				var value = window.localStorage.getItem("category");
+				// From extensive testing, the following simple comparison appears to be the only sure-fire way
+				// to determine if the device ID already exists.
+				if (value) {
+					// Category exists.
+					$('#category').val(value).change();
+				}
+				value = window.localStorage.getItem("radius");
+				// From extensive testing, the following simple comparison appears to be the only sure-fire way
+				// to determine if the value already exists.
+				if (value) {
+					// Radius exists.
+					$('#radius').val((value * 1) + 1).change();
+				}
+
+				var opts = {
+					  lines: 13 // The number of lines to draw
+					, length: 25 // The length of each line
+					, width: 1 // The line thickness
+					, radius: 5 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#1fab89' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+				
+				$('#category').change(function(e){
+					window.localStorage.setItem("category", $('#category option:selected').val());
+					onDeviceReady();
+				});
+				
+				$('#radius').change(function(e){
+//		console.log("Radius set to " + $('#radius option:selected').text().substring(0, 2));
+		console.log("Radius set to " + $('#radius option:selected').index());
+//					window.localStorage.setItem("radius", $('#radius option:selected').text().substring(0, 2));
+					window.localStorage.setItem("radius", $('#radius option:selected').index());
+					onDeviceReady();
+				});
+
+		//		document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+					var target = document.getElementById('deals');
+					var spinner = new Spinner(opts).spin(target);
+			//		window.navigator.geolocation.getCurrentPosition(function(pos) {
+						$.ajax({
+							url : "https://glasscard.org/dataaccessprod4/locationDiscounts.ashx",
+							type: "POST",
+							data: "AccountId=" + window.localStorage.getItem("accountId") +
+								"&Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
+								"&Longitude=" + window.localStorage.getItem("longitude") +      // pos.coords.longitude +
+								"&Category=" + $('#category option:selected').text() +
+								"&Radius=" + $('#radius option:selected').text().substring(0, 2),
+							dataType: "text",
+							crossdomain: true,
+							success: function(data, textStatus, jqXHR)
+							{
+								$('#deals').empty();
+								$('#deals').append(data);
+								spinner.stop();
+							},
+							error: function (jqXHR, textStatus, errorThrown)
+							{
+								spinner.stop();
+								displayMessage("System Error", "We were unable to determine your location. Please navigate to 'Home' to set your location.", "Close");
+								//log(jqXHR, textStatus, errorThrown);
+							}
+						});
+			//		});
+				}
+				onDeviceReady();
+			});
+
+		</script>
+	</body>
+</html>
+

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="css/slickNavStyle.css" />
+		<link rel="stylesheet" href="css/slickNav.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jsencrypt.js"></script>
+        <!--script type="text/javascript" src="js/jquery.js"></script-->
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.transit/0.9.9/jquery.transit.min.js"></script>
+		<script src="js/jquery.slicknav.js"></script> 
+        <!--script src="jquery.js"></script -->
+		<!--script src="//code.jquery.com/jquery-1.12.0.min.js"></script-->
+		<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+        <!--title>Hello World</title-->
+    </head>
+    <body>
+		<div data-role="page" data-theme="b">
+
+			<div data-role="header" data-position="fixed">
+				<h1>Alter Cache</h1>
+			</div>
+
+			<div role="main" class="ui-content">
+				<form id="ccForm">
+					<label for="itemToGet">Get Cache Item:</label>
+					<input data-wrapper-class="width200px" data-clear-btn="true" id="itemToGet" value="" maxlength="16" type="text">
+					<input data-wrapper-class="width200px" data-clear-btn="true" id="gottenItem" value="" maxlength="16" type="text">
+					<label for="itemToSet">Set Cache Item:</label>
+					<input data-wrapper-class="width200px" data-clear-btn="true" id="itemToSet" value="" maxlength="16" type="text">
+					<input data-wrapper-class="width200px" data-clear-btn="true" id="item" value="" maxlength="16" type="text">
+				</form>
+			</div>
+			<div style="text-align: center;" data-role="footer">
+				<a href="#" id="submittal" class="ui-btn ui-corner-all">Submit</a>
+			</div>
+			
+			<div role="main" class="ui-content">
+				<form id="mainForm">
+				</form>
+				<div data-role="popup" id="messagePopup" class="ui-content" style="max-width:250px">
+					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+					<label id="messageText"></label>
+				</div>
+			</div>
+		</div>        
+        <script type="text/javascript">
+				$(document).ready(function() {
+
+				function displayMessage(text) {
+					$('#messageText').html(text);
+					$('#messagePopup').popup('open');
+				}
+
+				$(document).on("click","a[id='submittal']", function (event) {
+					event.preventDefault();
+					if ($('#itemToGet').val().length > 0) {
+						window.localStorage.getItem($('#itemToGet').val());
+						$('#gottenItem').val(window.localStorage.getItem($('#itemToGet').val()));
+					} else {
+						$('#gottenItem').val("");
+					}
+					if ($('#itemToSet').val().length > 0) {
+						if ($('#item').val().length > 0) {
+							window.localStorage.setItem($('#itemToSet').val(), $('#item').val());
+						} else {
+							window.localStorage.removeItem($('#itemToSet').val());
+						}
+					}
+				});
+			});
+		</script>
+    </body>
+</html>

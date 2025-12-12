@@ -46,7 +46,7 @@ body {margin:0px;
 div.container {
 	margin-top:0; /*The height of header and some*/
 	width:100%;
-	padding-bottom:40px;
+	padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 div.categoryContainer {

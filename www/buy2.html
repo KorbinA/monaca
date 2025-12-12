@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html >
+	<head>
+		<title>Buy</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script src="js/spin.min.js"></script>
+	</head>
+	<body>
+		<div class="header">
+			<center>
+				<table class="header">
+					<tr>
+						<td class="header"><a href="home.html" style="color:black;">HOME</a></td>
+						<td class="header"><a href="limited-time.html" style="color:black;">LIVE</a></td>
+					</tr>
+				</table>
+			</center>
+		</div>
+		<div class="container">
+			<a href="javascript:history.back()"><img src="images/blackarrow.png" style="width:6%; position:absolute; top:12.55%; left:3%;"></a>
+			<center>
+				<h1 style="color:black; font-size:6.5vw; font-family:Bebas;"><label id="businessName" class="bebas" /></h1>
+				<br>
+				<p class="title"><label class="bebas" id="title" /></p>
+				<p class="details" style="margin-bottom:5%; color:red;"><label id="timeLeft"></label></p>
+			</center>
+			<div id="imageName"><img class="discount" src=""></div>
+			<table class="icons">
+				<tr>
+					<td id="phone"><img src="images/phone.png" class="icon"></td>
+					<td id="address"><img src="images/location.png" class="icon"></td>
+					<td id="url"><img src="images/website.png" class="icon"></td>
+				</tr>
+			</table>
+			<p class="you-save" style="float:right; margin-right:5%; margin-top:2%;"><label id="savings" class="bebas"></label> off</p>
+			<hr>
+			<center>
+				<p style="color:black; font-size: 4.5vw; font-family:discreet;"><label id="discount" /><br />
+				<br />
+			</center>
+			<center><a href="#" id="purchase"><button class="usenow" id="btnText">USE NOW</button></a></center>
+			<p style="color:grey; font-size: 4vw; font-family:Discreet; font-style:italic;"><center style="margin-left:5%; margin-right:5%;"><label id="terms" style="color:grey;"></label></center></p>
+			<center>
+				<p style="color:grey; font-size: 4vw; font-family:Discreet;">Trouble Redeeming? Contact us at <a href="mailto:support@glasscard.org?Subject=" target="_top" style="text-decoration:underline; color:grey;">support@glasscard.org</a></p>
+			</center>
+		</div>
+		<br>
+		<br>
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var offset = "?DealID=".length;
+				var dealID = window.location.search.substring(offset);
+				var latitude = 0.0;
+				var longitude = 0.0;
+				var useCount = 0;
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				function displayMessage2(title, message, button1Text, button2Text, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:button1Text,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+				//					window.location.href = url;
+									recordSale();
+								}
+							}
+						},
+						{
+							text:button2Text,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+				//					window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var opts = {
+					  lines: 13 // The number of lines to draw
+					, length: 18 // The length of each line
+					, width: 10 // The line thickness
+					, radius: 28 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#ccc' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+
+				document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+// Rexburg only:
+//window.localStorage.setItem("latitude", "43.8260574");
+//window.localStorage.setItem("longitude", "-111.7837469");
+					window.navigator.geolocation.getCurrentPosition(function(pos) {
+						window.localStorage.setItem("latitude", pos.coords.latitude);
+						window.localStorage.setItem("longitude", pos.coords.longitude);
+					});
+				}
+				
+				var linkDisabled = false;
+				
+				var target = document.getElementById('imageName');
+				var spinner = new Spinner(opts).spin(target);
+				var now = new Date();
+				var release = now;
+
+				$.ajax({
+					url : "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
+					type: "POST",
+					data: "AppType=UserApp" +
+						"&Version=" + window.localStorage.getItem("userAppVersion") +
+						"&ID=" + dealID +
+						"&ID_Type=Deal",
+					dataType: "text",
+					crossdomain: true,
+					success: function(data, textStatus, jqXHR)
+					{
+						release = new Date(data); // data is in the form of '2017-09-16 09:34:30'.
+						getDeal();
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					}
+				});
+
+				function getDeal() {
+					$.ajax({
+						url : "https://glasscard.org/dataaccessprod4/getNewDeal" + ((now < release) ? "2" : "") + ".ashx",
+						type: "POST",
+						data: "DealID=" + dealID +
+							"&Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
+							"&Longitude=" + window.localStorage.getItem("longitude"),     // pos.coords.longitude,
+						dataType: "text",
+						crossdomain: true,
+						success: function(data, textStatus, jqXHR)
+						{
+							var savings = "";
+							var d = JSON.parse(data);
+							$('#businessName').html(d.businessName);
+							$('#title').html(d.title);
+							$('#price').html(d.price);
+							$('#discountPrice').html(d.discountPrice);
+							$('#terms').html(d.terms);
+							$('#discount').html(d.discount);
+							$('#imageName').empty();
+							$('#imageName').append("<img class=\"discount\" src=\"" + d.imageName + "\">");
+							$('#phone').empty();
+							$('#phone').append(d.phone);
+							$('#address').empty();
+							$('#address').append(d.address);
+							$('#url').empty();
+							$('#url').append(d.url);
+							latitude = d.latitude;
+							longitude = d.longitude;
+							$('#savings').html(d.savings);
+							$('#timeLeft').html(d.timeLeft);
+							$('#btnText').html(d.buttonText);
+							if (d.buttonText == "Not Available Now") {
+								$('#btnText').removeClass('usenow');
+								$('#btnText').addClass('usenowgray');
+								linkDisabled = true;
+								$('#btnText').disable(true);
+								$('#purchase').disable(true);
+							}
+							spinner.stop();
+						},
+						error: function (jqXHR, textStatus, errorThrown)
+						{
+						console.log(errorThrown);
+						console.log(textStatus);
+						console.log(jqXHR);
+							spinner.stop();
+							displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+						}
+					});
+				}
+	
+				function distance(lat1, lon1, lat2, lon2) {
+				  var p = 0.017453292519943295;    // Math.PI / 180
+				  var c = Math.cos;
+				  var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+
+				  return((12742.0 * Math.asin(Math.sqrt(a))) / 1.6); // (2 * R; R = 6371 km) / 1.6 = mi
+				}
+
+				$(document).on("click","a[id='purchase']", function (event) {
+					event.preventDefault();
+					if (!linkDisabled) {
+						// If the distance is less than three tenths of a mile (0.48 kilometers)...
+						if (distance(window.localStorage.getItem("latitude"), window.localStorage.getItem("longitude"), latitude, longitude) < 0.3) { 
+							recordSale();
+						} else {
+							var deviceID = window.localStorage.getItem("deviceID");
+							var password = window.localStorage.getItem("password");
+							var token = {DeviceID:deviceID,Password:password,DealID:dealID};
+							token = JSON.stringify(token);
+							token = btoa(token);
+							displayMessage("", "Please make sure your location services are turned on. The " +
+								$('#btnText').val() + " button is designed to function when you're at the business location. ", "OK");
+							onDeviceReady();
+						}
+					}
+				});
+							
+				function recordSale() {
+					displayMessage("Success", "Just testing geolocation.", "Close");
+				}
+			});
+		</script>
+	</body>
+</html>

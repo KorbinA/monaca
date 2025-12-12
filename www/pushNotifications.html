@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Location Services</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+				$(document).ready(function(){
+   
+        $("#footer").delay(5000).fadeIn(2000);
+		
+	});
+		</script>
+	</head>
+	<body>
+		<div class="location">
+		
+		<br>
+		
+			<center>
+				<img src="images/icon-pushnotification.png" style="width:50%;">
+			<br>
+			<br>
+				<p>By allowing <b>Push Notifications</b> you'll receive new deal updates as well as exclusive deals and offers <i>only available to notification recipients.</i></p>
+				
+			<br>
+			<br>
+			<br>
+			<br>
+				<a href="location-services.html"><fader id="fader" style=""><h1 style="background:#57e5e1; color:white; font-size:32px;position:absolute; margin:auto; bottom:50px; left:7%; padding:0; letter-spacing:1.1pt; border-radius:25px; height: 45px; width:86%; padding-top:7px; box-shadow: 1px 1px 2px .5px rgba(0,0,0,0.2);">Next</h1></fader></a>
+			</center>
+		</div>
+		
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var platform = window.localStorage.getItem("platform");//"Not set";
+//				document.addEventListener("deviceready", onDeviceReady, false);
+				$(document).on("click","a[id='platform']", function (event) {
+					event.preventDefault();
+//					displayMessage("clicked", "OS type: " + platform, "Close");
+					window.location.href = ((platform == "iOS") ? "iphone-settings.html" : "tutorial-home.html");
+				});
+
+/*				function onDeviceReady() {
+					platform = device.platform;
+//					console.log("Platform is: " + platform);
+				}
+// + device.platform
+				$(document).on("click","a[id='platform']", function (event) {
+					event.preventDefault();
+//displayMessage("clicked", "Button clicked.", "Close");
+	//				document.addEventListener("deviceready", onDeviceReady, false);
+
+		//			function onDeviceReady() {
+displayMessage("clicked", "OS type: " + platform
+// + device.platform
+, "Close");
+//						window.location.href = ((device.platform == "iOS") ? "iphone-settings.html" : "tutorial-home.html");
+			//		}
+				});*/
+			});
+		</script>
+	</body>
+</html>

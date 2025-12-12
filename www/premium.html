@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head> 
+		<title>Premium</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<!--		<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>-->
+<!--		<script type="text/javascript" src="js/jquery-1.12.1.ui.js"></script>-->
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+		<script src="js/spin.min.js"></script>
+		<!--Drop Down menu-->
+		<script type="text/javascript">
+			function myFunction() {
+				document.getElementById("myDropdown").classList.toggle("show");
+			}
+
+			window.onclick = function(event) {
+				if (!event.target.matches('.dropbtn')) {
+
+					var dropdowns = document.getElementsByClassName("dropdown-content");
+					var i;
+					for (i = 0; i < dropdowns.length; i++) {
+						var openDropdown = dropdowns[i];
+						if (openDropdown.classList.contains('show')) {
+							openDropdown.classList.remove('show');
+						}
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+	
+	<div class="hide" id="learnMore"></div>
+	<!--center>
+		<br>
+			<!--p style="color:#222831; font-size:150%; margin-top:0;">Premium Deals</p>
+			<div class="hide">
+				<p style="color:#B0B0B0; font-size:14pt; margin:15px; margin-top:0px; margin-bottom:;">You don't have these deals yet.</p>
+				<!--button class="rounded" style="background:#FFF588; "><a style="color:#959050;" href="gopremium.html" >Enter Access Code</a></button>
+			</div>
+		<br>
+	</center-->
+	<div class="container categoryContainer">
+    <center>
+                <p style="font-size:150%; color:#222831; margin:0; padding:0;">Premium Deals</p>
+            </center>
+        <table class="header">
+            <tr>
+                <td class="header">
+                    <select class="category" id="category" style="">
+                        <option value="4">all deals</option>
+                        <option value="1">food</option>
+                        <option value="2">services</option>
+                        <option value="3">activities</option>
+                        <option value="5">retail</option>
+                        <option value="6">Exclude Premium Deals</option>
+                    </select>
+                </td>
+                <td class="header">
+                </td>
+                <td class="header">
+                    <select class="category" id="radius" style="">
+                    <option value="1" selected="selected">60 mi</option>
+                    <option value="2">30 mi</option>
+                    <option value="3">15 mi</option>
+                    <option value="4">5 mi</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+	
+
+	<div id="premium-container" class="premium-container"></div>
+<footer class="menu" role="navigation">
+  <a class="tab" href="home.html" aria-label="Discover">
+    <img src="images/search-grey.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
+
+
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+        </div>
+            
+		<script type="text/javascript">
+			document.addEventListener("deviceready", function() {}, false);
+			$(function() {
+				function loadLearnMore() {
+					var parameterCache = window.localStorage.getItem("premium.banner");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'premium', Key: 'banner'},
+							function(data) {
+								window.localStorage.setItem("premium.banner", data);
+								$("#learnMore").html(data);
+							})
+					$("#learnMore").html(parameterCache);
+				}
+
+				function loadLearnMoreExMember() {
+					var parameterCache = window.localStorage.getItem("premium.banner.exmember");
+					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
+							{Name: 'premium', Key: 'banner.exmember'},
+							function(data) {
+								window.localStorage.setItem("premium.banner.exmember", data);
+								$("#learnMore").html(data);
+							})
+					$("#learnMore").html(parameterCache);
+				}
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				var opts = {
+					  lines: 13 // The number of lines to draw
+					, length: 25 // The length of each line
+					, width: 1 // The line thickness
+					, radius: 5 // The radius of the inner circle
+					, scale: 1 // Scales overall size of the spinner
+					, corners: 1 // Corner roundness (0..1)
+					, color: '#1fab89' // #rgb or #rrggbb or array of colors
+					, opacity: 0.05 // Opacity of the lines
+					, rotate: 0 // The rotation offset
+					, direction: 1 // 1: clockwise, -1: counterclockwise
+					, speed: 1 // Rounds per second
+					, trail: 60 // Afterglow percentage
+					, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+					, zIndex: 2e9 // The z-index (defaults to 2000000000)
+					, className: 'spinner' // The CSS class to assign to the spinner
+					, top: '50%' // Top position relative to parent
+					, left: '50%' // Left position relative to parent
+					, shadow: false // Whether to render a shadow
+					, hwaccel: false // Whether to use hardware acceleration
+					, position: 'absolute' // Element positioning
+				};
+
+				var target = document.getElementById('premium-container');
+				var spinner = new Spinner(opts).spin(target);
+
+				var latitude = window.localStorage.getItem("latitude");
+				var longitude = window.localStorage.getItem("longitude");
+
+				if (!latitude || !longitude) {
+
+					window.navigator.geolocation.getCurrentPosition(function(pos) {
+						latitude = pos.coords.latitude;
+						longitude = pos.coords.longitude;
+						window.localStorage.setItem("latitude", latitude);
+						window.localStorage.setItem("longitude", longitude);
+						loadList();
+					}, function(error){
+						displayMessage("", "Please make sure your location services are turned on.", "Close");
+						// Rexburg only:
+						// window.localStorage.setItem("latitude", "43.8260574");
+						// window.localStorage.setItem("longitude", "-111.7837469");
+						loadList();
+					}, {timeout: 5 * 1000});
+				} else {
+					loadList();
+				}
+
+				$('#category').change(function(e){
+					window.localStorage.setItem("category", $('#category option:selected').val());
+					loadList();
+				});
+
+				$('#radius').change(function(e){
+					window.localStorage.setItem("radius", $('#radius option:selected').index());
+					loadList();
+				});
+
+				function waitImagesAndAppendInChunks(target, elements, chunk) {
+					console.log("elements: " + elements.length);
+					// elements.slice(0, chunk).each(function() {
+					// 	console.log("appending: " + elements.length);
+					// 	$(target).append(this);
+					// });
+					$(target).append(elements.slice(0, chunk));
+					if(!JSON.parse(window.localStorage.getItem("isPremium"))) {
+						$('.premium-container a').click(function () {
+							displayMessage("Only for Premium Members", "This deal is only available for Premium Members", "Close");
+							return false;
+						});
+					}
+					if(elements.length > chunk) {
+						// $(".premiumDiscount", target).waitForImages(function () {
+						// 	console.log("waiting");
+						// 	waitImagesAndAppendInChunks(target, elements.slice(chunk), chunk);
+						// });
+						setTimeout(function () {
+							console.log("waiting");
+							waitImagesAndAppendInChunks(target, elements.slice(chunk), chunk);
+						}, 200);
+					}
+				}
+
+				function loadList() {
+					spinner.spin(target);
+					$.ajax({
+						url : "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
+						type: "POST",
+						data: "Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
+								"&Longitude=" + window.localStorage.getItem("longitude") +      // pos.coords.longitude +
+								"&Category=" + ($('#category option:selected').text() || 'all deals') +
+								"&Radius=" + ($('#radius option:selected').text().substring(0, 2) || 60) +
+								"&accountid=" + window.localStorage.getItem("accountId"),
+						dataType: "text",
+						crossdomain: true,
+						success: function(data, textStatus, jqXHR)
+						{
+							$(target).empty();
+							waitImagesAndAppendInChunks(target, $(data), 10);
+							// $(data).siblings().each(function(index) {
+							// 	if(index < 10)
+							// 		$(target).append(this);
+							// });
+							// $(target).append(data);
+							spinner.stop();
+							maybeLearnMore();
+						},
+						error: function (jqXHR, textStatus, errorThrown)
+						{
+							spinner.stop();
+							displayMessage("System Error", "We were unable to determine your location. Please navigate to 'Home' to set your location.", "Close");
+						}
+					});
+				}
+
+				function maybeLearnMore() {
+					if(JSON.parse(window.localStorage.getItem("isPremium"))) {
+						$('.hide').hide();
+					} else if(window.localStorage.getItem("premiumUntil")) {
+						loadLearnMoreExMember();
+					} else {
+						loadLearnMore();
+					}
+				}
+			})
+
+
+
+		</script>
+	</body>
+</html>

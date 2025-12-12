@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:black;">
+	<head>
+		<title>Home</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	</head>
+	<body>
+		<div class="myCard" style="background:black;">
+			<a href="home.html"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:5% 3%;"></a>
+			<center>
+				<p style="font-family:bebas; font-size:5vw; margin-top:20px; ">Credit Card</p>
+				<br>
+				<br>
+				<br>
+				<h1 style="font-family:bebas; font-size:11vw; color:white; background:none; margin:0; margin-left:0%; padding:0;"><label id=last4></label></h1>
+				<br>
+				<p style=" font-size:4vw; "></p>
+				<br>
+				<a href="billingInfo.html"><button class="login" style="width:35%; margin:0; padding:4px 6px; font-size:6vw;">Change Card</button></a>
+			</center>
+		</div>
+		<a href="myCardSavings.html">
+			<div class="left" style="background:#F2F2F2;">
+				<center>
+					<br>
+					<img src="images/savings.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Savings</p>
+				<center>
+			</div>
+		</a>
+		<a href="myCardBilling.html">
+			<div class="right" style="background:white;">
+				<center>
+					<br>
+					<img src="images/billing.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Credit Card</p>
+				<center>
+			</div>
+		</a>
+		<a href="myCardAccount.html">
+			<div class="left" style="background:white;">
+				<center>
+					<br>
+					<img src="images/password.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Account</p>
+				<center>
+			</div>
+		</a>
+		<div class="right" style="background:#F2F2F2;">
+			<center>
+				<br>
+				<img src="images/signout.png" style="width:30%; ">
+				<br>
+				<p style="color:black;">Sign Out</p>
+			<center>
+		</div>
+        <script type="text/javascript">
+            //app.initialize();
+			$(document).ready(function() {
+				var ccNumber = window.localStorage.getItem("ccNumber");
+				ccNumber = ccNumber.substring(ccNumber.length - 4);
+				$('#last4').html("XXXX-XXXX-XXXX-" + ccNumber);
+			});
+		</script>
+	</body>
+</html>

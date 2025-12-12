@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html style="background:white;">
+	<head>
+		<title>My Card</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" href="css/jquery-1.12.1.ui.css">
+		<script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/jquery-1.12.1.ui.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
+		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+	</head>
+	<body>
+		<div class="myCard" style="background:black;">
+			<a href="home.html"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:5% 3%;"></a>
+			<center>
+				<p style="font-family:bebas; font-size:5vw; margin-top:20px; ">Total Savings</p>
+				<br>
+				<br>
+				<br>
+				<h1 style="font-family:bebas; font-size:18vw; color:white; background:none; margin:0; margin-left:0%; padding:0;  "><label id="savings" /></h1>
+				<p style=" font-size:4vw; "><label id="creationDate" /></p>
+			</center>
+		</div>
+		<a href="myCardSavings.html">
+			<div class="left" style="background:#F2F2F2;">
+				<center>
+					<br>
+					<img src="images/savings.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Savings</p>
+				<center>
+			</div>
+		</a>
+		<!--a href="myCardBilling.html"-->
+		<a href="billingInfo.html">
+			<div class="right" style="background:white;">
+				<center>
+					<br>
+					<img src="images/billing.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Credit Card</p>
+				<center>
+			</div>
+		</a>
+		<a href="myCardAccount.html">
+			<div class="left" style="background:white;">
+				<center>
+					<br>
+					<img src="images/password.png" style="width:30%; ">
+					<br>
+					<p style="color:black;">Account</p>
+				<center>
+			</div>
+		</a>
+		<div class="right" style="background:#F2F2F2;">
+			<center>
+				<br>
+				<img src="images/signout.png" style="width:30%; ">
+				<br>
+				<p style="color:black;">Sign Out</p>
+			<center>
+		</div>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			
+				var deviceID = window.localStorage.getItem("deviceID");
+				var token = {DeviceID:deviceID};
+				
+				token = JSON.stringify(token);
+				token = encrypt(token);
+				$.ajax({
+					url : "https://glasscard.org/dataaccessprod4/getSavings.ashx",
+					type: "POST",
+					data: "Token=" + token,
+					dataType: "text",
+					crossdomain: true,
+					success: function(_data, textStatus, jqXHR)
+					{
+						var data = JSON.parse(_data);
+						$('#savings').html(data.Savings);
+						$('#creationDate').html(data.CreationDate);
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					console.log(errorThrown);
+					console.log(textStatus);
+					console.log(jqXHR);
+						displayMessage("System Error", "An unrecoverable error was encountered.", "Close");
+						//log(jqXHR, textStatus, errorThrown);
+					}
+				});					
+
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);//doOaepPadding);
+					return(System.Convert.ToBase64String(encryptedBytes));
+				}
+			});
+		</script>
+	</body>
+</html>

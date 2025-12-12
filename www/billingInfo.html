@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>Billing Info</title>
+		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="css/index.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+	</head>
+	<body>
+		<a href="fundraiser.html"><img src="images/arrow.png" class="dropbtn" style="width:6%; margin:5% 3%;"></a>
+		<center><h1 style="margin-top:10%; font-size:11vw;">Add Your Card</h1></center>
+		<p>This card will only be used to make your donation.</p>
+		<form class="account" id="ccform">
+			<input data-clear-btn="true" name="name" id="name" value="" type="text" maxlength="35" placeholder="Name on card">
+			<input data-clear-btn="true" name="cardNumber" id="cardNumber" value="" type="text" maxlength="19" placeholder="Card Number">
+			<select style="width:41.5%; margin-left:0;" name="expirationMonth" id="expirationMonth">
+				<option value="NA">-- Expiration Month --</option>
+				<option value="01">01 - January</option>
+				<option value="02">02 - February</option>
+				<option value="03">03 - March</option>
+				<option value="04">04 - April</option>
+				<option value="05">05 - May</option>
+				<option value="06">06 - June</option>
+				<option value="07">07 - July</option>
+				<option value="08">08 - August</option>
+				<option value="09">09 - September</option>
+				<option value="10">10 - October</option>
+				<option value="11">11 - November</option>
+				<option value="12">12 - December</option>
+			</select>
+			<select style="width:41.5%;" name="expirationYear" id="expirationYear">
+				<option value="NA">-- Expiration Year --</option>
+			</select>
+			<input data-clear-btn="true" name="cvvNumber" id="cvvNumber" value="" type="text" maxlength="4" placeholder="CVV Number">
+			<input data-clear-btn="true" name="zipCode" id="zipCode" value="" type="text" maxlength="5" placeholder="Billing Zip Code">
+		</form>
+		<center><a href="#" id="submit"><button class="login">Submit</button></a></center>
+		<div id="messagePopup" title="">
+			<label id="messageText"></label>
+		</div>
+		<script type="text/javascript">
+			//app.initialize();
+			$(document).ready(function() {
+			
+				var offset = "?Page=".length;
+				var page = window.location.search.substring(offset);
+
+				function displayMessage(title, message, buttonText, url) {
+					$('#messageText').html(message);
+					$('#messagePopup').dialog({
+						//title: title,
+						closeOnEscape: false,
+						open: function(event, ui) {
+							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+							$(this).siblings('.ui-dialog-titlebar').remove();
+						},
+						buttons:[{
+							text:buttonText,
+							click:function(){
+								$(this).dialog("close");
+								if ((url != undefined) && (url.length > 0)) {
+									window.location.href = url;
+								}
+							}
+						}]
+					});
+				}
+
+				document.addEventListener("deviceready", onDeviceReady, false);
+				
+				function onDeviceReady() {
+				}
+
+				// Fill the expiration date list.
+				var today = new Date();
+				var year = today.getFullYear();
+				var yearList = document.getElementById("expirationYear");
+				for (var i = 0; i < 12; i++, year++) {
+					var option = document.createElement("option");
+					option.value = "" + year;
+					option.text = "" + year;
+					yearList.add(option);
+				}
+
+				var keyPressed = -1;
+
+				$("#cardNumber").keypress(function (e) {
+					// If the key is not a digit then don't type anything.
+					if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+						return false;
+					}
+					keyPressed = e.which;
+				});
+				
+				$("#cardNumber").on('input', function (e) {
+					var num = $("#cardNumber").val();
+
+					if (((num.length == 4) || (num.length == 9) || (num.length == 14)) && (keyPressed != 8)) {
+						num = num + "-";
+						$("#cardNumber").val(num);
+					}
+				});
+
+				$("#cvvNumber").keypress(function (e) {
+					// If the key is not a digit then don't type anything.
+					if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+						return false;
+					}
+				});
+				
+				$("#zipCode").keypress(function (e) {
+					// If the key is not a digit then don't type anything.
+					if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+						return false;
+					}
+				});
+				
+				$(document).on("click","a[id='submit']", function (event) {
+					event.preventDefault();
+				
+					if (!validCardNumber($('#cardNumber').val())) {
+						displayMessage("Invalid Card Number", "The credit card number is invalid. Please check and correct it.", "Close");
+						return;
+					}
+					
+					if (!validExpirationDate($('select[name=expirationMonth]').val(), $('select[name=expirationYear]').val())) {
+						displayMessage("Invalid Card Date", "Today's date is past the expiration date entered for the card. If the card is indeed expired, please use a different card.", "Close");
+						return;
+					}
+					
+					window.localStorage.setItem("ccName", $('#name').val());
+					window.localStorage.setItem("ccNumber", $('#cardNumber').val());
+					window.localStorage.setItem("ccMonth", $('select[name=expirationMonth]').val());
+					window.localStorage.setItem("ccYear", $('select[name=expirationYear]').val());
+					window.localStorage.setItem("ccCVV", $('#cvvNumber').val()); // Security Code (Card Verification Value)
+					window.localStorage.setItem("ccZip", $('#zipCode').val());
+					displayMessage("Success", "Your credit card data was stored in your device.", "Close", page);
+				});
+
+				function validExpirationDate(expMonth, expYear) {
+					var today = new Date();
+					var year = today.getFullYear();
+					var month = today.getMonth() + 1;
+					if (expMonth == "NA") {
+						displayMessage("Invalid Card Month", "The expiration month is invalid. Please correct it and press the Submit button again.", "OK");
+						return false;
+					}
+					if (expYear == "NA") {
+						displayMessage("Invalid Card Year", "The expiration year is invalid. Please correct it and press the Submit button again.", "OK");
+						return false;
+					}
+					expMonth = expMonth * 1; // This changes the month from 06 to 6 (for example).
+					if (((expYear == year) && (expMonth < month)) || (expYear < year)) {
+						displayMessage("Expired Card", "Today's date is past the expiration date entered for the card. If the card is indeed expired, please use a different card. Otherwise, correct the date entry.", "OK");
+						return false;
+					}
+					return true;
+				}
+				
+				function validCardNumber(s) {
+					var i, n, c, r, t;
+// To do:
+// Check for accepted card types: VISA, MasterCard, Discover, AmEx.
+					// First, reverse the string and remove any non-numeric characters.
+					r = "";
+					for (i = 0; i < s.length; i++) {
+						c = parseInt(s.charAt(i), 10);
+						if (c >= 0 && c <= 9)
+							r = c + r;
+					}
+
+					// Check for a bad string.
+					if (r.length <= 1)
+						return false;
+
+					// Now run through each single digit to create a new string. Even digits
+					// are multiplied by two, odd digits are left alone.
+					t = "";
+					for (i = 0; i < r.length; i++) {
+						c = parseInt(r.charAt(i), 10);
+						if (i % 2 != 0)
+							c *= 2;
+						t = t + c;
+					}
+
+					// Finally, add up all the single digits in this string.
+					n = 0;
+					for (i = 0; i < t.length; i++) {
+						c = parseInt(t.charAt(i), 10);
+						n = n + c;
+					}
+
+					// If the resulting sum is an even multiple of ten (but not zero), the
+					// card number is good.
+
+					if (n != 0 && n % 10 == 0)
+						return true;
+					else
+						return false;
+				}
+			});
+		</script>
+	</body>
+</html>
+
+		

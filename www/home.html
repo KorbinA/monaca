@@ -456,21 +456,6 @@
           initSelectionsFromStorage();
           setupChangeHandlers();
           kickGeolocationFlow();
-
-          // Fix for safe-area insets not being applied on first load
-          if (window.cordova) {
-            setTimeout(function () {
-              if (window.StatusBar) {
-                // Determine if we need to adjust for status bar
-                // Sometimes toggling overlay helps re-trigger layout
-                // window.StatusBar.overlaysWebView(true); 
-              }
-              // Force a relayout
-              document.body.style.display = 'none';
-              document.body.offsetHeight; // trigger reflow
-              document.body.style.display = '';
-            }, 300);
-          }
         }
 
         $(document).ready(function () {

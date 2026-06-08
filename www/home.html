@@ -54,16 +54,15 @@
           <tr>
             <td class="header" style="width:33%;">
               <select class="category" id="category">
-                <option value="4">all deals</option>
-                <option value="1">food</option>
-                <option value="2">services</option>
-                <option value="3">activities</option>
-                <option value="5">retail</option>
-                <option value="6">Exclude Premium Deals</option>
+                <option value="4">All Deals</option>
+                <option value="1">Food</option>
+                <option value="2">Services</option>
+                <option value="3">Activities</option>
+                <option value="5">Retail</option>
               </select>
             </td>
             <td class="header" style="text-align:center; width:34%;">
-              <img src="images/black-glass.png" style="width:25%;" alt="Glass Card">
+              <img id="gcLogo" src="images/black-glass.png" style="width:25%;" alt="Glass Card">
             </td>
             <td class="header" style="width:33%;">
               <select class="category" id="radius">
@@ -243,10 +242,10 @@
             });
           } catch(e){ /* non-blocking */ }
         }
-      
+
         function ajaxMerchants(options) {
           options = options || {};
-          var categoryText = $('#category option:selected').text();
+          var categoryText = $('#category option:selected').text().toLowerCase();
           var radiusText = $('#radius option:selected').text().substring(0, 2);
           var key = mkKey(latitude, longitude, categoryText, radiusText);
       
@@ -259,28 +258,39 @@
           }
       
           if (!options.background) showSpinnerDelayed();
-      
+
+          var sharedData = "&Latitude=" + encodeURIComponent(latitude) +
+                           "&Longitude=" + encodeURIComponent(longitude) +
+                           "&Category=" + encodeURIComponent(categoryText) +
+                           "&Radius=" + encodeURIComponent(radiusText);
+
+          // Track both requests so we hide the spinner only when both finish
+          var regularDone = false, premiumDone = false;
+          function bothDone() {
+            if (regularDone && premiumDone) hideSpinner();
+          }
+
+          // ── Regular merchants ───────────────────────────────────────────
           $.ajax({
             url: "https://glasscard.org/dataaccessprod4/getMerchants.ashx",
             type: "POST",
-            data: "AccountId=" + encodeURIComponent(localStorage.getItem("accountId") || "") +
-                  "&Latitude=" + encodeURIComponent(latitude) +
-                  "&Longitude=" + encodeURIComponent(longitude) +
-                  "&Category=" + encodeURIComponent(categoryText) +
-                  "&Radius=" + encodeURIComponent(radiusText),
+            data: "AccountId=" + encodeURIComponent(localStorage.getItem("accountId") || "") + sharedData,
             dataType: "text",
             crossDomain: true,
             timeout: AJAX_TIMEOUT_MS,
             success: function(html){
+              regularDone = true;
               $('#merchants').empty().append(html);
-              writeMerchantsCache(key, html);
-              hideSpinner();
+              bothDone();
+              // After regular merchants render, premium deals go below them
+              ajaxPremiumDeals();
             },
             error: function(){
-              hideSpinner();
+              regularDone = true;
+              bothDone();
               if (!readMerchantsCache(key)) {
                 displayMessage("",
-                  "We couldn’t load nearby deals. Check your connection or try again.",
+                  "We couldn't load nearby deals. Check your connection or try again.",
                   [
                     { text: "Retry", click: function(){ $(this).dialog('close'); ajaxMerchants({showInstantCache:true}); } },
                     { text: "Close", click: function(){ $(this).dialog('close'); } }
@@ -289,6 +299,56 @@
               }
             }
           });
+
+          // ── Premium merchants (shown with lock for non-premium users) ───
+          // Parameter format mirrors premium.html's loadList() exactly.
+          function ajaxPremiumDeals() {
+            $.ajax({
+              url: "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
+              type: "POST",
+              data: "Latitude="  + localStorage.getItem("latitude")  +
+                    "&Longitude=" + localStorage.getItem("longitude") +
+                    "&Category="  + (categoryText || "all deals") +
+                    "&Radius="    + radiusText +
+                    "&accountid=" + (localStorage.getItem("accountId") || ""),
+              dataType: "text",
+              crossDomain: true,
+              timeout: AJAX_TIMEOUT_MS,
+              success: function(html) {
+                premiumDone = true;
+                var trimmed = $.trim(html);
+                // Skip the server's "no deals" fallback message — don't clutter the feed
+                var isEmptyMsg = !trimmed.length || trimmed.toLowerCase().indexOf("no") !== -1 && trimmed.toLowerCase().indexOf("deal") !== -1;
+                if (!isEmptyMsg) {
+                  // Remove any previous premium section before appending fresh one
+                  $('#merchants .premium-home-section').remove();
+                  var $wrap = $('<div class="premium-home-section"></div>').append($(html));
+                  $('#merchants').append($wrap);
+
+                  // Block clicks for non-premium users
+                  var isPremium = false;
+                  try { isPremium = JSON.parse(localStorage.getItem("isPremium")); } catch(e) {}
+                  if (!isPremium) {
+                    $wrap.find('.premium-container a').off('click.lock').on('click.lock', function(e) {
+                      e.preventDefault();
+                      e.stopImmediatePropagation();
+                      displayMessage("Card Members Only",
+                        "This deal is only available for Card Members.",
+                        [{ text: "Learn More", click: function(){ $(this).dialog('close'); window.location.href = 'premium.html'; } },
+                         { text: "Close",      click: function(){ $(this).dialog('close'); } }]
+                      );
+                      return false;
+                    });
+                  }
+                }
+                bothDone();
+              },
+              error: function() {
+                premiumDone = true;
+                bothDone(); // premium failing silently is acceptable
+              }
+            });
+          }
         }
       
         /* ===========================
@@ -330,7 +390,7 @@
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
-              ajaxMerchants({ showInstantCache:false });
+              ajaxMerchants({ showInstantCache:true });
               
               $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
 
@@ -455,8 +515,17 @@
            UI state
         =========================== */
         function initSelectionsFromStorage() {
-          var c = localStorage.getItem("category"); if (c) $('#category').val(c).change();
-          var r = localStorage.getItem("radius");   if (r) $('#radius').val((r * 1) + 1).change();
+          var c = localStorage.getItem("category");
+          // Restore saved category (option "6" no longer exists here so it safely
+          // falls back to the HTML default "All Deals" if stored value is stale).
+          if (c && c !== "6") {
+            $('#category').val(c);
+          } else {
+            // Clear any stale "Exclude" value so the backend gets "all deals"
+            $('#category').val('4');
+            localStorage.setItem("category", '4');
+          }
+          var r = localStorage.getItem("radius");   if (r) $('#radius').val((r * 1) + 1);
         }
       
         function setupChangeHandlers() {
@@ -515,7 +584,7 @@
 
           // Console helpers (manual refresh, etc.)
           window.__gc = {
-            refreshLocation: refreshLocation, // e.g., window.__gc.refreshLocation({highAccuracy:true})
+            refreshLocation: refreshLocation,
             reload: function(){ ajaxMerchants({ showInstantCache:true }); },
             clearLocation: function(){
               localStorage.removeItem('latitude');
@@ -523,6 +592,94 @@
               localStorage.removeItem('locationTimestamp');
             }
           };
+
+          // ── Secret 5-tap logo: location override ──────────────────────────
+          (function() {
+            var tapCount = 0;
+            var tapTimer = null;
+
+            document.getElementById('gcLogo').addEventListener('click', function(e) {
+              e.stopPropagation();
+              tapCount++;
+              clearTimeout(tapTimer);
+              // Reset counter after 3 s of no taps
+              tapTimer = setTimeout(function() { tapCount = 0; }, 3000);
+              if (tapCount >= 5) {
+                tapCount = 0;
+                clearTimeout(tapTimer);
+                showDevLocationModal();
+              }
+            }, false);
+
+            function showDevLocationModal() {
+              var modal   = document.getElementById('devLocationModal');
+              var input   = document.getElementById('devLocationInput');
+              var status  = document.getElementById('devLocationStatus');
+              input.value = '';
+              status.textContent = '';
+              modal.classList.remove('hidden');
+              setTimeout(function() { input.focus(); }, 200);
+            }
+
+            function hideDevLocationModal() {
+              document.getElementById('devLocationModal').classList.add('hidden');
+            }
+
+            document.getElementById('devLocationCancel').addEventListener('click', hideDevLocationModal);
+            document.getElementById('devLocationOverlay').addEventListener('click', hideDevLocationModal);
+
+            document.getElementById('devLocationInput').addEventListener('keydown', function(e) {
+              if (e.key === 'Enter') { e.preventDefault(); doGeocode(); }
+            });
+
+            document.getElementById('devLocationSubmit').addEventListener('click', doGeocode);
+
+            function doGeocode() {
+              var query  = (document.getElementById('devLocationInput').value || '').trim();
+              var status = document.getElementById('devLocationStatus');
+              var btn    = document.getElementById('devLocationSubmit');
+              if (!query) return;
+
+              status.textContent = 'Looking up…';
+              status.style.color = '#94a3b8';
+              btn.disabled = true;
+              btn.textContent = 'Looking up…';
+
+              $.ajax({
+                url: 'https://nominatim.openstreetmap.org/search',
+                type: 'GET',
+                data: { q: query, format: 'json', limit: 1 },
+                dataType: 'json',
+                timeout: 10000,
+                headers: { 'Accept-Language': 'en' },
+                success: function(results) {
+                  btn.disabled = false;
+                  btn.textContent = 'Set Location';
+                  if (!results || !results.length) {
+                    status.textContent = '⚠ Location not found. Try a different address.';
+                    status.style.color = '#ef4444';
+                    return;
+                  }
+                  var r = results[0];
+                  var lat = parseFloat(r.lat);
+                  var lon = parseFloat(r.lon);
+                  var label = r.display_name || query;
+                  saveCoords(lat, lon);
+                  latitude = lat; longitude = lon;
+                  $('#locationStatusText').html('📍 Override: ' + label.split(',').slice(0,2).join(',')).css('color','#f59e0b');
+                  ajaxMerchants({ showInstantCache: false });
+                  hideDevLocationModal();
+                },
+                error: function() {
+                  btn.disabled = false;
+                  btn.textContent = 'Set Location';
+                  status.textContent = '⚠ Network error. Check your connection.';
+                  status.style.color = '#ef4444';
+                }
+              });
+            }
+          })();
+          // ─────────────────────────────────────────────────────────────────
         });
       })();
       </script>
@@ -539,6 +696,34 @@
           </div>
           <div class="custom-modal-footer">
             <button id="btnModalClose" class="custom-modal-btn btn-primary">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secret location override modal (5-tap logo) -->
+      <div id="devLocationModal" class="custom-modal hidden">
+        <div class="custom-modal-overlay" id="devLocationOverlay"></div>
+        <div class="custom-modal-content">
+          <h2 style="font-size:17px !important;">📍 Set Test Location</h2>
+          <div class="custom-modal-body">
+            <p style="margin-bottom:12px !important;">Enter a city, state, zip code, or full address.</p>
+            <input
+              id="devLocationInput"
+              type="text"
+              placeholder="e.g. Rexburg, ID or 83440"
+              style="
+                width:100%; box-sizing:border-box;
+                padding:12px 14px; border-radius:12px;
+                border:1.5px solid #e2e8f0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+                font-size:15px; color:#0f172a; background:#f8fafc;
+                outline:none; margin-bottom:4px;
+              "
+            />
+            <p id="devLocationStatus" style="font-size:12px !important; color:#94a3b8 !important; margin:6px 0 0 0 !important; min-height:16px;"></p>
+          </div>
+          <div class="custom-modal-footer">
+            <button id="devLocationSubmit" class="custom-modal-btn btn-primary">Set Location</button>
+            <button id="devLocationCancel" class="custom-modal-btn btn-secondary">Cancel</button>
           </div>
         </div>
       </div>

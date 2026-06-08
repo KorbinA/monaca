@@ -216,12 +216,11 @@
             <tr>
                 <td class="header">
                     <select class="category" id="category" style="">
-                        <option value="4">all deals</option>
-                        <option value="1">food</option>
-                        <option value="2">services</option>
-                        <option value="3">activities</option>
-                        <option value="5">retail</option>
-                        <option value="6">Exclude Local Deals</option>
+                        <option value="4">All Deals</option>
+                        <option value="1">Food</option>
+                        <option value="2">Services</option>
+                        <option value="3">Activities</option>
+                        <option value="5">Retail</option>
                     </select>
                 </td>
                 <td class="header">
@@ -538,7 +537,7 @@
 						type: "POST",
 						data: "Latitude=" + window.localStorage.getItem("latitude") +      // pos.coords.latitude +
 								"&Longitude=" + window.localStorage.getItem("longitude") +      // pos.coords.longitude +
-								"&Category=" + ($('#category option:selected').text() || 'all deals') +
+								"&Category=" + ($('#category option:selected').text().toLowerCase() || 'all deals') +
 								"&Radius=" + ($('#radius option:selected').text().substring(0, 2) || 60) +
 								"&accountid=" + window.localStorage.getItem("accountId"),
 						dataType: "text",

@@ -75,6 +75,16 @@
             </td>
           </tr>
         </table>
+        <hr style="border: 0; border-top: 1px solid #f4f4f4; margin: 4px 0 0 0;">
+        <div id="locationStatusContainer" style="padding: 4px 16px 0 16px; font-size: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+          <span id="locationStatusText" style="color: #64748b;">📍 Detecting location...</span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span id="refreshIndicator" style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px;"></span>
+            <button id="btnRefreshLocation" style="background: none; border: none; padding: 2.5px 6px; cursor: pointer; color: #1fab89; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; text-decoration: underline; box-shadow: none !important;">
+              Refresh Location
+            </button>
+          </div>
+        </div>
       </div>
 
       <center>
@@ -112,8 +122,6 @@
         var SPINNER_DELAY_MS         = 800;              // Delay before showing spinner (prevents flash)
         var FAST_GETPOSITION_TIMEOUT = 3000;             // Quick one-shot GPS timeout
         var FAST_GETPOSITION_MAXAGE  = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
-        var FALLBACK_LAT             = 43.8260574;       // Fallback coords (customize)
-        var FALLBACK_LON             = -111.7837469;
       
         /* ===========================
            State
@@ -133,6 +141,12 @@
         function log(){ try { console.log.apply(console, ["[home]"].concat([].slice.call(arguments))); } catch(e){} }
       
         function displayMessage(title, message, buttonsSpec) {
+          var buttons;
+          if (typeof buttonsSpec === 'string') {
+            buttons = [{ text: buttonsSpec, click: function(){ $(this).dialog('close'); } }];
+          } else {
+            buttons = buttonsSpec || [{ text: "Close", click: function(){ $(this).dialog('close'); } }];
+          }
           $('#messageText').html(message);
           $('#messagePopup').dialog({
             modal: true,
@@ -141,7 +155,7 @@
             resizable: false,
             draggable: false,
             open: function(){ $(this).siblings('.ui-dialog-titlebar').remove(); },
-            buttons: buttonsSpec || [{ text: "Close", click: function(){ $(this).dialog('close'); } }]
+            buttons: buttons
           });
         }
       
@@ -287,32 +301,71 @@
           latitude = lat; longitude = lon;
           log('using stored coords ('+reason+'):', lat, lon);
           ajaxMerchants({ showInstantCache:true }); // instant view + network refresh
+          $('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
           return true;
         }
       
+        function showLocationSettingsDialog() {
+          $('#locationModal').removeClass('hidden');
+        }
+
         // Manual refresh (exposed)
         function refreshLocation(opts) {
           opts = opts || {};
-          if (!(navigator && navigator.geolocation)) return;
+          if (!(navigator && navigator.geolocation)) {
+            if (opts.manual) {
+              displayMessage("Error", "Location Services are not supported by this device.", "Close");
+            }
+            return;
+          }
       
+          if (opts.manual) {
+            $('#refreshIndicator').html('<span class="mini-spinner"></span>').removeClass('fade-out-indicator').show();
+          }
+
+          $('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
+
           // Quick, one-shot position (returns OS cached instantly if recent)
           navigator.geolocation.getCurrentPosition(function(pos){
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
-              ajaxMerchants({ showInstantCache:true });
+              ajaxMerchants({ showInstantCache:false });
+              
+              $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
+
+              if (opts.manual) {
+                $('#refreshIndicator').html('<span class="mini-check">✓</span>');
+                setTimeout(function() {
+                  $('#refreshIndicator').addClass('fade-out-indicator');
+                }, 1500);
+              }
             }
           }, function(err){
-            log('manual getCurrentPosition error:', err);
-            // Fall back to stored or fallback city if absolutely nothing
-            if (!tryRenderWithStoredCoords('manual refresh fallback')) {
-              saveCoords(FALLBACK_LAT, FALLBACK_LON);
-              ajaxMerchants({ showInstantCache:true });
+            log('getCurrentPosition error:', err);
+            if (opts.manual) {
+              $('#refreshIndicator').html('');
+            }
+            
+            $('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
+
+            // If they clicked manual refresh, or if we have no stored coords:
+            if (opts.manual || !localStorage.getItem("latitude") || !localStorage.getItem("longitude")) {
+              showLocationSettingsDialog();
+            }
+
+            // Fall back to stored if available
+            if (!tryRenderWithStoredCoords('refreshLocation fallback')) {
+              // Show visual error state in merchants
+              $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+                '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+                '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+                '</div>');
             }
           }, {
-            timeout: FAST_GETPOSITION_TIMEOUT,
-            maximumAge: FAST_GETPOSITION_MAXAGE,
-            enableHighAccuracy: !!opts.highAccuracy
+            timeout: opts.manual ? 10000 : FAST_GETPOSITION_TIMEOUT,
+            maximumAge: opts.manual ? 0 : FAST_GETPOSITION_MAXAGE,
+            enableHighAccuracy: true
           });
         }
       
@@ -325,6 +378,7 @@
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
+              $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
               // If merchants are empty (first display), render now
               if (!$('#merchants').children().length) {
                 ajaxMerchants({ showInstantCache:true });
@@ -368,18 +422,7 @@
               return;
             }
       
-            displayMessage("",
-              "We need your phone's Location Services to show nearby deals. Please allow “While Using the App.”",
-              [
-                { text: "Retry", click: function(){ $(this).dialog('close'); refreshLocation(); } },
-                { text: "Use Fallback Location", click: function(){
-                    $(this).dialog('close');
-                    saveCoords(FALLBACK_LAT, FALLBACK_LON);
-                    ajaxMerchants({ showInstantCache:true });
-                  }
-                }
-              ]
-            );
+            showLocationSettingsDialog();
           }, FIRST_FIX_GATE_MS);
         }
       
@@ -458,6 +501,18 @@
             }
           });
       
+          // Refresh button listener
+          $('#btnRefreshLocation').off('click').on('click', function(e){
+            e.preventDefault();
+            refreshLocation({ manual: true });
+          });
+
+          // Modal buttons listeners
+          $('#btnModalClose, .custom-modal-overlay').off('click').on('click', function(e){
+            e.preventDefault();
+            $('#locationModal').addClass('hidden');
+          });
+
           // Console helpers (manual refresh, etc.)
           window.__gc = {
             refreshLocation: refreshLocation, // e.g., window.__gc.refreshLocation({highAccuracy:true})
@@ -471,6 +526,21 @@
         });
       })();
       </script>
-      
+
+      <!-- Custom Modern Location Services Modal -->
+      <div id="locationModal" class="custom-modal hidden">
+        <div class="custom-modal-overlay"></div>
+        <div class="custom-modal-content">
+          <img src="images/location-icon.png" class="custom-modal-icon" alt="Location Services" />
+          <h2>Location Services Disabled</h2>
+          <div class="custom-modal-body">
+            <p>To show you nearby deals, Glass Card needs access to your location.</p>
+            <p class="instructions-text">Please open your phone's <b>Settings</b>, find the <b>Glass Card</b> app, and grant it location permissions.</p>
+          </div>
+          <div class="custom-modal-footer">
+            <button id="btnModalClose" class="custom-modal-btn btn-primary">Close</button>
+          </div>
+        </div>
+      </div>
   </body>
 </html>

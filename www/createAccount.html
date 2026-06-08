@@ -223,7 +223,7 @@
             url : "https://glasscard.org/dataaccessprod4/getReleaseDate.ashx",
             type: "POST",
             data: "AppType=UserApp" +
-                  "&Version=" + window.localStorage.getItem("userAppVersion") +
+                  "&Version=" + (window.localStorage.getItem("userAppVersion") || "2.0.10") +
                   "&ID=0" +
                   "&ID_Type=CreateAcct",
             dataType: "text",

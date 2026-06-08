@@ -149,6 +149,20 @@
 
     // Version gate identical to original
     function versionGate(next){
+      // Bypass version check if running on localhost / local IP or in development environment
+      if (window.location.hostname === "localhost" || 
+          window.location.hostname === "127.0.0.1" || 
+          window.location.protocol === "file:") {
+        console.log("Local development environment detected: Bypassing version gate.");
+        try {
+          if (!window.localStorage.getItem("userAppVersion")) {
+            window.localStorage.setItem("userAppVersion", "2.0.10");
+          }
+        } catch(e){}
+        next && next();
+        return;
+      }
+
       var version = (window.AppVersion && AppVersion.version) || window.localStorage.getItem("userAppVersion") || "";
       try { if (window.AppVersion && AppVersion.version) window.localStorage.setItem("userAppVersion", AppVersion.version); } catch(e){}
 

@@ -1,12 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head> 
-		<title>Premium</title>
+		<title>Local Deals</title>
 		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 		<link href="css/index.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
 		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
+		<script type="text/javascript" src="js/jquery.counterup.min.js"></script>
 <!--		<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>-->
 <!--		<script type="text/javascript" src="js/jquery-1.12.1.ui.js"></script>-->
 		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
@@ -40,6 +42,161 @@
 				}
 			}
 		</script>
+		<style type="text/css">
+			.banner-card-wrapper {
+				position: relative;
+				width: 92%;
+				max-width: 440px;
+				margin: 20px auto;
+			}
+			.banner-card {
+				position: relative;
+				overflow: hidden;
+				background: rgba(255, 255, 255, 0.75);
+				-webkit-backdrop-filter: blur(20px) saturate(160%);
+				backdrop-filter: blur(20px) saturate(160%);
+				border: 1px solid rgba(255, 255, 255, 0.4);
+				border-radius: 24px;
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+				padding: 30px 24px 24px 24px;
+				text-align: center;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				color: #0f172a;
+			}
+			.banner-card__glow-1 {
+				position: absolute;
+				top: -40px;
+				left: -40px;
+				width: 140px;
+				height: 140px;
+				border-radius: 50%;
+				background: rgba(22, 177, 135, 0.15);
+				filter: blur(35px);
+				z-index: 0;
+				pointer-events: none;
+			}
+			.banner-card__glow-2 {
+				position: absolute;
+				bottom: -40px;
+				right: -40px;
+				width: 140px;
+				height: 140px;
+				border-radius: 50%;
+				background: rgba(59, 130, 246, 0.15);
+				filter: blur(35px);
+				z-index: 0;
+				pointer-events: none;
+			}
+			.banner-card__content {
+				position: relative;
+				z-index: 1;
+			}
+			.banner-card__tag {
+				display: inline-block;
+				font-size: 10px;
+				text-transform: uppercase;
+				letter-spacing: 1.5px;
+				font-weight: 800;
+				color: #16b187;
+				background: rgba(22, 177, 135, 0.08);
+				padding: 4px 10px;
+				border-radius: 9999px;
+				margin-bottom: 14px;
+				border: 1px solid rgba(22, 177, 135, 0.15);
+			}
+			.banner-card__title {
+				font-size: 22px;
+				font-weight: 900;
+				letter-spacing: -0.5px;
+				margin: 0 0 16px 0;
+				width: 100%;
+				background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			.banner-card__text {
+				font-size: 14.5px;
+				line-height: 1.6;
+				color: #4b5563;
+				margin: 0 0 24px 0;
+			}
+			.savings-gradient {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				display: inline-block;
+				font-weight: 900;
+			}
+			.savings-widget {
+				background: rgba(22, 177, 135, 0.05);
+				border: 1px dashed rgba(22, 177, 135, 0.25);
+				border-radius: 18px;
+				padding: 16px 12px;
+				margin-bottom: 20px;
+				text-align: center;
+				position: relative;
+				overflow: hidden;
+			}
+			.savings-widget__label {
+				font-size: 11px;
+				text-transform: uppercase;
+				letter-spacing: 1.5px;
+				font-weight: 800;
+				color: #5f718a;
+				margin-bottom: 4px;
+			}
+			.savings-widget__amount {
+				font-size: 32px;
+				font-weight: 900;
+				color: #16b187;
+				letter-spacing: -0.5px;
+				line-height: 1;
+			}
+			.banner-card__actions {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+			}
+			.banner-card__btn {
+				appearance: none;
+				-webkit-appearance: none;
+				border: 0;
+				cursor: pointer;
+				padding: 14px 18px;
+				border-radius: 14px;
+				font-weight: 800;
+				font-size: 15px;
+				text-decoration: none !important;
+				display: block;
+				text-align: center;
+				transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+				box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+			}
+			.banner-card__btn:active {
+				transform: scale(0.985);
+			}
+			.banner-card__btn--primary {
+				background: linear-gradient(135deg, #16b187 0%, #3b82f6 100%);
+				color: #ffffff !important;
+				box-shadow: 0 8px 20px rgba(32, 166, 255, 0.25);
+			}
+			.banner-card__btn--primary:hover {
+				box-shadow: 0 10px 24px rgba(32, 166, 255, 0.3);
+				opacity: 0.98;
+			}
+			.banner-card__btn--secondary {
+				background: rgba(255, 255, 255, 0.8);
+				border: 1px solid rgba(0, 0, 0, 0.08);
+				color: #2066c7 !important;
+			}
+			.banner-card__btn--secondary:hover {
+				background: rgba(255, 255, 255, 0.95);
+				border-color: rgba(0, 0, 0, 0.15);
+			}
+		</style>
 	</head>
 	<body>
 	
@@ -54,9 +211,7 @@
 		<br>
 	</center-->
 	<div class="container categoryContainer">
-    <center>
-                <p style="font-size:150%; color:#222831; margin:0; padding:0;">Premium Deals</p>
-            </center>
+
         <table class="header">
             <tr>
                 <td class="header">
@@ -66,7 +221,7 @@
                         <option value="2">services</option>
                         <option value="3">activities</option>
                         <option value="5">retail</option>
-                        <option value="6">Exclude Premium Deals</option>
+                        <option value="6">Exclude Local Deals</option>
                     </select>
                 </td>
                 <td class="header">
@@ -81,6 +236,16 @@
                 </td>
             </tr>
         </table>
+        <hr style="border: 0; border-top: 1px solid #f4f4f4; margin: 4px 0 0 0;">
+        <div id="locationStatusContainer" style="padding: 4px 16px 0 16px; font-size: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+          <span id="locationStatusText" style="color: #64748b;">📍 Detecting location...</span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span id="refreshIndicator" style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px;"></span>
+            <button id="btnRefreshLocation" style="background: none; border: none; padding: 2.5px 6px; cursor: pointer; color: #1fab89; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; text-decoration: underline; box-shadow: none !important;">
+              Refresh Location
+            </button>
+          </div>
+        </div>
     </div>
 	
 
@@ -104,26 +269,97 @@
 		<script type="text/javascript">
 			document.addEventListener("deviceready", function() {}, false);
 			$(function() {
+				try {
+					var isPremium = window.localStorage.getItem("isPremium");
+					var premiumUntil = window.localStorage.getItem("premiumUntil");
+					if ((isPremium === "true" || isPremium === true) && premiumUntil) {
+						var untilDate = new Date(premiumUntil);
+						if (!isNaN(untilDate.getTime()) && untilDate < new Date()) {
+							window.localStorage.setItem("isPremium", false);
+						}
+					}
+				} catch(e) {}
+
+				function encrypt(textToEncrypt) {
+					var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
+					var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
+					rsa.FromXmlString("<RSAKeyValue><Modulus>j47ELmY9UH+ugOpzj2qiuL0uWtTIUD1Ts2VK0Y5rf3s65T/iDWnCoSL+BstDgR61YpAsRfCGSjrnbr+AEkmkALkFlkmWcr7s3dUv2SSnOh0FDHE3r/DGpSbi99sscrH2PnmDRyrg7060ITmPV4h/h39sbQVVJjPFD0hIJK3ScbUPyg0Jfx83l0YfKOLd0q/KAwNspV4Lem2kiT50EUATuzQZerid937phL69kUXlaZn6z/SG1Zr2QpHsH7K7kAejpB2lFOEgrXLv29aRHE7f9yR8oNk0l7/iX5CiHEJ+XdD/mRVVJ8oEdjJ5xJZFJQrPMCc2BF7HwrqWxOhFYLFpfw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+					var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);
+					return System.Convert.ToBase64String(encryptedBytes);
+				}
+
 				function loadLearnMore() {
-					var parameterCache = window.localStorage.getItem("premium.banner");
-					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
-							{Name: 'premium', Key: 'banner'},
-							function(data) {
-								window.localStorage.setItem("premium.banner", data);
-								$("#learnMore").html(data);
-							})
-					$("#learnMore").html(parameterCache);
+					var html = 
+						'<div class="banner-card-wrapper">' +
+						'  <div class="banner-card__glow-1"></div>' +
+						'  <div class="banner-card__glow-2"></div>' +
+						'  <div class="banner-card">' +
+						'    <div class="banner-card__content">' +
+						'      <div class="banner-card__tag">Fundraiser Card</div>' +
+						'      <h2 class="banner-card__title">Activate Your Glass Card</h2>' +
+						'      <p class="banner-card__text">Support local schools, groups, and businesses while saving money on every purchase. Unlock deals in your area today!</p>' +
+						'      <div class="banner-card__actions">' +
+						'        <a href="getPremium.html" class="banner-card__btn banner-card__btn--primary">Buy a Card</a>' +
+						'        <a href="gopremium.html" class="banner-card__btn banner-card__btn--secondary">Activate with Code</a>' +
+						'      </div>' +
+						'    </div>' +
+						'  </div>' +
+						'</div>';
+					$("#learnMore").html(html);
 				}
 
 				function loadLearnMoreExMember() {
-					var parameterCache = window.localStorage.getItem("premium.banner.exmember");
-					$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
-							{Name: 'premium', Key: 'banner.exmember'},
-							function(data) {
-								window.localStorage.setItem("premium.banner.exmember", data);
-								$("#learnMore").html(data);
-							})
-					$("#learnMore").html(parameterCache);
+					var defaultText = "Renew your card today to continue supporting local groups, local businesses, and saving money on every purchase.";
+					var renderBanner = function(text) {
+						var html = 
+							'<div class="banner-card-wrapper">' +
+							'  <div class="banner-card__glow-1"></div>' +
+							'  <div class="banner-card__glow-2"></div>' +
+							'  <div class="banner-card">' +
+							'    <div class="banner-card__content">' +
+							'      <div class="banner-card__tag">Support Local</div>' +
+							'      <h2 class="banner-card__title">Support & Save Again</h2>' +
+							'      <p class="banner-card__text">' + text + '</p>' +
+							'      <div class="banner-card__actions">' +
+							'        <a href="gopremium.html" class="banner-card__btn banner-card__btn--primary">Renew Card</a>' +
+							'      </div>' +
+							'    </div>' +
+							'  </div>' +
+							'</div>';
+						$("#learnMore").html(html);
+					};
+
+					renderBanner(defaultText);
+
+					var deviceID = window.localStorage.getItem("deviceID");
+					if (deviceID) {
+						try {
+							var token = JSON.stringify({DeviceID: deviceID});
+							token = encrypt(token);
+							$.ajax({
+								url: "https://glasscard.org/dataaccessprod4/getSavings.ashx",
+								type: "POST",
+								data: "Token=" + token,
+								dataType: "text",
+								crossdomain: true,
+								success: function(_data) {
+									try {
+										var data = JSON.parse(_data);
+										var cleanSavings = data.Savings.replace(/[^0-9.]/g, '');
+										var savings = parseFloat(cleanSavings);
+										if (!isNaN(savings) && savings > 0) {
+											var savingsText = 'You saved <strong class="savings-gradient">$' + data.Savings + '</strong> with your card last year! Renew today to continue supporting local groups, local businesses, and saving money on every purchase.';
+											renderBanner(savingsText);
+										}
+									} catch(e) {
+										console.log("Error parsing savings:", e);
+									}
+								}
+							});
+						} catch(e) {
+							console.log("Error encrypting deviceID:", e);
+						}
+					}
 				}
 
 				function displayMessage(title, message, buttonText, url) {
@@ -176,22 +412,87 @@
 				var latitude = window.localStorage.getItem("latitude");
 				var longitude = window.localStorage.getItem("longitude");
 
-				if (!latitude || !longitude) {
+				function showLocationSettingsDialog() {
+					$('#locationModal').removeClass('hidden');
+				}
+
+				function refreshLocation(opts) {
+					opts = opts || {};
+					if (!(window.navigator && window.navigator.geolocation)) {
+						if (opts.manual) {
+							displayMessage("Error", "Location Services are not supported by this device.", "Close");
+						}
+						return;
+					}
+
+					if (opts.manual) {
+						$('#refreshIndicator').html('<span class="mini-spinner"></span>').removeClass('fade-out-indicator').show();
+					}
+
+					$('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
 
 					window.navigator.geolocation.getCurrentPosition(function(pos) {
-						latitude = pos.coords.latitude;
-						longitude = pos.coords.longitude;
-						window.localStorage.setItem("latitude", latitude);
-						window.localStorage.setItem("longitude", longitude);
-						loadList();
-					}, function(error){
-						displayMessage("", "Please make sure your location services are turned on.", "Close");
-						// Rexburg only:
-						// window.localStorage.setItem("latitude", "43.8260574");
-						// window.localStorage.setItem("longitude", "-111.7837469");
-						loadList();
-					}, {timeout: 5 * 1000});
+						if (pos && pos.coords) {
+							latitude = pos.coords.latitude;
+							longitude = pos.coords.longitude;
+							window.localStorage.setItem("latitude", latitude);
+							window.localStorage.setItem("longitude", longitude);
+							window.localStorage.setItem("locationTimestamp", String(Date.now()));
+							loadList();
+							
+							$('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
+
+							if (opts.manual) {
+								$('#refreshIndicator').html('<span class="mini-check">✓</span>');
+								setTimeout(function() {
+									$('#refreshIndicator').addClass('fade-out-indicator');
+								}, 1500);
+							}
+						}
+					}, function(error) {
+						console.log("Premium geolocation error:", error);
+						if (opts.manual) {
+							$('#refreshIndicator').html('');
+						}
+						
+						$('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
+
+						// Show instructions dialog if manual or if we have no stored coords
+						if (opts.manual || !window.localStorage.getItem("latitude") || !window.localStorage.getItem("longitude")) {
+							showLocationSettingsDialog();
+						}
+
+						// Render empty state
+						if (!window.localStorage.getItem("latitude") || !window.localStorage.getItem("longitude")) {
+							$('#premium-container').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+								'<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+								'<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+								'</div>');
+						}
+					}, {
+						timeout: opts.manual ? 10000 : 5000,
+						maximumAge: opts.manual ? 0 : 5 * 60 * 1000,
+						enableHighAccuracy: true
+					});
+				}
+
+				// Refresh button listener
+				$('#btnRefreshLocation').off('click').on('click', function(e) {
+					e.preventDefault();
+					refreshLocation({ manual: true });
+				});
+
+				// Modal buttons listeners
+				$('#btnModalClose, .custom-modal-overlay').off('click').on('click', function(e) {
+					e.preventDefault();
+					$('#locationModal').addClass('hidden');
+				});
+
+				// Initial location check
+				if (!latitude || !longitude) {
+					refreshLocation();
 				} else {
+					$('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
 					loadList();
 				}
 
@@ -214,7 +515,7 @@
 					$(target).append(elements.slice(0, chunk));
 					if(!JSON.parse(window.localStorage.getItem("isPremium"))) {
 						$('.premium-container a').click(function () {
-							displayMessage("Only for Premium Members", "This deal is only available for Premium Members", "Close");
+							displayMessage("Only for Card Members", "This deal is only available for Card Members", "Close");
 							return false;
 						});
 					}
@@ -276,5 +577,21 @@
 
 
 		</script>
+
+		<!-- Custom Modern Location Services Modal -->
+		<div id="locationModal" class="custom-modal hidden">
+			<div class="custom-modal-overlay"></div>
+			<div class="custom-modal-content">
+				<img src="images/location-icon.png" class="custom-modal-icon" alt="Location Services" />
+				<h2>Location Services Disabled</h2>
+				<div class="custom-modal-body">
+					<p>To show you nearby deals, Glass Card needs access to your location.</p>
+					<p class="instructions-text">Please open your phone's <b>Settings</b>, find the <b>Glass Card</b> app, and grant it location permissions.</p>
+				</div>
+				<div class="custom-modal-footer">
+					<button id="btnModalClose" class="custom-modal-btn btn-primary">Close</button>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

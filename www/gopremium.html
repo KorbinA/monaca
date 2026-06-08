@@ -1,176 +1,344 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html style="background:#3e3e3e; background-image:url(images/darkfancypizza.jpg); background-size:cover;height:100%; background-position:top; background-repeat:no-repeat;">
-	<head>
-		<title>Go Premium</title>
-		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-		<link href="css/index.css" rel="stylesheet" type="text/css"/>
-		<script type="text/javascript" charset="utf-8" src="cordova.js"></script> 
-		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.IO.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.Text.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.Convert.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.BitConverter.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.BigInt.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.debug.js"></script>
-		<script type="text/javascript" language="JavaScript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
-	</head>
-	<body>
+<!DOCTYPE html>
+<html lang="en">
 
-		<div class="card" id="activate" style="width:86%; height:275px; margin:auto; position:absolute; top:0; bottom:0; right:0;  left:0; display:block;">
-			<div id="activate_content"> LOADING CONTENT </div>
-				
-			<form>
-					<input class="billingForm" style="width:80%; text-align:center;" data-clear-btn="true" name="accessCode" id="accesstoken" value="" type="text" maxlength="35" placeholder="Access Code">
-					<br>
-					<br>
-					<button type="button" id="activatebutton" class="form" style="width:85%; box-shadow: 0px 1px 1px 01px rgba(0,0,0,0.3);">Activate</button>
-					<br>
-					<p style="color:black; font-size:10pt; text-decoration: underline;"><a href="getPremium.html" style="color:black;">Don't have an access code?</a></p>
-					<br>
-			</form>
-		</div>
+<head>
+  <meta charset="utf-8" />
+  <title>Activate Your Digital Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="js/jquery-ui.css" />
+  <link href="css/index.css" rel="stylesheet" type="text/css" />
+  <link href="css/newStyle.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+  <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+  <style>
+    .wrap {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+      /* space for footer */
+    }
 
-		<div class="card" id="renew" style="width:86%; height:310px; margin:auto; position:absolute; top:0; bottom:0; right:0;  left:0; display:none;">
-			<div id="renew_content"> LOADING CONTENT</div>
-					<br>
-		</div>
-				
-<footer class="menu" role="navigation">
-  <a class="tab" href="home.html" aria-label="Discover">
-    <img src="images/search-grey.png" alt="">
-    <span>Discover</span>
-  </a>
-  <a class="tab" href="profile.html" aria-label="Account">
-    <img src="images/account-grey.png" alt="">
-    <span>Account</span>
-  </a>
-</footer>
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 8px 0;
+      font-size: clamp(20px, 5.5vw, 26px);
+      letter-spacing: .4px;
+      font-weight: 900;
+      color: #0b1b34;
+    }
+
+    header p {
+      margin: 0;
+      color: #5f718a;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .code-input {
+      flex: 1;
+      font-size: 18px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #dbe5f0;
+      outline: none;
+      letter-spacing: .5px;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .code-input:focus {
+      border-color: #b8d3ff;
+      box-shadow: 0 0 0 5px rgba(32, 166, 255, .22);
+    }
+
+    .btn-action {
+      appearance: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+      color: #fff;
+      min-width: 110px;
+      font-size: 15px;
+      box-shadow: 0 8px 20px rgba(22, 177, 135, .2);
+      transition: transform .05s ease, opacity .2s ease;
+    }
+
+    .btn-action[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-action:active:not([disabled]) {
+      transform: translateY(1px);
+    }
+
+    .tips {
+      margin-top: 20px;
+      background: #fafafa;
+      border: 1px dashed #e6ecf2;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .tips summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: #374151;
+      font-size: 13.5px;
+      outline: none;
+    }
+
+    .tips summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .tip-list {
+      margin: 8px 0 0 0;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .tip-list li {
+      margin: 8px 0;
+      padding-left: 0px;
+      font-size: 12px;
+    }
+
+    .footer-mini {
+      margin-top: 20px;
+      text-align: center;
+      color: #5f718a;
+      font-size: 13.5px;
+    }
+
+    #messagePopup .ui-dialog-content {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body class="gradient">
+  <main class="container">
+    <div class="wrap">
 
 
-		<div id="messagePopup" title="">
-			<label id="messageText"></label>
+      <section class="card" id="activate" style="display:none; width: 100%;">
+        <div id="activate_content" style="margin-bottom:12px;"></div>
+
+        <label for="accessCode" style="font-size:13.5px; color:#5f718a; font-weight:700;">Access Code</label>
+        <div class="input-row">
+          <input id="accessCode" name="unlockCode" class="code-input" type="text" inputmode="text" autocomplete="off"
+            autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="36" placeholder="XXXXXX" />
+          <button id="activateBtn" class="btn-action" disabled>Activate</button>
         </div>
 
-		<script type="text/javascript">
+        <details class="tips">
+          <summary>Where is my access code?</summary>
+          <ul class="tip-list" style="margin-left:0px; padding-left:0px; list-style-type: none;">
+            <li style="text-align: left; margin-bottom: 10px;"><strong>Plastic fundraiser card:</strong> your access
+              code is printed on the physical card.</li>
+            <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout
+              confirmation screen and in your emailed receipt.</li>
+          </ul>
+        </details>
 
-			function displayMessage(title, message, buttonText, url) {
-				$('#messageText').html(message);
-				$('#messagePopup').dialog({
-					//title: title,
-					closeOnEscape: false,
-					open: function(event, ui) {
-						//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-						$(this).siblings('.ui-dialog-titlebar').remove();
-					},
-					buttons:[{
-						text:buttonText,
-						click:function(){
-							$(this).dialog("close");
-							if ((url != undefined) && (url.length > 0)) {
-								window.location.href = url;
-							}
-						}
-					}]
-				});
-			}
+        <div class="footer-mini">
+          Don’t have an access code? <a href="getPremium.html"
+            style="color:#2066c7; text-decoration:none; font-weight:800;">Buy a Card Online</a>
+        </div>
+      </section>
 
-			if(JSON.parse(window.localStorage.getItem("isPremium"))) {
-				$('#renew').show();
-				$('#activate').hide();
-				loadRenew();
-			} else if(window.localStorage.getItem("premiumUntil")) {
-				$('#renew').hide();
-				$('#activate').show();
-				loadActivateExMember();
-			} else {
-				$('#renew').hide();
-				$('#activate').show();
-				loadActivate();
-			}
+      <section class="card" id="renew" style="display:none; width: 100%;">
+        <div id="renew_content"> LOADING CONTENT</div>
+      </section>
+    </div>
+  </main>
 
-			function loadActivate() {
-				var parameterCache = window.localStorage.getItem("gopremium.activate");
-				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
-						{Name: 'gopremium', Key: 'activate'},
-						function(data) {
-							window.localStorage.setItem("gopremium.activate", data);
-							$("#activate_content").html(data);
-						})
-				$("#activate_content").html(parameterCache);
+  <footer class="menu" role="navigation">
+    <a class="tab" href="home.html" aria-label="Discover">
+      <img src="images/search-grey.png" alt="">
+      <span>Discover</span>
+    </a>
+    <a class="tab" href="profile.html" aria-label="Account">
+      <img src="images/account-grey.png" alt="">
+      <span>Account</span>
+    </a>
+  </footer>
 
+  <div id="messagePopup" title="" style="display:none;">
+    <label id="messageText"></label>
+  </div>
 
-				$("#activatebutton").click(function(e) {
-					var accesstoken = $("#accesstoken").val();
-					var accountid = window.localStorage.getItem("accountId");
-					$.get("https://glasscard.org/dataaccessprod4/activateAccessToken.ashx",
-							{accesstoken: accesstoken, accountid: accountid},
-							function(_data) {
-								var data = JSON.parse(_data);
-								if(data.ok) {
-									console.log("worked!");
-									window.localStorage.setItem("isPremium", true);
-									window.location.href = "home.html";
-								} else {
-									console.log("did not work");
-									displayMessage("Access Token Activation Error", data.message, "OK");
-								}
-							})
-				});
-				return false;
-			}
+  <script type="text/javascript">
+    (function () {
+      function displayMessage(title, message, buttonText, url) {
+        $('#messageText').html(message);
+        $('#messagePopup').dialog({
+          closeOnEscape: false,
+          open: function (event, ui) {
+            $(this).siblings('.ui-dialog-titlebar').remove();
+          },
+          buttons: [{
+            text: buttonText || "OK",
+            click: function () {
+              $(this).dialog("close");
+              if (url) window.location.href = url;
+            }
+          }]
+        });
+      }
 
-			function loadActivateExMember() {
-				var parameterCache = window.localStorage.getItem("gopremium.activate.exmember");
-				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
-						{Name: 'gopremium', Key: 'activate.exmember'},
-						function(data) {
-							window.localStorage.setItem("gopremium.activate.exmember", data);
-							$("#activate_content").html(data);
-						})
-				$("#activate_content").html(parameterCache);
+      function normalizeCode(s) {
+        return (s || "").replace(/[\s\-]/g, "").trim();
+      }
 
+      function setBusy(isBusy) {
+        $('#activateBtn').prop('disabled', isBusy || !normalizeCode($('#accessCode').val()));
+        $('#activateBtn').text(isBusy ? 'Activating…' : 'Activate');
+      }
 
-				$("#activatebutton").click(function(e) {
-					var accesstoken = $("#accesstoken").val();
-					var accountid = window.localStorage.getItem("accountId");
-					$.get("https://glasscard.org/dataaccessprod4/activateAccessToken.ashx",
-							{accesstoken: accesstoken, accountid: accountid},
-							function(_data) {
-								var data = JSON.parse(_data);
-								if(data.ok) {
-									console.log("worked!");
-									window.localStorage.setItem("isPremium", true);
-									window.location.href = "home.html";
-								} else {
-									console.log("did not work");
-									displayMessage("Access Token Activation Error", data.message, "OK");
-								}
-							})
-				});
-				return false;
-			}
+      $('#accessCode').on('input', function () {
+        $('#activateBtn').prop('disabled', !normalizeCode(this.value));
+      });
 
-			function loadRenew() {
-				var premiumBanner = window.localStorage.getItem("premium.banner");
-				$.get("https://glasscard.org/dataaccessprod4/getParameter.ashx",
-						{Name: 'gopremium', Key: 'renew'},
-						function(data) {
-							var newData = data.replace('{%active_until%}', window.localStorage.getItem('premiumUntil'))
-							window.localStorage.setItem("gopremium.renew", newData);
-							$("#renew_content").html(newData);
-						})
-				$("#renew_content").html(premiumBanner);
-			}
+      $('#accessCode').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          $('#activateBtn').click();
+        }
+      });
 
-			document.addEventListener("deviceready", onDeviceReady, false);
+      // Check membership status on load
+      try {
+        var isPremium = window.localStorage.getItem("isPremium");
+        var premiumUntil = window.localStorage.getItem("premiumUntil");
+        if ((isPremium === "true" || isPremium === true) && premiumUntil) {
+          var untilDate = new Date(premiumUntil);
+          if (!isNaN(untilDate.getTime()) && untilDate < new Date()) {
+            window.localStorage.setItem("isPremium", false);
+            isPremium = false;
+          }
+        }
+      } catch (e) { }
 
-			function onDeviceReady() {
+      if (JSON.parse(window.localStorage.getItem("isPremium"))) {
+        $('#renew').show();
+        $('#activate').hide();
+        loadRenew();
+      } else if (window.localStorage.getItem("premiumUntil")) {
+        $('#renew').hide();
+        $('#activate').show();
+        loadActivateExMember();
+      } else {
+        $('#renew').hide();
+        $('#activate').show();
+        loadActivate();
+      }
 
-			}
-		</script>
-	</body>
+      function loadActivate() {
+        var html =
+          '<div style="text-align: left; margin-bottom: 20px;">' +
+          '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Activate Your Digital Card</h2>' +
+          '  <p style="font-size: 14.5px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>' +
+          '</div>';
+        $("#activate_content").html(html);
+      }
+
+      function loadActivateExMember() {
+        var html =
+          '<div style="text-align: left; margin-bottom: 20px;">' +
+          '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Enter Access Code</h2>' +
+          '  <p style="font-size: 14.5px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>' +
+          '</div>';
+        $("#activate_content").html(html);
+      }
+
+      function loadRenew() {
+        var premiumUntil = window.localStorage.getItem('premiumUntil');
+        var expiryStr = "Active";
+        if (premiumUntil) {
+          try {
+            var date = new Date(premiumUntil);
+            if (!isNaN(date.getTime())) {
+              expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            } else {
+              expiryStr = premiumUntil;
+            }
+          } catch (e) {
+            expiryStr = premiumUntil;
+          }
+        }
+        var html =
+          '<div style="text-align: center; padding: 10px;">' +
+          '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Premium Active</h2>' +
+          '  <p style="font-size: 14px; color: #5f718a; line-height: 1.5; margin: 0 0 16px 0;">' +
+          '    Your Glass Card Premium membership is active!' +
+          '  </p>' +
+          '  <div style="display: inline-block; padding: 10px 16px; background: rgba(22, 177, 135, 0.08); border: 1px solid rgba(22, 177, 135, 0.2); border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #16b187;">' +
+          '    Valid Until: ' + expiryStr +
+          '  </div>' +
+          '</div>';
+        $("#renew_content").html(html);
+      }
+
+      $('#activateBtn').on('click', function () {
+        var raw = $('#accessCode').val();
+        var code = normalizeCode(raw);
+        if (!code) return;
+
+        var accountId = window.localStorage.getItem('accountId') || '';
+        if (!accountId) {
+          displayMessage('', 'Please sign in or create an account first.', 'OK', 'profile.html');
+          return;
+        }
+
+        setBusy(true);
+
+        $.get('https://glasscard.org/dataaccessprod4/activateAccessToken.ashx',
+          { accesstoken: code, accountid: accountId },
+          function (_data) {
+            var data = {};
+            try { data = (typeof _data === 'string') ? JSON.parse(_data) : _data; } catch (e) { }
+
+            if (data && data.ok) {
+              try { window.localStorage.setItem('isPremium', true); } catch (_) { }
+              window.location.href = "home.html";
+            } else {
+              var msg = (data && data.message)
+                ? data.message
+                : "We couldn’t activate that code. Please check it and try again.";
+              displayMessage("Activation Error", msg, "OK");
+            }
+          }
+        ).fail(function () {
+          displayMessage('Network Error', 'We couldn’t reach the server. Please check your connection and try again.', 'OK');
+        }).always(function () {
+          setBusy(false);
+        });
+      });
+
+      setTimeout(function () { $('#accessCode').focus(); }, 150);
+    })();
+  </script>
+</body>
+
 </html>

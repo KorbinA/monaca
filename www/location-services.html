@@ -1,108 +1,173 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Location Services</title>
-		<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-		<link href="css/index.css" rel="stylesheet" type="text/css"/>
-		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
-		<!--Drop Down menu-->
-		<script type="text/javascript">
-			function myFunction() {
-				document.getElementById("myDropdown").classList.toggle("show");
-			}
+  <head>
+    <title>Location Services</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <link href="css/index.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+    <style type="text/css">
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .location-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+        padding: 24px;
+        text-align: center;
+      }
+      .location-card {
+        width: 100%;
+        max-width: 400px;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 32px 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
+        border: 1px solid #f1f5f9;
+      }
+      .location-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 24px;
+      }
+      .pulse {
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 0.5; }
+      }
+      h2 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px 0;
+        letter-spacing: -0.5px;
+      }
+      p {
+        font-size: 15px;
+        color: #475569;
+        line-height: 1.6;
+        margin: 0 0 32px 0;
+      }
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+      .btn {
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+      .btn-primary {
+        background: #1fab89;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(31, 171, 137, 0.2);
+      }
+      .btn-primary:active {
+        transform: scale(0.98);
+      }
+      .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+      }
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+      .loading-text {
+        font-size: 16px;
+        color: #64748b;
+        font-weight: 600;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="location-container">
+      <!-- Initial Loading State -->
+      <div id="loadingState" class="location-card">
+        <div style="margin-bottom: 20px;">
+          <img src="images/location-icon.png" class="location-icon pulse" alt="Location" />
+        </div>
+        <div class="loading-text">Requesting location access...</div>
+      </div>
 
-			window.onclick = function(event) {
-				if (!event.target.matches('.dropbtn')) {
+      <!-- Instructions/Denied State (Initially Hidden) -->
+      <div id="instructionState" class="location-card hidden">
+        <img src="images/location-icon.png" class="location-icon" alt="Location Required" />
+        <h2>Location Access Required</h2>
+        <p>To show you nearby deals, Glass Card needs access to your location.<br/><br/>Please open your phone's <b>Settings</b>, find the <b>Glass Card</b> app, and grant it location permissions.</p>
+        <div class="btn-group">
+          <button id="btnTryAgain" class="btn btn-primary">Try Again</button>
+          <button id="btnSkip" class="btn btn-secondary">Skip for Now</button>
+        </div>
+      </div>
+    </div>
 
-					var dropdowns = document.getElementsByClassName("dropdown-content");
-					var i;
-					for (i = 0; i < dropdowns.length; i++) {
-						var openDropdown = dropdowns[i];
-						if (openDropdown.classList.contains('show')) {
-							openDropdown.classList.remove('show');
-						}
-					}
-				}
-			}
-		</script>
-	</head>
-	<body>
-		<div class="location">
-		
-		<br />
-		<br />
-		<br />
-		<br />
-			<center>
-				<img src="images/location-icon.png" style="width:25%;">
-			<br />
-			<br />
-				<p>You need to have <b>Location Services</b> turned on to show you deals nearby.</p>
-				
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-				<!--a href="iphone-settings.html"><footer><h1 style="color:white; margin:0; letter-spacing:1.1pt;">Next<h1></footer-->
-				<a href="#" id="platform"><h1 style="background:#57e5e1; color:white; font-size:32px;position:absolute; margin:auto; bottom:50px; left:7%; padding:0; letter-spacing:1.1pt; border-radius:25px; height: 45px; width:86%; padding-top:7px; box-shadow: 1px 1px 2px .5px rgba(0,0,0,0.2);">Next<h1></a>
-			</center>
-		</div>
-		<div id="messagePopup" title="">
-			<label id="messageText"></label>
-		</div>
-		<script type="text/javascript">
-			$(document).ready(function() {
-			
-				function displayMessage(title, message, buttonText, url) {
-					$('#messageText').html(message);
-					$('#messagePopup').dialog({
-						//title: title,
-						closeOnEscape: false,
-						open: function(event, ui) {
-							//$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-							$(this).siblings('.ui-dialog-titlebar').remove();
-						},
-						buttons:[{
-							text:buttonText,
-							click:function(){
-								$(this).dialog("close");
-								if ((url != undefined) && (url.length > 0)) {
-									window.location.href = url;
-								}
-							}
-						}]
-					});
-				}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        function requestPermission() {
+          $('#loadingState').removeClass('hidden');
+          $('#instructionState').addClass('hidden');
 
-				var platform = window.localStorage.getItem("platform");//"Not set";
-//				document.addEventListener("deviceready", onDeviceReady, false);
-				$(document).on("click","a[id='platform']", function (event) {
-					event.preventDefault();
-//					displayMessage("clicked", "OS type: " + platform, "Close");
-					window.location.href = ((platform == "iOS") ? "iphone-settings.html" : "unlock.html");
-				});
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+              if (pos && pos.coords) {
+                window.localStorage.setItem("latitude", pos.coords.latitude);
+                window.localStorage.setItem("longitude", pos.coords.longitude);
+                window.localStorage.setItem("locationTimestamp", String(Date.now()));
+              }
+              window.location.href = "unlock.html";
+            }, function(error) {
+              console.log("Geolocation error during onboarding:", error);
+              showInstructions();
+            }, {
+              timeout: 6000,
+              enableHighAccuracy: false,
+              maximumAge: 0
+            });
+          } else {
+            showInstructions();
+          }
+        }
 
-/*				function onDeviceReady() {
-					platform = device.platform;
-//					console.log("Platform is: " + platform);
-				}
-// + device.platform
-				$(document).on("click","a[id='platform']", function (event) {
-					event.preventDefault();
-//displayMessage("clicked", "Button clicked.", "Close");
-	//				document.addEventListener("deviceready", onDeviceReady, false);
+        function showInstructions() {
+          $('#loadingState').addClass('hidden');
+          $('#instructionState').removeClass('hidden');
+        }
 
-		//			function onDeviceReady() {
-displayMessage("clicked", "OS type: " + platform
-// + device.platform
-, "Close");
-//						window.location.href = ((device.platform == "iOS") ? "iphone-settings.html" : "tutorial-home.html");
-			//		}
-				});*/
-			});
-		</script>
-	</body>
+        // Trigger automatically on load
+        requestPermission();
+
+        $('#btnTryAgain').on('click', function() {
+          requestPermission();
+        });
+
+        $('#btnSkip').on('click', function() {
+          window.location.href = "unlock.html";
+        });
+      });
+    </script>
+  </body>
 </html>

@@ -1,153 +1,151 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
+  <head>
+    <title>Home</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <link href="css/index.css" rel="stylesheet" type="text/css"/>
 
-<head>
-  <title>Home</title>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <link href="css/index.css" rel="stylesheet" type="text/css" />
+    <!-- Core libs -->
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
 
-  <!-- Core libs -->
-  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-  <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-  <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
+    <!-- Crypto libs -->
+    <script type="text/javascript" src="js/System.debug.js"></script>
+    <script type="text/javascript" src="js/System.IO.debug.js"></script>
+    <script type="text/javascript" src="js/System.Text.debug.js"></script>
+    <script type="text/javascript" src="js/System.Convert.debug.js"></script>
+    <script type="text/javascript" src="js/System.BitConverter.debug.js"></script>
+    <script type="text/javascript" src="js/System.BigInt.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.debug.js"></script>
+    <script type="text/javascript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
 
-  <!-- Crypto libs -->
-  <script type="text/javascript" src="js/System.debug.js"></script>
-  <script type="text/javascript" src="js/System.IO.debug.js"></script>
-  <script type="text/javascript" src="js/System.Text.debug.js"></script>
-  <script type="text/javascript" src="js/System.Convert.debug.js"></script>
-  <script type="text/javascript" src="js/System.BitConverter.debug.js"></script>
-  <script type="text/javascript" src="js/System.BigInt.debug.js"></script>
-  <script type="text/javascript" src="js/System.Security.Cryptography.SHA1.debug.js"></script>
-  <script type="text/javascript" src="js/System.Security.Cryptography.debug.js"></script>
-  <script type="text/javascript" src="js/System.Security.Cryptography.RSA.debug.js"></script>
+    <!-- Spinner -->
+    <script src="js/spin.min.js"></script>
 
-  <!-- Spinner -->
-  <script src="js/spin.min.js"></script>
+    <!-- Minimal modal/layout safeguards -->
+    <style type="text/css">
+      #messagePopup { display:none; }
+      .ui-dialog { border-radius: 10px; overflow: hidden; }
+      .ui-dialog .ui-dialog-content { padding: 16px !important; }
+      .ui-dialog-buttonpane { padding: 8px 16px !important; }
+      .ui-widget-overlay { background: rgba(0,0,0,0.35) !important; }
+   
+      
+    </style>
 
-  <!-- Minimal modal/layout safeguards -->
-  <style type="text/css">
-    #messagePopup {
-      display: none;
-    }
-
-    .ui-dialog {
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .ui-dialog .ui-dialog-content {
-      padding: 16px !important;
-    }
-
-    .ui-dialog-buttonpane {
-      padding: 8px 16px !important;
-    }
-
-    .ui-widget-overlay {
-      background: rgba(0, 0, 0, 0.35) !important;
-    }
-  </style>
-
-  <!-- Drop-down helper (fixed type) -->
-  <script type="text/javascript">
-    function myFunction() { document.getElementById("myDropdown").classList.toggle("show"); }
-    window.onclick = function (e) {
-      if (!e.target.matches('.dropbtn')) {
-        var d = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < d.length; i++) { if (d[i].classList.contains('show')) d[i].classList.remove('show'); }
+    <!-- Drop-down helper (fixed type) -->
+    <script type="text/javascript">
+      function myFunction(){ document.getElementById("myDropdown").classList.toggle("show"); }
+      window.onclick = function(e){
+        if(!e.target.matches('.dropbtn')){
+          var d=document.getElementsByClassName("dropdown-content");
+          for(var i=0;i<d.length;i++){ if(d[i].classList.contains('show')) d[i].classList.remove('show'); }
+        }
       }
-    }
-  </script>
-</head>
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="container categoryContainer">
+        <table class="header" style="width:100%; table-layout:fixed;">
+          <tr>
+            <td class="header" style="width:33%;">
+              <select class="category" id="category">
+                <option value="4">All Deals</option>
+                <option value="1">Food</option>
+                <option value="2">Services</option>
+                <option value="3">Activities</option>
+                <option value="5">Retail</option>
+              </select>
+            </td>
+            <td class="header" style="text-align:center; width:34%;">
+              <img id="gcLogo" src="images/black-glass.png" style="width:25%;" alt="Glass Card">
+            </td>
+            <td class="header" style="width:33%;">
+              <select class="category" id="radius">
+                <option value="1" selected="selected">60 mi</option>
+                <option value="2">30 mi</option>
+                <option value="3">15 mi</option>
+                <option value="4">5 mi</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <hr style="border: 0; border-top: 1px solid #f4f4f4; margin: 4px 0 0 0;">
+        <div id="locationStatusContainer" style="padding: 4px 16px 0 16px; font-size: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+          <span id="locationStatusText" style="color: #64748b;">📍 Detecting location...</span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span id="refreshIndicator" style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px;"></span>
+            <button id="btnRefreshLocation" style="background: none; border: none; padding: 2.5px 6px; cursor: pointer; color: #1fab89; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; text-decoration: underline; box-shadow: none !important;">
+              Refresh Location
+            </button>
+          </div>
+        </div>
+      </div>
 
-<body>
-  <div class="container">
-    <div class="container categoryContainer">
-      <table class="header" style="width:100%; table-layout:fixed;">
-        <tr>
-          <td class="header" style="width:33%;">
-            <select class="category" id="category">
-              <option value="4">all deals</option>
-              <option value="1">food</option>
-              <option value="2">services</option>
-              <option value="3">activities</option>
-              <option value="5">retail</option>
-              <option value="6">Exclude Premium Deals</option>
-            </select>
-          </td>
-          <td class="header" style="text-align:center; width:34%;">
-            <img src="images/black-glass.png" style="width:25%;" alt="Glass Card">
-          </td>
-          <td class="header" style="width:33%;">
-            <select class="category" id="radius">
-              <option value="1" selected="selected">60 mi</option>
-              <option value="2">30 mi</option>
-              <option value="3">15 mi</option>
-              <option value="4">5 mi</option>
-            </select>
-          </td>
-        </tr>
-      </table>
+      <center>
+        <div class="merchants" id="merchants" style="margin-top:1%; margin-bottom:20px;"></div>
+      </center>
     </div>
 
-    <center>
-      <div class="merchants" id="merchants" style="margin-top:1%; margin-bottom:20px;"></div>
-    </center>
-  </div>
-
-  <footer class="menu" role="navigation">
-    <a class="tab is-active" href="home.html" aria-label="Discover">
-      <img src="images/search-gradient.png" alt="">
-      <span>Discover</span>
-    </a>
-    <a class="tab" href="profile.html" aria-label="Account">
-      <img src="images/account-grey.png" alt="">
-      <span>Account</span>
-    </a>
-  </footer>
+   <footer class="menu" role="navigation">
+  <a class="tab is-active" href="home.html" aria-label="Discover">
+    <img src="images/search-gradient.png" alt="">
+    <span>Discover</span>
+  </a>
+  <a class="tab" href="profile.html" aria-label="Account">
+    <img src="images/account-grey.png" alt="">
+    <span>Account</span>
+  </a>
+</footer>
 
 
-  <!-- Modal -->
-  <div id="messagePopup" title="">
-    <label id="messageText"></label>
-  </div>
+    <!-- Modal -->
+    <div id="messagePopup" title="">
+      <label id="messageText"></label>
+    </div>
 
-  <script type="text/javascript">
-      (function () {
+    <script type="text/javascript">
+      (function(){
         /* ===========================
            Tunables
         =========================== */
-        var GEO_STORED_FRESH_MS = 30 * 60 * 1000;   // Treat stored coords as fresh up to 30 min
-        var FIRST_FIX_GATE_MS = 6000;             // First-run grace window to avoid premature prompt
-        var AJAX_TIMEOUT_MS = 15000;            // Network guard
-        var MERCHANTS_CACHE_TTL = 5 * 60 * 1000;    // Merchant HTML cache TTL (5 min)
-        var COORDS_ROUND_PLACES = 2;                // Round lat/lon for cache key (~1.1km)
-        var SPINNER_DELAY_MS = 800;              // Delay before showing spinner (prevents flash)
+        var GEO_STORED_FRESH_MS      = 30 * 60 * 1000;   // Treat stored coords as fresh up to 30 min
+        var FIRST_FIX_GATE_MS        = 6000;             // First-run grace window to avoid premature prompt
+        var AJAX_TIMEOUT_MS          = 15000;            // Network guard
+        var MERCHANTS_CACHE_TTL      = 5 * 60 * 1000;    // Merchant HTML cache TTL (5 min)
+        var COORDS_ROUND_PLACES      = 2;                // Round lat/lon for cache key (~1.1km)
+        var SPINNER_DELAY_MS         = 800;              // Delay before showing spinner (prevents flash)
         var FAST_GETPOSITION_TIMEOUT = 3000;             // Quick one-shot GPS timeout
-        var FAST_GETPOSITION_MAXAGE = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
-        var FALLBACK_LAT = 43.8260574;       // Fallback coords (customize)
-        var FALLBACK_LON = -111.7837469;
-
+        var FAST_GETPOSITION_MAXAGE  = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
+      
         /* ===========================
            State
         =========================== */
         var spinner, spinnerTarget;
         var spinnerDelayTimer = null;
         var spinnerVisible = false;
-
+      
         var latitude = "", longitude = "";
         var watchId = null;
         var gotAnyFixThisSession = false;
         var firstFixTimerFired = false;
-
+      
         /* ===========================
            Utilities / logging
         =========================== */
-        function log() { try { console.log.apply(console, ["[home]"].concat([].slice.call(arguments))); } catch (e) { } }
-
+        function log(){ try { console.log.apply(console, ["[home]"].concat([].slice.call(arguments))); } catch(e){} }
+      
         function displayMessage(title, message, buttonsSpec) {
+          var buttons;
+          if (typeof buttonsSpec === 'string') {
+            buttons = [{ text: buttonsSpec, click: function(){ $(this).dialog('close'); } }];
+          } else {
+            buttons = buttonsSpec || [{ text: "Close", click: function(){ $(this).dialog('close'); } }];
+          }
           $('#messageText').html(message);
           $('#messagePopup').dialog({
             modal: true,
@@ -155,35 +153,33 @@
             closeOnEscape: false,
             resizable: false,
             draggable: false,
-            open: function () { $(this).siblings('.ui-dialog-titlebar').remove(); },
-            buttons: buttonsSpec || [{ text: "Close", click: function () { $(this).dialog('close'); } }]
+            open: function(){ $(this).siblings('.ui-dialog-titlebar').remove(); },
+            buttons: buttons
           });
         }
-
+      
         function showSpinnerDelayed() {
           // Only schedule a spinner if it's not already visible or scheduled
           if (spinnerVisible || spinnerDelayTimer) return;
-          spinnerDelayTimer = setTimeout(function () {
+          spinnerDelayTimer = setTimeout(function(){
             spinnerDelayTimer = null;
             spinnerVisible = true;
-            var opts = {
-              lines: 12, length: 24, width: 3, radius: 10, scale: 1, corners: 1, color: '#1fab89',
-              opacity: 0.2, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9,
-              className: 'spinner', top: '50%', left: '50%', position: 'absolute'
-            };
+            var opts = { lines:12, length:24, width:3, radius:10, scale:1, corners:1, color:'#1fab89',
+                         opacity:0.2, direction:1, speed:1, trail:60, fps:20, zIndex:2e9,
+                         className:'spinner', top:'50%', left:'50%', position:'absolute' };
             spinnerTarget = document.getElementById('merchants');
             spinner = new Spinner(opts).spin(spinnerTarget);
           }, SPINNER_DELAY_MS);
         }
-
+      
         function hideSpinner() {
           if (spinnerDelayTimer) { clearTimeout(spinnerDelayTimer); spinnerDelayTimer = null; }
           if (spinnerVisible) {
-            try { spinner && spinner.stop(); } catch (e) { }
+            try { spinner && spinner.stop(); } catch(e){}
             spinnerVisible = false;
           }
         }
-
+      
         function encrypt(textToEncrypt) {
           var unencryptedBytes = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
           var rsa = new System.Security.Cryptography.RSACryptoServiceProvider(256);
@@ -191,49 +187,49 @@
           var encryptedBytes = rsa.Encrypt(unencryptedBytes, false);
           return System.Convert.ToBase64String(encryptedBytes);
         }
-
+      
         function coordsAreFresh(ts) {
           if (!ts) return false;
           var age = Date.now() - parseInt(ts, 10);
           return age >= 0 && age <= GEO_STORED_FRESH_MS;
         }
-
+      
         function saveCoords(lat, lon) {
           latitude = lat; longitude = lon;
           localStorage.setItem("latitude", lat);
           localStorage.setItem("longitude", lon);
           localStorage.setItem("locationTimestamp", String(Date.now()));
         }
-
+      
         /* ===========================
            Merchants cache (instant render)
         =========================== */
-        function rnd(x, places) { var m = Math.pow(10, places); return Math.round(parseFloat(x) * m) / m; }
-        function mkKey(lat, lon, cat, rad) { return ['merchants', rnd(lat, COORDS_ROUND_PLACES), rnd(lon, COORDS_ROUND_PLACES), cat, rad].join('|'); }
-
+        function rnd(x, places){ var m = Math.pow(10, places); return Math.round(parseFloat(x) * m) / m; }
+        function mkKey(lat, lon, cat, rad){ return ['merchants', rnd(lat,COORDS_ROUND_PLACES), rnd(lon,COORDS_ROUND_PLACES), cat, rad].join('|'); }
+      
         function readMerchantsCache(key) {
           try {
-            var raw = localStorage.getItem('merchantsCache:' + key);
+            var raw = localStorage.getItem('merchantsCache:'+key);
             if (!raw) return null;
             var obj = JSON.parse(raw);
             if (!obj || !obj.html || !obj.ts) return null;
             if ((Date.now() - obj.ts) > MERCHANTS_CACHE_TTL) return null;
             return obj.html;
-          } catch (e) { return null; }
+          } catch(e){ return null; }
         }
-
+      
         function writeMerchantsCache(key, html) {
           try {
-            localStorage.setItem('merchantsCache:' + key, JSON.stringify({ ts: Date.now(), html: html }));
-          } catch (e) { }
+            localStorage.setItem('merchantsCache:'+key, JSON.stringify({ ts: Date.now(), html: html }));
+          } catch(e){}
         }
-
+      
         /* ===========================
            Data calls
         =========================== */
         function ajaxSavings() {
           try {
-            var deviceID = localStorage.getItem("deviceID") || ("dev-" + Date.now());
+            var deviceID = localStorage.getItem("deviceID") || ("dev-"+Date.now());
             localStorage.setItem("deviceID", deviceID);
             var token = encrypt(JSON.stringify({ DeviceID: deviceID }));
             $.ajax({
@@ -244,15 +240,15 @@
               crossDomain: true,
               timeout: AJAX_TIMEOUT_MS
             });
-          } catch (e) { /* non-blocking */ }
+          } catch(e){ /* non-blocking */ }
         }
 
         function ajaxMerchants(options) {
           options = options || {};
-          var categoryText = $('#category option:selected').text();
+          var categoryText = $('#category option:selected').text().toLowerCase();
           var radiusText = $('#radius option:selected').text().substring(0, 2);
           var key = mkKey(latitude, longitude, categoryText, radiusText);
-
+      
           if (options.showInstantCache) {
             var cached = readMerchantsCache(key);
             if (cached) {
@@ -260,40 +256,101 @@
               $('#merchants').html(cached);
             }
           }
-
+      
           if (!options.background) showSpinnerDelayed();
 
+          var sharedData = "&Latitude=" + encodeURIComponent(latitude) +
+                           "&Longitude=" + encodeURIComponent(longitude) +
+                           "&Category=" + encodeURIComponent(categoryText) +
+                           "&Radius=" + encodeURIComponent(radiusText);
+
+          // Track both requests so we hide the spinner only when both finish
+          var regularDone = false, premiumDone = false;
+          function bothDone() {
+            if (regularDone && premiumDone) hideSpinner();
+          }
+
+          // ── Regular merchants ───────────────────────────────────────────
           $.ajax({
             url: "https://glasscard.org/dataaccessprod4/getMerchants.ashx",
             type: "POST",
-            data: "AccountId=" + encodeURIComponent(localStorage.getItem("accountId") || "") +
-              "&Latitude=" + encodeURIComponent(latitude) +
-              "&Longitude=" + encodeURIComponent(longitude) +
-              "&Category=" + encodeURIComponent(categoryText) +
-              "&Radius=" + encodeURIComponent(radiusText),
+            data: "AccountId=" + encodeURIComponent(localStorage.getItem("accountId") || "") + sharedData,
             dataType: "text",
             crossDomain: true,
             timeout: AJAX_TIMEOUT_MS,
-            success: function (html) {
+            success: function(html){
+              regularDone = true;
               $('#merchants').empty().append(html);
-              writeMerchantsCache(key, html);
-              hideSpinner();
+              bothDone();
+              // After regular merchants render, premium deals go below them
+              ajaxPremiumDeals();
             },
-            error: function () {
-              hideSpinner();
+            error: function(){
+              regularDone = true;
+              bothDone();
               if (!readMerchantsCache(key)) {
                 displayMessage("",
-                  "We couldn’t load nearby deals. Check your connection or try again.",
+                  "We couldn't load nearby deals. Check your connection or try again.",
                   [
-                    { text: "Retry", click: function () { $(this).dialog('close'); ajaxMerchants({ showInstantCache: true }); } },
-                    { text: "Close", click: function () { $(this).dialog('close'); } }
+                    { text: "Retry", click: function(){ $(this).dialog('close'); ajaxMerchants({showInstantCache:true}); } },
+                    { text: "Close", click: function(){ $(this).dialog('close'); } }
                   ]
                 );
               }
             }
           });
-        }
 
+          // ── Premium merchants (shown with lock for non-premium users) ───
+          // Parameter format mirrors premium.html's loadList() exactly.
+          function ajaxPremiumDeals() {
+            $.ajax({
+              url: "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
+              type: "POST",
+              data: "Latitude="  + localStorage.getItem("latitude")  +
+                    "&Longitude=" + localStorage.getItem("longitude") +
+                    "&Category="  + (categoryText || "all deals") +
+                    "&Radius="    + radiusText +
+                    "&accountid=" + (localStorage.getItem("accountId") || ""),
+              dataType: "text",
+              crossDomain: true,
+              timeout: AJAX_TIMEOUT_MS,
+              success: function(html) {
+                premiumDone = true;
+                var trimmed = $.trim(html);
+                // Skip the server's "no deals" fallback message — don't clutter the feed
+                var isEmptyMsg = !trimmed.length || trimmed.toLowerCase().indexOf("no") !== -1 && trimmed.toLowerCase().indexOf("deal") !== -1;
+                if (!isEmptyMsg) {
+                  // Remove any previous premium section before appending fresh one
+                  $('#merchants .premium-home-section').remove();
+                  var $wrap = $('<div class="premium-home-section"></div>').append($(html));
+                  $('#merchants').append($wrap);
+
+                  // Block clicks for non-premium users
+                  var isPremium = false;
+                  try { isPremium = JSON.parse(localStorage.getItem("isPremium")); } catch(e) {}
+                  if (!isPremium) {
+                    $wrap.find('.premium-container a').off('click.lock').on('click.lock', function(e) {
+                      e.preventDefault();
+                      e.stopImmediatePropagation();
+                      displayMessage("Card Members Only",
+                        "This deal is only available for Card Members.",
+                        [{ text: "Learn More", click: function(){ $(this).dialog('close'); window.location.href = 'premium.html'; } },
+                         { text: "Close",      click: function(){ $(this).dialog('close'); } }]
+                      );
+                      return false;
+                    });
+                  }
+                }
+                bothDone();
+              },
+              error: function() {
+                premiumDone = true;
+                bothDone(); // premium failing silently is acceptable
+              }
+            });
+          }
+        }
+      
         /* ===========================
            Location flow
         =========================== */
@@ -302,105 +359,133 @@
           var lon = localStorage.getItem("longitude") || "";
           if (!lat || !lon) return false;
           latitude = lat; longitude = lon;
-          log('using stored coords (' + reason + '):', lat, lon);
-          ajaxMerchants({ showInstantCache: true }); // instant view + network refresh
+          log('using stored coords ('+reason+'):', lat, lon);
+          ajaxMerchants({ showInstantCache:true }); // instant view + network refresh
+          $('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
           return true;
+        }
+      
+        function showLocationSettingsDialog() {
+          $('#locationModal').removeClass('hidden');
         }
 
         // Manual refresh (exposed)
         function refreshLocation(opts) {
           opts = opts || {};
-          if (!(navigator && navigator.geolocation)) return;
+          if (!(navigator && navigator.geolocation)) {
+            if (opts.manual) {
+              displayMessage("Error", "Location Services are not supported by this device.", "Close");
+            }
+            return;
+          }
+      
+          if (opts.manual) {
+            $('#refreshIndicator').html('<span class="mini-spinner"></span>').removeClass('fade-out-indicator').show();
+          }
+
+          $('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
 
           // Quick, one-shot position (returns OS cached instantly if recent)
-          navigator.geolocation.getCurrentPosition(function (pos) {
+          navigator.geolocation.getCurrentPosition(function(pos){
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
-              ajaxMerchants({ showInstantCache: true });
+              ajaxMerchants({ showInstantCache:true });
+              
+              $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
+
+              if (opts.manual) {
+                $('#refreshIndicator').html('<span class="mini-check">✓</span>');
+                setTimeout(function() {
+                  $('#refreshIndicator').addClass('fade-out-indicator');
+                }, 1500);
+              }
             }
-          }, function (err) {
-            log('manual getCurrentPosition error:', err);
-            // Fall back to stored or fallback city if absolutely nothing
-            if (!tryRenderWithStoredCoords('manual refresh fallback')) {
-              saveCoords(FALLBACK_LAT, FALLBACK_LON);
-              ajaxMerchants({ showInstantCache: true });
+          }, function(err){
+            log('getCurrentPosition error:', err);
+            if (opts.manual) {
+              $('#refreshIndicator').html('');
+            }
+            
+            $('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
+
+            // If they clicked manual refresh, or if we have no stored coords:
+            if (opts.manual || !localStorage.getItem("latitude") || !localStorage.getItem("longitude")) {
+              showLocationSettingsDialog();
+            }
+
+            // Fall back to stored if available
+            if (!tryRenderWithStoredCoords('refreshLocation fallback')) {
+              // Show visual error state in merchants
+              $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+                '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+                '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+                '</div>');
             }
           }, {
-            timeout: FAST_GETPOSITION_TIMEOUT,
-            maximumAge: FAST_GETPOSITION_MAXAGE,
-            enableHighAccuracy: !!opts.highAccuracy
+            timeout: opts.manual ? 10000 : FAST_GETPOSITION_TIMEOUT,
+            maximumAge: opts.manual ? 0 : FAST_GETPOSITION_MAXAGE,
+            enableHighAccuracy: true
           });
         }
-
+      
         function startWatchOnce() {
           if (!(navigator && navigator.geolocation)) { log('geolocation not available'); return; }
           if (watchId !== null) return;
-
+      
           log('starting watchPosition');
-          watchId = navigator.geolocation.watchPosition(function (pos) {
+          watchId = navigator.geolocation.watchPosition(function(pos){
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
+              $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
               // If merchants are empty (first display), render now
               if (!$('#merchants').children().length) {
-                ajaxMerchants({ showInstantCache: true });
+                ajaxMerchants({ showInstantCache:true });
               }
             }
-          }, function (err) {
+          }, function(err){
             log('watchPosition error:', err && (err.code + ' ' + err.message));
           }, {
             maximumAge: FAST_GETPOSITION_MAXAGE, // allow OS cached fixes
             enableHighAccuracy: false
           });
-
-          document.addEventListener('pause', function () {
+      
+          document.addEventListener('pause', function(){
             if (watchId !== null && navigator.geolocation.clearWatch) {
               log('clearing watch on pause');
               navigator.geolocation.clearWatch(watchId);
               watchId = null;
             }
           }, false);
-
-          document.addEventListener('resume', function () {
+      
+          document.addEventListener('resume', function(){
             startWatchOnce();
             // On resume, instant cached render then quick refresh
             if (tryRenderWithStoredCoords('resume')) {
-              ajaxMerchants({ showInstantCache: true });
+              ajaxMerchants({ showInstantCache:true });
               refreshLocation(); // quick refresh after resume
             }
           }, false);
         }
-
+      
         function firstFixGate() {
           if (firstFixTimerFired) return;
           firstFixTimerFired = true;
-
-          setTimeout(function () {
+      
+          setTimeout(function(){
             if (gotAnyFixThisSession) { log('first fix arrived already'); return; }
-
+      
             if (tryRenderWithStoredCoords('firstFixGate fallback')) {
               // Try to improve in background
               refreshLocation();
               return;
             }
-
-            displayMessage("",
-              "We need your phone's Location Services to show nearby deals. Please allow “While Using the App.”",
-              [
-                { text: "Retry", click: function () { $(this).dialog('close'); refreshLocation(); } },
-                {
-                  text: "Use Fallback Location", click: function () {
-                    $(this).dialog('close');
-                    saveCoords(FALLBACK_LAT, FALLBACK_LON);
-                    ajaxMerchants({ showInstantCache: true });
-                  }
-                }
-              ]
-            );
+      
+            showLocationSettingsDialog();
           }, FIRST_FIX_GATE_MS);
         }
-
+      
         function kickGeolocationFlow() {
           // 1) Instant render if we have anything stored
           var ts = localStorage.getItem('locationTimestamp') || "";
@@ -408,46 +493,55 @@
             latitude = localStorage.getItem('latitude');
             longitude = localStorage.getItem('longitude');
             log('fresh stored coords -> instant render');
-            ajaxMerchants({ showInstantCache: true });
+            ajaxMerchants({ showInstantCache:true });
           } else if (tryRenderWithStoredCoords('kick flow')) {
             // stale but usable — show now; network refresh will happen below
           } else {
             // absolutely first-run: schedule spinner, but it won't show if we finish quickly
             showSpinnerDelayed();
           }
-
+      
           // 2) Continuous updates (non-blocking)
           startWatchOnce();
-
+      
           // 3) One quick refresh (non-blocking, accepts OS cache)
           refreshLocation();
-
+      
           // 4) Safety gate to avoid permanent limbo on true first-run
           firstFixGate();
         }
-
+      
         /* ===========================
            UI state
         =========================== */
         function initSelectionsFromStorage() {
-          var c = localStorage.getItem("category"); if (c) $('#category').val(c).change();
-          var r = localStorage.getItem("radius"); if (r) $('#radius').val((r * 1) + 1).change();
+          var c = localStorage.getItem("category");
+          // Restore saved category (option "6" no longer exists here so it safely
+          // falls back to the HTML default "All Deals" if stored value is stale).
+          if (c && c !== "6") {
+            $('#category').val(c);
+          } else {
+            // Clear any stale "Exclude" value so the backend gets "all deals"
+            $('#category').val('4');
+            localStorage.setItem("category", '4');
+          }
+          var r = localStorage.getItem("radius");   if (r) $('#radius').val((r * 1) + 1);
         }
-
+      
         function setupChangeHandlers() {
-          $('#category').off('change').on('change', function () {
+          $('#category').off('change').on('change', function(){
             localStorage.setItem("category", $('#category option:selected').val());
             // Instant cache render; network refresh follows
             if (!tryRenderWithStoredCoords('category change')) showSpinnerDelayed();
-            ajaxMerchants({ showInstantCache: true });
+            ajaxMerchants({ showInstantCache:true });
           });
-          $('#radius').off('change').on('change', function () {
+          $('#radius').off('change').on('change', function(){
             localStorage.setItem("radius", $('#radius option:selected').index());
             if (!tryRenderWithStoredCoords('radius change')) showSpinnerDelayed();
-            ajaxMerchants({ showInstantCache: true });
+            ajaxMerchants({ showInstantCache:true });
           });
         }
-
+      
         /* ===========================
            Boot
         =========================== */
@@ -457,39 +551,181 @@
           setupChangeHandlers();
           kickGeolocationFlow();
         }
-
-        $(document).ready(function () {
+      
+        $(document).ready(function(){
           // Try to render something immediately from cache if possible
           tryRenderWithStoredCoords('document ready');
-
+      
           if (window.cordova) {
             document.addEventListener("deviceready", onDeviceReady, false);
           } else {
             onDeviceReady(); // web testing
           }
-
+      
           // On back navigation, avoid spinner flash by delaying it
-          window.addEventListener('pageshow', function () {
+          window.addEventListener('pageshow', function(){
             if (tryRenderWithStoredCoords('pageshow')) {
-              ajaxMerchants({ showInstantCache: true });
+              ajaxMerchants({ showInstantCache:true });
               refreshLocation();
             }
+          });
+      
+          // Refresh button listener
+          $('#btnRefreshLocation').off('click').on('click', function(e){
+            e.preventDefault();
+            refreshLocation({ manual: true });
+          });
+
+          // Modal buttons listeners
+          $('#btnModalClose, .custom-modal-overlay').off('click').on('click', function(e){
+            e.preventDefault();
+            $('#locationModal').addClass('hidden');
           });
 
           // Console helpers (manual refresh, etc.)
           window.__gc = {
-            refreshLocation: refreshLocation, // e.g., window.__gc.refreshLocation({highAccuracy:true})
-            reload: function () { ajaxMerchants({ showInstantCache: true }); },
-            clearLocation: function () {
+            refreshLocation: refreshLocation,
+            reload: function(){ ajaxMerchants({ showInstantCache:true }); },
+            clearLocation: function(){
               localStorage.removeItem('latitude');
               localStorage.removeItem('longitude');
               localStorage.removeItem('locationTimestamp');
             }
           };
+
+          // ── Secret 5-tap logo: location override ──────────────────────────
+          (function() {
+            var tapCount = 0;
+            var tapTimer = null;
+
+            document.getElementById('gcLogo').addEventListener('click', function(e) {
+              e.stopPropagation();
+              tapCount++;
+              clearTimeout(tapTimer);
+              // Reset counter after 3 s of no taps
+              tapTimer = setTimeout(function() { tapCount = 0; }, 3000);
+              if (tapCount >= 5) {
+                tapCount = 0;
+                clearTimeout(tapTimer);
+                showDevLocationModal();
+              }
+            }, false);
+
+            function showDevLocationModal() {
+              var modal   = document.getElementById('devLocationModal');
+              var input   = document.getElementById('devLocationInput');
+              var status  = document.getElementById('devLocationStatus');
+              input.value = '';
+              status.textContent = '';
+              modal.classList.remove('hidden');
+              setTimeout(function() { input.focus(); }, 200);
+            }
+
+            function hideDevLocationModal() {
+              document.getElementById('devLocationModal').classList.add('hidden');
+            }
+
+            document.getElementById('devLocationCancel').addEventListener('click', hideDevLocationModal);
+            document.getElementById('devLocationOverlay').addEventListener('click', hideDevLocationModal);
+
+            document.getElementById('devLocationInput').addEventListener('keydown', function(e) {
+              if (e.key === 'Enter') { e.preventDefault(); doGeocode(); }
+            });
+
+            document.getElementById('devLocationSubmit').addEventListener('click', doGeocode);
+
+            function doGeocode() {
+              var query  = (document.getElementById('devLocationInput').value || '').trim();
+              var status = document.getElementById('devLocationStatus');
+              var btn    = document.getElementById('devLocationSubmit');
+              if (!query) return;
+
+              status.textContent = 'Looking up…';
+              status.style.color = '#94a3b8';
+              btn.disabled = true;
+              btn.textContent = 'Looking up…';
+
+              $.ajax({
+                url: 'https://nominatim.openstreetmap.org/search',
+                type: 'GET',
+                data: { q: query, format: 'json', limit: 1 },
+                dataType: 'json',
+                timeout: 10000,
+                headers: { 'Accept-Language': 'en' },
+                success: function(results) {
+                  btn.disabled = false;
+                  btn.textContent = 'Set Location';
+                  if (!results || !results.length) {
+                    status.textContent = '⚠ Location not found. Try a different address.';
+                    status.style.color = '#ef4444';
+                    return;
+                  }
+                  var r = results[0];
+                  var lat = parseFloat(r.lat);
+                  var lon = parseFloat(r.lon);
+                  var label = r.display_name || query;
+                  saveCoords(lat, lon);
+                  latitude = lat; longitude = lon;
+                  $('#locationStatusText').html('📍 Override: ' + label.split(',').slice(0,2).join(',')).css('color','#f59e0b');
+                  ajaxMerchants({ showInstantCache: false });
+                  hideDevLocationModal();
+                },
+                error: function() {
+                  btn.disabled = false;
+                  btn.textContent = 'Set Location';
+                  status.textContent = '⚠ Network error. Check your connection.';
+                  status.style.color = '#ef4444';
+                }
+              });
+            }
+          })();
+          // ─────────────────────────────────────────────────────────────────
         });
       })();
-  </script>
+      </script>
 
-</body>
+      <!-- Custom Modern Location Services Modal -->
+      <div id="locationModal" class="custom-modal hidden">
+        <div class="custom-modal-overlay"></div>
+        <div class="custom-modal-content">
+          <img src="images/location-icon.png" class="custom-modal-icon" alt="Location Services" />
+          <h2>Location Services Disabled</h2>
+          <div class="custom-modal-body">
+            <p>To show you nearby deals, Glass Card needs access to your location.</p>
+            <p class="instructions-text">Please open your phone's <b>Settings</b>, find the <b>Glass Card</b> app, and grant it location permissions.</p>
+          </div>
+          <div class="custom-modal-footer">
+            <button id="btnModalClose" class="custom-modal-btn btn-primary">Close</button>
+          </div>
+        </div>
+      </div>
 
+      <!-- Secret location override modal (5-tap logo) -->
+      <div id="devLocationModal" class="custom-modal hidden">
+        <div class="custom-modal-overlay" id="devLocationOverlay"></div>
+        <div class="custom-modal-content">
+          <h2 style="font-size:17px !important;">📍 Set Test Location</h2>
+          <div class="custom-modal-body">
+            <p style="margin-bottom:12px !important;">Enter a city, state, zip code, or full address.</p>
+            <input
+              id="devLocationInput"
+              type="text"
+              placeholder="e.g. Rexburg, ID or 83440"
+              style="
+                width:100%; box-sizing:border-box;
+                padding:12px 14px; border-radius:12px;
+                border:1.5px solid #e2e8f0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+                font-size:15px; color:#0f172a; background:#f8fafc;
+                outline:none; margin-bottom:4px;
+              "
+            />
+            <p id="devLocationStatus" style="font-size:12px !important; color:#94a3b8 !important; margin:6px 0 0 0 !important; min-height:16px;"></p>
+          </div>
+          <div class="custom-modal-footer">
+            <button id="devLocationSubmit" class="custom-modal-btn btn-primary">Set Location</button>
+            <button id="devLocationCancel" class="custom-modal-btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+  </body>
 </html>

@@ -95,84 +95,86 @@ table.profile td {
 		  
 	</head>
 	<body>
-		<br>
-		<center>
-			<div  style="background: rgba(255,255,255,1); border-radius:20px; width:90%; padding:5% 0; margin-top:15%; box-shadow:1px 1px 2px 1px rgba(0,0,0,0.3);">
-				<!--img src="images/white-glass.png" style="width:75px;"-->
-				<p style="color:#393e46; font-size:150%; letter-spacing:1.1pt; font-weight:bold;">Total Savings</p>
-				<br>
-				<!--The total amount saved goes where the 20.21 is-->
-				<p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#1fab89; font-size:175%; padding:0; text-align:center; margin:0; font-weight:900;">$<span class="counter"></span></p>
-			</div>
-		</center>
-		
-		<br>
-		<br>
-		<br>
-        <table class="profile">
-			<tr class="profile" id="expirationRow" style="cursor:pointer;">
-			  <td class="profile">
-				<a href="#" style="display:block; color:#222831; text-decoration:none;">
-				  Card Expiration: <span id="expirationDate">Loading...</span>
-				</a>
-			  </td>
-			  <td class="profile_icon" style="color:#1fab89; vertical-align:middle; line-height:0;">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
-				  <rect x="2" y="5" width="20" height="14" rx="2" ry="2" />
-				  <line x1="2" y1="10" x2="22" y2="10" />
-				</svg>
-			  </td>
-			</tr>
-
-			<tr class="profile">
-			  <td class="profile">
-				<a id="fundraisersLink" href="https://glasscardapp.com" target="_system" style="display:block; color:#222831;">
-					Fundraiser Opportunities
-				  </a>
-			  </td>
-			  <td class="profile_icon" style="color:#1fab89;">$</td>
-			</tr>
-		  
-			<tr class="profile">
-			  <td class="profile">
-				<a href="how-to-redeem.html" style="display:block; color:#222831;">How To Redeem & FAQs</a>
-			  </td>
-			  <td class="profile_icon" style="color:#1fab89;">?</td>
-			</tr>
-		  
-			<tr class="profile">
-			  <td class="profile">
-				<a href="mailto:support@glasscardapp.com?Subject=App%20Support" style="display:block; color:#222831;" target="_top">
-				  Contact Us
-				</a>
-			  </td>
-			  <td class="profile_icon" style="color:#1fab89;">&#x270E;</td>
-			</tr>
-		  
-			<!-- NEW: Delete Account -->
-			<tr class="profile">
-				<td class="profile">
-					<a id="deleteAccountLink" href="https://glasscard.org/deleteAccount.aspx" target="_system" style="display:block; color:#222831;">
-						Delete Account
-					  </a>
-				</td>
-				<td class="profile_icon">
-					<svg class="icon" xmlns="http://www.w3.org/2000/svg"
-						 viewBox="0 0 24 24" fill="none"
-						 stroke="currentColor" stroke-width="2"
-						 stroke-linecap="round" stroke-linejoin="round"
-						 aria-hidden="true">
-					  <path d="M3 6h18"/>
-					  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-					  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-					  <path d="M10 11v6"/>
-					  <path d="M14 11v6"/>
+		<div class="container">
+			<br>
+			<center>
+				<div  style="background: rgba(255,255,255,1); border-radius:20px; width:90%; padding:5% 0; margin-top:15%; box-shadow:1px 1px 2px 1px rgba(0,0,0,0.3);">
+					<!--img src="images/white-glass.png" style="width:75px;"-->
+					<p style="color:#393e46; font-size:150%; letter-spacing:1.1pt; font-weight:bold;">Total Savings</p>
+					<br>
+					<!--The total amount saved goes where the 20.21 is-->
+					<p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#1fab89; font-size:175%; padding:0; text-align:center; margin:0; font-weight:900;">$<span class="counter"></span></p>
+				</div>
+			</center>
+			
+			<br>
+			<br>
+			<br>
+			<table class="profile">
+				<tr class="profile" id="expirationRow" style="cursor:pointer;">
+				  <td class="profile">
+					<a href="#" style="display:block; color:#222831; text-decoration:none;">
+					  Card Expiration: <span id="expirationDate">Loading...</span>
+					</a>
+				  </td>
+				  <td class="profile_icon" style="color:#1fab89; vertical-align:middle; line-height:0;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+					  <rect x="2" y="5" width="20" height="14" rx="2" ry="2" />
+					  <line x1="2" y1="10" x2="22" y2="10" />
 					</svg>
 				  </td>
-			  </tr>
-		  </table>
-		
-		<a href="#" id="signout" style="display:block; color:white; width:90%; background:#222831; border-radius:20px; text-align:center; box-shadow:0px 1px 2px 1px rgba(0,0,0,0.3); margin-left:5%; margin-top:5%; margin-bottom:100px; padding:3% 0; font-size:125%;">Sign Out</a>
+				</tr>
+	
+				<tr class="profile">
+				  <td class="profile">
+					<a id="fundraisersLink" href="https://glasscardapp.com" target="_system" style="display:block; color:#222831;">
+						Fundraiser Opportunities
+					  </a>
+				  </td>
+				  <td class="profile_icon" style="color:#1fab89;">$</td>
+				</tr>
+			  
+				<tr class="profile">
+				  <td class="profile">
+					<a href="how-to-redeem.html" style="display:block; color:#222831;">How To Redeem & FAQs</a>
+				  </td>
+				  <td class="profile_icon" style="color:#1fab89;">?</td>
+				</tr>
+			  
+				<tr class="profile">
+				  <td class="profile">
+					<a href="mailto:support@glasscardapp.com?Subject=App%20Support" style="display:block; color:#222831;" target="_top">
+					  Contact Us
+					</a>
+				  </td>
+				  <td class="profile_icon" style="color:#1fab89;">&#x270E;</td>
+				</tr>
+			  
+				<!-- NEW: Delete Account -->
+				<tr class="profile">
+					<td class="profile">
+						<a id="deleteAccountLink" href="https://glasscard.org/deleteAccount.aspx" target="_system" style="display:block; color:#222831;">
+							Delete Account
+						  </a>
+					</td>
+					<td class="profile_icon">
+						<svg class="icon" xmlns="http://www.w3.org/2000/svg"
+							 viewBox="0 0 24 24" fill="none"
+							 stroke="currentColor" stroke-width="2"
+							 stroke-linecap="round" stroke-linejoin="round"
+							 aria-hidden="true">
+						  <path d="M3 6h18"/>
+						  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+						  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+						  <path d="M10 11v6"/>
+						  <path d="M14 11v6"/>
+						</svg>
+					  </td>
+				  </tr>
+			  </table>
+			
+			<a href="#" id="signout" style="display:block; color:white; width:90%; background:#222831; border-radius:20px; text-align:center; box-shadow:0px 1px 2px 1px rgba(0,0,0,0.3); margin-left:5%; margin-top:5%; margin-bottom:30px; padding:3% 0; font-size:125%;">Sign Out</a>
+		</div>
 
    <footer class="menu" role="navigation">
   <a class="tab" href="home.html" aria-label="Discover">

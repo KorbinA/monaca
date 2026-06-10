@@ -345,30 +345,66 @@ table.profile td {
 				});
 
 				// Card Expiration Display
-				try {
-					var isPremium = window.localStorage.getItem("isPremium");
-					var premiumUntil = window.localStorage.getItem("premiumUntil");
-					var expiryStr = "Not Active";
-					var hasPremium = (isPremium === "true" || isPremium === true);
+				function updateExpirationDisplay() {
+					try {
+						var isPremium = window.localStorage.getItem("isPremium");
+						var premiumUntil = window.localStorage.getItem("premiumUntil");
+						var expiryStr = "Not Active";
+						var hasPremium = (isPremium === "true" || isPremium === true);
 
-					if (hasPremium && premiumUntil) {
-						var date = new Date(premiumUntil);
-						if (!isNaN(date.getTime())) {
-							expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-						} else {
-							expiryStr = premiumUntil;
+						if (hasPremium && premiumUntil) {
+							var date = new Date(premiumUntil);
+							if (!isNaN(date.getTime())) {
+								expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+							} else {
+								expiryStr = premiumUntil;
+							}
+						} else if (premiumUntil) {
+							var date = new Date(premiumUntil);
+							if (!isNaN(date.getTime())) {
+								expiryStr = "Expired (" + date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ")";
+							} else {
+								expiryStr = "Expired (" + premiumUntil + ")";
+							}
 						}
-					} else if (premiumUntil) {
-						var date = new Date(premiumUntil);
-						if (!isNaN(date.getTime())) {
-							expiryStr = "Expired (" + date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ")";
-						} else {
-							expiryStr = "Expired (" + premiumUntil + ")";
-						}
+						$('#expirationDate').html(expiryStr);
+					} catch(err) {
+						console.log("Error displaying expiration date:", err);
 					}
-					$('#expirationDate').html(expiryStr);
-				} catch(err) {
-					console.log("Error displaying expiration date:", err);
+				}
+
+				// Run display update immediately using cached values
+				updateExpirationDisplay();
+
+				// Background Silent Sync
+				var storedEmail = window.localStorage.getItem("deviceID");
+				var storedPassword = window.localStorage.getItem("password");
+				if (storedEmail && storedPassword) {
+					try {
+						var loginToken = encrypt(JSON.stringify({ DeviceID: storedEmail, Password: storedPassword }));
+						$.ajax({
+							url: "https://glasscard.org/dataaccessprod4/appLogin.ashx",
+							type: "POST",
+							data: "Token=" + encodeURIComponent(loginToken),
+							dataType: "text",
+							crossDomain: true,
+							timeout: 10000,
+							success: function(_data) {
+								var data;
+								try { data = JSON.parse(_data); } catch(e) { data = {}; }
+								if (data && data.status === "AccountConnected") {
+									try {
+										window.localStorage.setItem("isPremium", data.isPremium);
+										window.localStorage.setItem("premiumUntil", data.premiumUntil);
+										window.localStorage.setItem("accountId", data.accountId);
+									} catch(e) {}
+									updateExpirationDisplay();
+								}
+							}
+						});
+					} catch(err) {
+						console.log("Background refresh error:", err);
+					}
 				}
 
 				$(document).on("click", "#expirationRow", function(event) {

@@ -109,8 +109,7 @@
     </div>
 
     <script type="text/javascript">
-      (function(){
-        /* ===========================
+      (function(){        /* ===========================
            Tunables
         =========================== */
         var GEO_STORED_FRESH_MS      = 30 * 60 * 1000;   // Treat stored coords as fresh up to 30 min
@@ -121,6 +120,8 @@
         var SPINNER_DELAY_MS         = 800;              // Delay before showing spinner (prevents flash)
         var FAST_GETPOSITION_TIMEOUT = 3000;             // Quick one-shot GPS timeout
         var FAST_GETPOSITION_MAXAGE  = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
+        var FALLBACK_LAT             = "43.8260574";     // Fallback coordinates (Rexburg, ID)
+        var FALLBACK_LON             = "-111.7837469";
       
         /* ===========================
            State
@@ -133,6 +134,9 @@
         var watchId = null;
         var gotAnyFixThisSession = false;
         var firstFixTimerFired = false;
+      
+        // Restore manual location override status on startup
+        window.__locationOverrideActive = (localStorage.getItem("locationOverrideActive") === "true");
       
         /* ===========================
            Utilities / logging
@@ -193,11 +197,19 @@
           var age = Date.now() - parseInt(ts, 10);
           return age >= 0 && age <= GEO_STORED_FRESH_MS;
         }
+
+        function isValidCoordinate(val) {
+          if (val === null || val === undefined) return false;
+          var s = String(val).trim();
+          if (s === "" || s === "null" || s === "undefined" || s === "NaN") return false;
+          var f = parseFloat(s);
+          return !isNaN(f) && isFinite(f);
+        }
       
         function saveCoords(lat, lon) {
-          latitude = lat; longitude = lon;
-          localStorage.setItem("latitude", lat);
-          localStorage.setItem("longitude", lon);
+          latitude = String(lat); longitude = String(lon);
+          localStorage.setItem("latitude", latitude);
+          localStorage.setItem("longitude", longitude);
           localStorage.setItem("locationTimestamp", String(Date.now()));
         }
       
@@ -242,12 +254,20 @@
             });
           } catch(e){ /* non-blocking */ }
         }
-
+ 
         function ajaxMerchants(options) {
           options = options || {};
           var categoryText = $('#category option:selected').text().toLowerCase();
           var radiusText = $('#radius option:selected').text().substring(0, 2);
-          var key = mkKey(latitude, longitude, categoryText, radiusText);
+          
+          var lat = latitude;
+          var lon = longitude;
+          if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) {
+            lat = FALLBACK_LAT;
+            lon = FALLBACK_LON;
+          }
+
+          var key = mkKey(lat, lon, categoryText, radiusText);
       
           if (options.showInstantCache) {
             var cached = readMerchantsCache(key);
@@ -258,36 +278,32 @@
           }
       
           if (!options.background) showSpinnerDelayed();
-
-          var sharedData = "&Latitude=" + encodeURIComponent(latitude) +
-                           "&Longitude=" + encodeURIComponent(longitude) +
+ 
+          var sharedData = "&Latitude=" + encodeURIComponent(lat) +
+                           "&Longitude=" + encodeURIComponent(lon) +
                            "&Category=" + encodeURIComponent(categoryText) +
                            "&Radius=" + encodeURIComponent(radiusText);
-
-          // Track both requests so we hide the spinner only when both finish
-          var regularDone = false, premiumDone = false;
-          function bothDone() {
-            if (regularDone && premiumDone) hideSpinner();
+ 
+          var accountId = localStorage.getItem("accountId") || "";
+          if (accountId === "null" || accountId === "undefined") {
+            accountId = "";
           }
 
-          // ── Regular merchants ───────────────────────────────────────────
           $.ajax({
             url: "https://glasscard.org/dataaccessprod4/getMerchants.ashx",
             type: "POST",
-            data: "AccountId=" + encodeURIComponent(localStorage.getItem("accountId") || "") + sharedData,
+            data: "AccountId=" + encodeURIComponent(accountId) + sharedData,
             dataType: "text",
             crossDomain: true,
             timeout: AJAX_TIMEOUT_MS,
             success: function(html){
-              regularDone = true;
               $('#merchants').empty().append(html);
-              bothDone();
-              // After regular merchants render, premium deals go below them
+              writeMerchantsCache(key, html);
+              hideSpinner();
               ajaxPremiumDeals();
             },
             error: function(){
-              regularDone = true;
-              bothDone();
+              hideSpinner();
               if (!readMerchantsCache(key)) {
                 displayMessage("",
                   "We couldn't load nearby deals. Check your connection or try again.",
@@ -299,79 +315,100 @@
               }
             }
           });
-
-          // ── Premium merchants (shown with lock for non-premium users) ───
-          // Parameter format mirrors premium.html's loadList() exactly.
-          function ajaxPremiumDeals() {
-            $.ajax({
-              url: "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
-              type: "POST",
-              data: "Latitude="  + localStorage.getItem("latitude")  +
-                    "&Longitude=" + localStorage.getItem("longitude") +
-                    "&Category="  + (categoryText || "all deals") +
-                    "&Radius="    + radiusText +
-                    "&accountid=" + (localStorage.getItem("accountId") || ""),
-              dataType: "text",
-              crossDomain: true,
-              timeout: AJAX_TIMEOUT_MS,
-              success: function(html) {
-                premiumDone = true;
-                var trimmed = $.trim(html);
-                // Skip the server's "no deals" fallback message — don't clutter the feed
-                var isEmptyMsg = !trimmed.length || trimmed.toLowerCase().indexOf("no") !== -1 && trimmed.toLowerCase().indexOf("deal") !== -1;
-                if (!isEmptyMsg) {
-                  // Remove any previous premium section before appending fresh one
-                  $('#merchants .premium-home-section').remove();
-                  var $wrap = $('<div class="premium-home-section"></div>').append($(html));
-                  $('#merchants').append($wrap);
-
-                  // Block clicks for non-premium users
-                  var isPremium = false;
-                  try { isPremium = JSON.parse(localStorage.getItem("isPremium")); } catch(e) {}
-                  if (!isPremium) {
-                    $wrap.find('.premium-container a').off('click.lock').on('click.lock', function(e) {
-                      e.preventDefault();
-                      e.stopImmediatePropagation();
-                      displayMessage("Card Members Only",
-                        "This deal is only available for Card Members.",
-                        [{ text: "Learn More", click: function(){ $(this).dialog('close'); window.location.href = 'premium.html'; } },
-                         { text: "Close",      click: function(){ $(this).dialog('close'); } }]
-                      );
-                      return false;
-                    });
-                  }
-                }
-                bothDone();
-              },
-              error: function() {
-                premiumDone = true;
-                bothDone(); // premium failing silently is acceptable
-              }
-            });
+        }
+ 
+        function ajaxPremiumDeals() {
+          var categoryText = $('#category option:selected').text().toLowerCase();
+          var radiusText = $('#radius option:selected').text().substring(0, 2);
+          
+          var accountId = localStorage.getItem("accountId") || "";
+          if (accountId === "null" || accountId === "undefined") {
+            accountId = "";
           }
+
+          var lat = localStorage.getItem("latitude") || latitude;
+          var lon = localStorage.getItem("longitude") || longitude;
+          if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) {
+            lat = FALLBACK_LAT;
+            lon = FALLBACK_LON;
+          }
+
+          $.ajax({
+            url: "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
+            type: "POST",
+            data: "Latitude=" + encodeURIComponent(lat) +
+                  "&Longitude=" + encodeURIComponent(lon) +
+                  "&Category=" + encodeURIComponent(categoryText || "all deals") +
+                  "&Radius=" + encodeURIComponent(radiusText) +
+                  "&accountid=" + encodeURIComponent(accountId),
+            dataType: "text",
+            crossDomain: true,
+            timeout: AJAX_TIMEOUT_MS,
+            success: function(html) {
+              var trimmed = $.trim(html);
+              var isNoDeals = (trimmed.toLowerCase().indexOf("active deals within") !== -1) ||
+                              (trimmed.toLowerCase().indexOf("no active deals") !== -1);
+              var isEmptyMsg = !trimmed.length || isNoDeals;
+              
+              // Always remove previous premium section on reload
+              $('#merchants .premium-home-section').remove();
+              
+              if (!isEmptyMsg) {
+                var $wrap = $('<div class="premium-home-section"></div>').append(html);
+                $('#merchants').append($wrap);
+ 
+                // Block clicks for non-premium users
+                var isPremium = false;
+                try { isPremium = JSON.parse(localStorage.getItem("isPremium")); } catch(e) {}
+                if (!isPremium) {
+                  $wrap.find('.premium-container a').off('click.lock').on('click.lock', function(e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    displayMessage("Card Members Only",
+                      "This deal is only available for Card Members.",
+                      [{ text: "Learn More", click: function(){ $(this).dialog('close'); window.location.href = 'premium.html'; } },
+                       { text: "Close",      click: function(){ $(this).dialog('close'); } }]
+                    );
+                    return false;
+                  });
+                }
+              }
+            },
+            error: function() {
+              // Fail silently
+            }
+          });
         }
       
         /* ===========================
            Location flow
         =========================== */
         function tryRenderWithStoredCoords(reason) {
-          var lat = localStorage.getItem("latitude") || "";
-          var lon = localStorage.getItem("longitude") || "";
-          if (!lat || !lon) return false;
-          latitude = lat; longitude = lon;
-          log('using stored coords ('+reason+'):', lat, lon);
+          var lat = localStorage.getItem("latitude");
+          var lon = localStorage.getItem("longitude");
+          if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) return false;
+          latitude = String(parseFloat(lat));
+          longitude = String(parseFloat(lon));
+          log('using stored coords ('+reason+'):', latitude, longitude);
           ajaxMerchants({ showInstantCache:true }); // instant view + network refresh
-          $('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
+          if (window.__locationOverrideActive && localStorage.getItem("locationOverrideLabel")) {
+            var lbl = localStorage.getItem("locationOverrideLabel");
+            $('#locationStatusText').html('📍 Override: ' + lbl.split(',').slice(0,2).join(',')).css('color','#f59e0b');
+          } else {
+            $('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
+          }
           return true;
         }
       
         function showLocationSettingsDialog() {
           $('#locationModal').removeClass('hidden');
         }
-
-        // Manual refresh (exposed)
         function refreshLocation(opts) {
           opts = opts || {};
+          if (window.__locationOverrideActive && !opts.manual) {
+            log('skipping auto refreshLocation because location override is active');
+            return;
+          }
           if (!(navigator && navigator.geolocation)) {
             if (opts.manual) {
               displayMessage("Error", "Location Services are not supported by this device.", "Close");
@@ -382,18 +419,19 @@
           if (opts.manual) {
             $('#refreshIndicator').html('<span class="mini-spinner"></span>').removeClass('fade-out-indicator').show();
           }
-
+ 
           $('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
-
+ 
           // Quick, one-shot position (returns OS cached instantly if recent)
           navigator.geolocation.getCurrentPosition(function(pos){
+            if (window.__locationOverrideActive && !opts.manual) return;
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
               ajaxMerchants({ showInstantCache:true });
               
               $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
-
+ 
               if (opts.manual) {
                 $('#refreshIndicator').html('<span class="mini-check">✓</span>');
                 setTimeout(function() {
@@ -402,25 +440,24 @@
               }
             }
           }, function(err){
+            if (window.__locationOverrideActive && !opts.manual) return;
             log('getCurrentPosition error:', err);
             if (opts.manual) {
               $('#refreshIndicator').html('');
             }
             
             $('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
-
+ 
             // If they clicked manual refresh, or if we have no stored coords:
-            if (opts.manual || !localStorage.getItem("latitude") || !localStorage.getItem("longitude")) {
+            if (opts.manual || !isValidCoordinate(localStorage.getItem("latitude")) || !isValidCoordinate(localStorage.getItem("longitude"))) {
               showLocationSettingsDialog();
             }
-
-            // Fall back to stored if available
+ 
+            // Fall back to stored or auto fallback
             if (!tryRenderWithStoredCoords('refreshLocation fallback')) {
-              // Show visual error state in merchants
-              $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
-                '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
-                '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
-                '</div>');
+              saveCoords(FALLBACK_LAT, FALLBACK_LON);
+              $('#locationStatusText').html('📍 Fallback: Rexburg, ID').css('color', '#64748b');
+              ajaxMerchants({ showInstantCache:true });
             }
           }, {
             timeout: opts.manual ? 10000 : FAST_GETPOSITION_TIMEOUT,
@@ -435,6 +472,10 @@
       
           log('starting watchPosition');
           watchId = navigator.geolocation.watchPosition(function(pos){
+            if (window.__locationOverrideActive) {
+              log('skipping watchPosition update because override is active');
+              return;
+            }
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
@@ -463,7 +504,6 @@
             startWatchOnce();
             // On resume, instant cached render then quick refresh
             if (tryRenderWithStoredCoords('resume')) {
-              ajaxMerchants({ showInstantCache:true });
               refreshLocation(); // quick refresh after resume
             }
           }, false);
@@ -482,6 +522,11 @@
               return;
             }
       
+            // Auto fallback to Rexburg
+            saveCoords(FALLBACK_LAT, FALLBACK_LON);
+            $('#locationStatusText').html('📍 Fallback: Rexburg, ID').css('color', '#64748b');
+            ajaxMerchants({ showInstantCache:true });
+            
             showLocationSettingsDialog();
           }, FIRST_FIX_GATE_MS);
         }
@@ -489,9 +534,11 @@
         function kickGeolocationFlow() {
           // 1) Instant render if we have anything stored
           var ts = localStorage.getItem('locationTimestamp') || "";
-          if (coordsAreFresh(ts) && localStorage.getItem('latitude') && localStorage.getItem('longitude')) {
-            latitude = localStorage.getItem('latitude');
-            longitude = localStorage.getItem('longitude');
+          var lat = localStorage.getItem('latitude');
+          var lon = localStorage.getItem('longitude');
+          if (coordsAreFresh(ts) && isValidCoordinate(lat) && isValidCoordinate(lon)) {
+            latitude = String(parseFloat(lat));
+            longitude = String(parseFloat(lon));
             log('fresh stored coords -> instant render');
             ajaxMerchants({ showInstantCache:true });
           } else if (tryRenderWithStoredCoords('kick flow')) {
@@ -531,14 +578,17 @@
         function setupChangeHandlers() {
           $('#category').off('change').on('change', function(){
             localStorage.setItem("category", $('#category option:selected').val());
-            // Instant cache render; network refresh follows
-            if (!tryRenderWithStoredCoords('category change')) showSpinnerDelayed();
-            ajaxMerchants({ showInstantCache:true });
+            if (!tryRenderWithStoredCoords('category change')) {
+              showSpinnerDelayed();
+              ajaxMerchants({ showInstantCache:true });
+            }
           });
           $('#radius').off('change').on('change', function(){
             localStorage.setItem("radius", $('#radius option:selected').index());
-            if (!tryRenderWithStoredCoords('radius change')) showSpinnerDelayed();
-            ajaxMerchants({ showInstantCache:true });
+            if (!tryRenderWithStoredCoords('radius change')) {
+              showSpinnerDelayed();
+              ajaxMerchants({ showInstantCache:true });
+            }
           });
         }
       
@@ -565,7 +615,6 @@
           // On back navigation, avoid spinner flash by delaying it
           window.addEventListener('pageshow', function(){
             if (tryRenderWithStoredCoords('pageshow')) {
-              ajaxMerchants({ showInstantCache:true });
               refreshLocation();
             }
           });
@@ -573,6 +622,9 @@
           // Refresh button listener
           $('#btnRefreshLocation').off('click').on('click', function(e){
             e.preventDefault();
+            window.__locationOverrideActive = false;
+            localStorage.removeItem("locationOverrideActive");
+            localStorage.removeItem("locationOverrideLabel");
             refreshLocation({ manual: true });
           });
 
@@ -590,6 +642,9 @@
               localStorage.removeItem('latitude');
               localStorage.removeItem('longitude');
               localStorage.removeItem('locationTimestamp');
+              window.__locationOverrideActive = false;
+              localStorage.removeItem("locationOverrideActive");
+              localStorage.removeItem("locationOverrideLabel");
             }
           };
 
@@ -664,6 +719,12 @@
                   var lat = parseFloat(r.lat);
                   var lon = parseFloat(r.lon);
                   var label = r.display_name || query;
+                  
+                  // Set override active flags
+                  window.__locationOverrideActive = true;
+                  localStorage.setItem("locationOverrideActive", "true");
+                  localStorage.setItem("locationOverrideLabel", label);
+
                   saveCoords(lat, lon);
                   latitude = lat; longitude = lon;
                   $('#locationStatusText').html('📍 Override: ' + label.split(',').slice(0,2).join(',')).css('color','#f59e0b');

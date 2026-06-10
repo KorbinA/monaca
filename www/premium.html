@@ -407,8 +407,6 @@
 
 				var target = document.getElementById('premium-container');
 				var spinner = new Spinner(opts).spin(target);
-				var FALLBACK_LAT = "43.8260574";
-				var FALLBACK_LON = "-111.7837469";
 
 				function isValidCoordinate(val) {
 					if (val === null || val === undefined) return false;
@@ -473,12 +471,14 @@
 						var storedLat = window.localStorage.getItem("latitude");
 						var storedLon = window.localStorage.getItem("longitude");
 						if (!isValidCoordinate(storedLat) || !isValidCoordinate(storedLon)) {
-							latitude = FALLBACK_LAT;
-							longitude = FALLBACK_LON;
-							window.localStorage.setItem("latitude", latitude);
-							window.localStorage.setItem("longitude", longitude);
-							window.localStorage.setItem("locationTimestamp", String(Date.now()));
-							$('#locationStatusText').html('📍 Fallback: Rexburg, ID').css('color', '#64748b');
+							latitude = "";
+							longitude = "";
+							$(target).html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+								'<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+								'<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+								'</div>');
+							spinner.stop();
+							return;
 						} else {
 							latitude = storedLat;
 							longitude = storedLon;
@@ -559,8 +559,13 @@
 					var lat = window.localStorage.getItem("latitude") || latitude;
 					var lon = window.localStorage.getItem("longitude") || longitude;
 					if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) {
-						lat = FALLBACK_LAT;
-						lon = FALLBACK_LON;
+						log('invalid coordinates, showing Location Access Required message');
+						$(target).html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+							'<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+							'<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+							'</div>');
+						spinner.stop();
+						return;
 					}
 
 					var accountId = window.localStorage.getItem("accountId") || "";

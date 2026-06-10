@@ -120,9 +120,7 @@
         var SPINNER_DELAY_MS         = 800;              // Delay before showing spinner (prevents flash)
         var FAST_GETPOSITION_TIMEOUT = 3000;             // Quick one-shot GPS timeout
         var FAST_GETPOSITION_MAXAGE  = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
-        var FALLBACK_LAT             = "43.8260574";     // Fallback coordinates (Rexburg, ID)
-        var FALLBACK_LON             = "-111.7837469";
-      
+       
         /* ===========================
            State
         =========================== */
@@ -263,8 +261,13 @@
           var lat = latitude;
           var lon = longitude;
           if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) {
-            lat = FALLBACK_LAT;
-            lon = FALLBACK_LON;
+            log('invalid coordinates, showing Location Access Required message');
+            hideSpinner();
+            $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+              '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+              '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+              '</div>');
+            return;
           }
 
           var key = mkKey(lat, lon, categoryText, radiusText);
@@ -300,7 +303,6 @@
               $('#merchants').empty().append(html);
               writeMerchantsCache(key, html);
               hideSpinner();
-              ajaxPremiumDeals();
             },
             error: function(){
               hideSpinner();
@@ -316,69 +318,7 @@
             }
           });
         }
- 
-        function ajaxPremiumDeals() {
-          var categoryText = $('#category option:selected').text().toLowerCase();
-          var radiusText = $('#radius option:selected').text().substring(0, 2);
-          
-          var accountId = localStorage.getItem("accountId") || "";
-          if (accountId === "null" || accountId === "undefined") {
-            accountId = "";
-          }
 
-          var lat = localStorage.getItem("latitude") || latitude;
-          var lon = localStorage.getItem("longitude") || longitude;
-          if (!isValidCoordinate(lat) || !isValidCoordinate(lon)) {
-            lat = FALLBACK_LAT;
-            lon = FALLBACK_LON;
-          }
-
-          $.ajax({
-            url: "https://glasscard.org/dataaccessprod4/getPremiumDeals.ashx",
-            type: "POST",
-            data: "Latitude=" + encodeURIComponent(lat) +
-                  "&Longitude=" + encodeURIComponent(lon) +
-                  "&Category=" + encodeURIComponent(categoryText || "all deals") +
-                  "&Radius=" + encodeURIComponent(radiusText) +
-                  "&accountid=" + encodeURIComponent(accountId),
-            dataType: "text",
-            crossDomain: true,
-            timeout: AJAX_TIMEOUT_MS,
-            success: function(html) {
-              var trimmed = $.trim(html);
-              var isNoDeals = (trimmed.toLowerCase().indexOf("active deals within") !== -1) ||
-                              (trimmed.toLowerCase().indexOf("no active deals") !== -1);
-              var isEmptyMsg = !trimmed.length || isNoDeals;
-              
-              // Always remove previous premium section on reload
-              $('#merchants .premium-home-section').remove();
-              
-              if (!isEmptyMsg) {
-                var $wrap = $('<div class="premium-home-section"></div>').append(html);
-                $('#merchants').append($wrap);
- 
-                // Block clicks for non-premium users
-                var isPremium = false;
-                try { isPremium = JSON.parse(localStorage.getItem("isPremium")); } catch(e) {}
-                if (!isPremium) {
-                  $wrap.find('.premium-container a').off('click.lock').on('click.lock', function(e) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    displayMessage("Card Members Only",
-                      "This deal is only available for Card Members.",
-                      [{ text: "Learn More", click: function(){ $(this).dialog('close'); window.location.href = 'premium.html'; } },
-                       { text: "Close",      click: function(){ $(this).dialog('close'); } }]
-                    );
-                    return false;
-                  });
-                }
-              }
-            },
-            error: function() {
-              // Fail silently
-            }
-          });
-        }
       
         /* ===========================
            Location flow
@@ -453,11 +393,13 @@
               showLocationSettingsDialog();
             }
  
-            // Fall back to stored or auto fallback
+            // Fall back to stored if available, otherwise show location required
             if (!tryRenderWithStoredCoords('refreshLocation fallback')) {
-              saveCoords(FALLBACK_LAT, FALLBACK_LON);
-              $('#locationStatusText').html('📍 Fallback: Rexburg, ID').css('color', '#64748b');
-              ajaxMerchants({ showInstantCache:true });
+              hideSpinner();
+              $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+                '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+                '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+                '</div>');
             }
           }, {
             timeout: opts.manual ? 10000 : FAST_GETPOSITION_TIMEOUT,
@@ -522,10 +464,11 @@
               return;
             }
       
-            // Auto fallback to Rexburg
-            saveCoords(FALLBACK_LAT, FALLBACK_LON);
-            $('#locationStatusText').html('📍 Fallback: Rexburg, ID').css('color', '#64748b');
-            ajaxMerchants({ showInstantCache:true });
+            hideSpinner();
+            $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+              '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+              '<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+              '</div>');
             
             showLocationSettingsDialog();
           }, FIRST_FIX_GATE_MS);

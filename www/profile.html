@@ -110,6 +110,20 @@ table.profile td {
 		<br>
 		<br>
         <table class="profile">
+			<tr class="profile" id="expirationRow" style="cursor:pointer;">
+			  <td class="profile">
+				<a href="#" style="display:block; color:#222831; text-decoration:none;">
+				  Card Expiration: <span id="expirationDate">Loading...</span>
+				</a>
+			  </td>
+			  <td class="profile_icon" style="color:#1fab89; vertical-align:middle; line-height:0;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+				  <rect x="2" y="5" width="20" height="14" rx="2" ry="2" />
+				  <line x1="2" y1="10" x2="22" y2="10" />
+				</svg>
+			  </td>
+			</tr>
+
 			<tr class="profile">
 			  <td class="profile">
 				<a id="fundraisersLink" href="https://glasscardapp.com" target="_system" style="display:block; color:#222831;">
@@ -329,6 +343,40 @@ table.profile td {
 					window.localStorage.clear();
 					window.location.href = "login.html";
 				});
+
+				// Card Expiration Display
+				try {
+					var isPremium = window.localStorage.getItem("isPremium");
+					var premiumUntil = window.localStorage.getItem("premiumUntil");
+					var expiryStr = "Not Active";
+					var hasPremium = (isPremium === "true" || isPremium === true);
+
+					if (hasPremium && premiumUntil) {
+						var date = new Date(premiumUntil);
+						if (!isNaN(date.getTime())) {
+							expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+						} else {
+							expiryStr = premiumUntil;
+						}
+					} else if (premiumUntil) {
+						var date = new Date(premiumUntil);
+						if (!isNaN(date.getTime())) {
+							expiryStr = "Expired (" + date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ")";
+						} else {
+							expiryStr = "Expired (" + premiumUntil + ")";
+						}
+					}
+					$('#expirationDate').html(expiryStr);
+				} catch(err) {
+					console.log("Error displaying expiration date:", err);
+				}
+
+				$(document).on("click", "#expirationRow", function(event) {
+					event.preventDefault();
+					var infoMsg = "Want to support another fundraiser? You can purchase a new access code online or via a plastic card. Entering a new code will reactivate or extend your card after the current one expires.";
+					displayMessage("Support Another Fundraiser", infoMsg, "OK");
+				});
+
 				// NEW external link handler
 				document.addEventListener("deviceready", function () {
 				function openExternal(e) {

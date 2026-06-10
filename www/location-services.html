@@ -23,28 +23,31 @@
         box-sizing: border-box;
         padding: 24px;
         text-align: center;
-      }
-      .location-card {
-        width: 100%;
-        max-width: 400px;
         background: #ffffff;
-        border-radius: 20px;
-        padding: 32px 24px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
-        border: 1px solid #f1f5f9;
+      }
+      .location-content {
+        width: 100%;
+        max-width: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .location-icon {
-        width: 72px;
-        height: 72px;
+        width: 48px;
+        height: 48px;
         margin-bottom: 24px;
+        color: #0b5fff;
+      }
+      .warning-color {
+        color: #ef4444;
       }
       .pulse {
         animation: pulse 1.5s infinite ease-in-out;
       }
       @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.05); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 0.5; }
+        0% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.6; }
       }
       h2 {
         font-size: 24px;
@@ -58,6 +61,20 @@
         color: #475569;
         line-height: 1.6;
         margin: 0 0 32px 0;
+      }
+      .instructions-text {
+        text-align: left;
+        font-size: 13px;
+        color: #334155;
+        line-height: 1.6;
+        margin: 0 0 32px 0;
+        width: 100%;
+      }
+      .instruction-row {
+        margin-bottom: 16px;
+      }
+      .instruction-row b {
+        color: #0f172a;
       }
       .btn-group {
         display: flex;
@@ -79,24 +96,19 @@
         transition: all 0.2s ease;
       }
       .btn-primary {
-        background: #1fab89;
+        background: #0b5fff;
         color: #ffffff;
-        box-shadow: 0 4px 12px rgba(31, 171, 137, 0.2);
       }
       .btn-primary:active {
         transform: scale(0.98);
+        opacity: 0.9;
       }
       .btn-secondary {
         background: #f1f5f9;
         color: #475569;
       }
-      .btn-secondary:hover {
+      .btn-secondary:active {
         background: #e2e8f0;
-      }
-      .loading-text {
-        font-size: 16px;
-        color: #64748b;
-        font-weight: 600;
       }
       .hidden {
         display: none !important;
@@ -105,29 +117,58 @@
   </head>
   <body>
     <div class="location-container">
-      <!-- Initial Loading State -->
-      <div id="loadingState" class="location-card">
-        <div style="margin-bottom: 20px;">
-          <img src="images/location-icon.png" class="location-icon pulse" alt="Location" />
-        </div>
-        <div class="loading-text">Requesting location access...</div>
-      </div>
-
-      <!-- Instructions/Denied State (Initially Hidden) -->
-      <div id="instructionState" class="location-card hidden">
-        <img src="images/location-icon.png" class="location-icon" alt="Location Required" />
-        <h2>Location Access Required</h2>
-        <p>To show you nearby deals, Glass Card needs access to your location.<br/><br/>Please open your phone's <b>Settings</b>, find the <b>Glass Card</b> app, and grant it location permissions.</p>
+      
+      <!-- State 1: Ask Permission (Initial screen) -->
+      <div id="requestState" class="location-content">
+        <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
+        </svg>
+        <h2>Enable Location Services</h2>
+        <p>Glass Card needs to know your phone's location to show deals nearby.</p>
         <div class="btn-group">
-          <button id="btnTryAgain" class="btn btn-primary">Try Again</button>
+          <button id="btnOK" class="btn btn-primary">OK</button>
           <button id="btnSkip" class="btn btn-secondary">Skip for Now</button>
         </div>
       </div>
+
+      <!-- State 2: Requesting/Loading State -->
+      <div id="loadingState" class="location-content hidden">
+        <svg class="location-icon pulse" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
+        </svg>
+        <h2>Accessing Location...</h2>
+        <p>Please authorize location access when prompted by your device.</p>
+      </div>
+
+      <!-- State 3: Denied/Instructions State -->
+      <div id="instructionState" class="location-content hidden">
+        <svg class="location-icon warning-color" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
+        </svg>
+        <h2>Location Access Required</h2>
+        <p>To show you nearby deals, Glass Card needs access to your location.</p>
+        
+        <div class="instructions-text">
+          <div class="instruction-row">
+            <b>Android:</b> Open your device's <b>Settings</b>, go to <b>Location &gt; App location permissions</b>, tap <b>Glass Card</b>, and choose your preferred access level.
+          </div>
+          <div class="instruction-row">
+            <b>iOS:</b> Open your <b>Settings</b> app, tap <b>Privacy &amp; Security</b>, and select <b>Location Services</b>. Ensure the master toggle at the top is turned on, then scroll down, tap <b>Glass Card</b>, and choose your preferred access level.
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btnTryAgain" class="btn btn-primary">Try Again</button>
+          <button id="btnSkipInstructions" class="btn btn-secondary">Skip for Now</button>
+        </div>
+      </div>
+
     </div>
 
     <script type="text/javascript">
       $(document).ready(function() {
         function requestPermission() {
+          $('#requestState').addClass('hidden');
           $('#loadingState').removeClass('hidden');
           $('#instructionState').addClass('hidden');
 
@@ -138,7 +179,7 @@
                 window.localStorage.setItem("longitude", pos.coords.longitude);
                 window.localStorage.setItem("locationTimestamp", String(Date.now()));
               }
-              window.location.href = "unlock.html";
+              window.location.href = "home.html";
             }, function(error) {
               console.log("Geolocation error during onboarding:", error);
               showInstructions();
@@ -153,19 +194,26 @@
         }
 
         function showInstructions() {
+          $('#requestState').addClass('hidden');
           $('#loadingState').addClass('hidden');
           $('#instructionState').removeClass('hidden');
         }
 
-        // Trigger automatically on load
-        requestPermission();
+        // Click handlers
+        $('#btnOK').on('click', function() {
+          requestPermission();
+        });
 
         $('#btnTryAgain').on('click', function() {
           requestPermission();
         });
 
         $('#btnSkip').on('click', function() {
-          window.location.href = "unlock.html";
+          window.location.href = "home.html";
+        });
+
+        $('#btnSkipInstructions').on('click', function() {
+          window.location.href = "home.html";
         });
       });
     </script>

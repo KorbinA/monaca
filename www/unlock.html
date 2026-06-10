@@ -121,7 +121,7 @@
       </details>
 
       <div class="footer-mini">
-        Don’t have a code? <a href="home.html" style="color:var(--accent); text-decoration:none; font-weight:600;">SKIP.</a>
+        Don’t have a code? <a href="location-services.html" style="color:var(--accent); text-decoration:none; font-weight:600;">SKIP.</a>
       </div>
     </section>
   </div>
@@ -201,7 +201,7 @@
 
             if (data && data.ok) {
   try { window.localStorage.setItem('isPremium', true); } catch(_){}
-  window.location.href = "home.html";
+  window.location.href = "location-services.html";
 } else {
   var msg = (data && data.message)
     ? data.message

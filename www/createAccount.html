@@ -262,7 +262,7 @@
                   loginTo(token, email, password, "home.html");
                 } else if (typeof data === "string" && data.length > 0) {
                   sendWelcomeEMail(email);
-                  loginTo(token, email, password, "location-services.html");
+                  loginTo(token, email, password, "unlock.html");
                 } else {
                   displayMessage("Unexpected Response", "We couldn't complete your account setup. Please try again in a minute.", "OK");
                 }

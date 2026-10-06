@@ -40,7 +40,12 @@
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
       <application android:usesCleartextTraffic="true"/>
     </edit-config>
-    <icon src="res/android/icon/googleappicon.png"/>
+    <icon density="ldpi" src="res/android/icon/ldpi.png"/>
+    <icon density="mdpi" src="res/android/icon/mdpi.png"/>
+    <icon density="hdpi" src="res/android/icon/hdpi.png"/>
+    <icon density="xhdpi" src="res/android/icon/xhdpi.png"/>
+    <icon density="xxhdpi" src="res/android/icon/xxhdpi.png"/>
+    <icon density="xxxhdpi" src="res/android/icon/xxxhdpi.png"/>
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
       <application android:exported="true"/>
     </edit-config>
@@ -54,30 +59,30 @@
     <edit-config file="*-Info.plist" mode="merge" overwrite="true" target="NSLocationAlwaysAndWhenInUseUsageDescription">
       <string>We use your location to show nearby discounts while you’re using Glass Card. We do not collect or track your location in the background.</string>
     </edit-config>
-    <icon height="120" src="www/GlassCard/Resources/Icon-60@2x.png" width="120"/>
-    <icon height="180" src="www/GlassCard/Resources/Icon-60@3x.png" width="180"/>
-    <icon height="72" src="www/GlassCard/Resources/Icon-72.png" width="72"/>
-    <icon height="144" src="www/GlassCard/Resources/Icon-72@2x.png" width="144"/>
-    <icon height="76" src="www/GlassCard/Resources/Icon-76.png" width="76"/>
-    <icon height="152" src="www/GlassCard/Resources/Icon-76@2x.png" width="152"/>
-    <icon height="167" src="www/GlassCard/Resources/Icon-83.5@2x.png" width="167"/>
-    <icon height="50" src="www/GlassCard/Resources/Icon-50.png" width="50"/>
-    <icon height="100" src="www/GlassCard/Resources/Icon-50@2x.png" width="100"/>
-    <icon height="57" src="www/GlassCard/Resources/Icon-57.png" width="57"/>
-    <icon height="114" src="www/GlassCard/Resources/Icon-57@2x.png" width="114"/>
-    <icon height="29" src="www/GlassCard/Resources/Icon-small.png" width="29"/>
-    <icon height="58" src="www/GlassCard/Resources/Icon-small@2x.png" width="58"/>
-    <icon height="87" src="www/GlassCard/Resources/Icon-small@3x.png" width="87"/>
-    <icon height="40" src="www/GlassCard/Resources/Icon-small-40.png" width="40"/>
-    <icon height="80" src="www/GlassCard/Resources/Icon-small-40@2x.png" width="80"/>
-    <icon height="1024" src="www/GlassCard/Resources/appicon1024.png" width="1024"/>
+    <icon height="57" src="res/ios/icon/icon.png" width="57"/>
+    <icon height="114" src="res/ios/icon/icon@2x.png" width="114"/>
+    <icon height="72" src="res/ios/icon/icon-72.png" width="72"/>
+    <icon height="144" src="res/ios/icon/icon-72@2x.png" width="144"/>
+    <icon height="60" src="res/ios/icon/icon-60.png" width="60"/>
+    <icon height="120" src="res/ios/icon/icon-60@2x.png" width="120"/>
+    <icon height="180" src="res/ios/icon/icon-60@3x.png" width="180"/>
+    <icon height="76" src="res/ios/icon/icon-76.png" width="76"/>
+    <icon height="152" src="res/ios/icon/icon-76@2x.png" width="152"/>
+    <icon height="167" src="res/ios/icon/icon-83.5@2x~ipad.png" width="167"/>
+    <icon height="40" src="res/ios/icon/icon-40.png" width="40"/>
+    <icon height="80" src="res/ios/icon/icon-40@2x.png" width="80"/>
+    <icon height="50" src="res/ios/icon/icon-50.png" width="50"/>
+    <icon height="100" src="res/ios/icon/icon-50@2x.png" width="100"/>
+    <icon height="29" src="res/ios/icon/icon-small.png" width="29"/>
+    <icon height="58" src="res/ios/icon/icon-small@2x.png" width="58"/>
+    <icon height="87" src="res/ios/icon/icon-small@3x.png" width="87"/>
+    <icon height="20" src="res/ios/icon/icon-20.png" width="20"/>
+    <icon height="1024" src="res/ios/icon/icon-1024.png" width="1024"/>
     <splash src="res/ios/screen/Default@2x~universal~anyany.png"/>
     <preference name="orientation" value="portrait"/>
     <allow-intent href="*"/>
     <preference name="scheme" value="monaca-app"/>
     <preference name="hostname" value="localhost"/>
-    <icon src="/res/ios/icon/icon-60.png" width="60" height="60"/>
-    <icon src="/res/ios/icon/icon-20.png" width="20" height="20"/>
   </platform>
   <engine name="android" spec="^11.0.0"/>
   <preference name="WindowsStorePublisherName" value="My Name"/>

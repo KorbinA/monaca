@@ -149,21 +149,31 @@
 
     // Version gate identical to original
     function versionGate(next){
-      // Bypass version check if running on localhost / local IP or in development environment
-      if (window.location.hostname === "localhost" || 
+      // Bypass version check if running in a web browser without Cordova, or on localhost / file / local network
+      var isCordova = !!(window.cordova || window.Cordova || window.PhoneGap);
+      var isLocalOrWeb = !isCordova || 
+          window.location.hostname === "localhost" || 
           window.location.hostname === "127.0.0.1" || 
-          window.location.protocol === "file:") {
-        console.log("Local development environment detected: Bypassing version gate.");
-        try {
-          if (!window.localStorage.getItem("userAppVersion")) {
-            window.localStorage.setItem("userAppVersion", "2.0.10");
-          }
-        } catch(e){}
+          window.location.hostname.indexOf("192.168.") === 0 ||
+          window.location.hostname.indexOf("10.") === 0 ||
+          window.location.protocol === "file:" ||
+          window.location.protocol === "http:" ||
+          window.location.protocol === "https:";
+
+      // Always ensure userAppVersion is set to latest accepted version
+      try {
+        if (!window.localStorage.getItem("userAppVersion") || window.localStorage.getItem("userAppVersion") === "2.0.10") {
+          window.localStorage.setItem("userAppVersion", "2.0.13");
+        }
+      } catch(e){}
+
+      if (!isCordova) {
+        console.log("Browser environment detected (non-Cordova): Bypassing version gate for web testing.");
         next && next();
         return;
       }
 
-      var version = (window.AppVersion && AppVersion.version) || window.localStorage.getItem("userAppVersion") || "";
+      var version = (window.AppVersion && AppVersion.version) || window.localStorage.getItem("userAppVersion") || "2.0.13";
       try { if (window.AppVersion && AppVersion.version) window.localStorage.setItem("userAppVersion", AppVersion.version); } catch(e){}
 
       // Ensure jQuery knows we intend to do CORS (for older jQuery)

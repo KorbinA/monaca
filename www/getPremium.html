@@ -13,6 +13,8 @@
   <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
   <script src="js/jquery.inputmask.bundle.js"></script>
   <script src="js/spin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="text/javascript" src="https://js.authorize.net/v1/Accept.js" charset="utf-8"></script>
   <style>
     .wrap {
       width: 100%;
@@ -104,6 +106,33 @@
             Activate your card</h1>
           <div id="descriptiontext"></div>
         </header>
+
+        <!-- Fundraiser Attribution Status -->
+        <div id="fundraiserStatusBox" style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #10b981; border-radius: 50%; color: white; font-weight: bold; font-size: 13px;">✓</span>
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #059669; letter-spacing: 0.5px;">Supporting Fundraiser</div>
+              <div id="fundraiserNameText" style="font-size: 15px; font-weight: 800; color: #065f46;"></div>
+            </div>
+          </div>
+          <button type="button" id="changeFundraiserBtn" style="background: transparent; border: none; font-size: 12px; color: #059669; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px;">Change</button>
+        </div>
+
+        <!-- Unconnected Notice & Optional Fundraiser ID Input -->
+        <div id="unconnectedNoticeBox" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 16px; margin-bottom: 20px; display: none;">
+          <div style="font-size: 13px; color: #475569; line-height: 1.45; margin-bottom: 10px;">
+            This purchase is not currently connected to a school or team fundraiser.
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label for="fundraiserLookupInput" style="font-size: 12px; font-weight: 700; color: #64748b; margin: 0;">Have a Fundraiser ID to support?</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="fundraiserLookupInput" class="input" style="flex: 1; height: 42px !important; padding: 8px 12px !important; font-size: 14px;" placeholder="e.g. fundraiser ID or code" />
+              <button type="button" id="applyFundraiserBtn" style="background: #2563eb; color: white; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; font-size: 13px; cursor: pointer; height: 42px;">Connect</button>
+            </div>
+            <div id="fundraiserLookupError" style="font-size: 12px; color: #dc2626; margin-top: 4px; display: none;"></div>
+          </div>
+        </div>
 
         <!-- Form -->
         <form id="ccform" style="display: flex; flex-direction: column; gap: 16px;">
@@ -224,10 +253,10 @@
 
           <button type="button" id="submit" class="btn" style="margin-top: 8px;">Confirm Payment</button>
 
-          <!-- Simple One-Line Small Print Disclaimer -->
-          <div
-            style="font-size: 11.5px; color: #5f718a; text-align: center; margin-top: 4px; font-weight: 500; line-height: 1.4;">
-            This is a one-time charge. We do not store your card or automatically renew next year.
+          <!-- Subscription Disclaimer Fine Print -->
+          <div id="subscriptionDisclaimer"
+            style="font-size: 12px; color: #64748b; text-align: left; margin-top: 8px; line-height: 1.5; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+            * Your purchase includes an automatic annual card renewal. Renewed cards are optional. <span id="groupRenewalNotice">We will remind you 30 days before your card expires with an opportunity to renew or cancel.</span>
           </div>
         </form>
       </section>
@@ -258,9 +287,43 @@
   </div>
 
   <script type="text/javascript">
+    const SUPABASE_URL = 'https://zsnqvjreqjbevorjwaby.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzbnF2anJlcWpiZXZvcmp3YWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjc0NTMsImV4cCI6MjA4MjgwMzQ1M30.kGvKboi4NVCcRkEti9GITwSZS-F6kjUlHxxcfg2FQh8';
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.error("[Supabase Init Error]", e);
+    }
+
+    const authData = {
+      clientKey: "658DRsG37KYthMmb39Acfwfg2qhVPWgdtWbJv39kjsaW8EM5XQ8J3224DW9E7vw7",
+      apiLoginID: "79b4jZ86XU"
+    };
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function getFriendlyErrorMessage(message) {
+      if (!message) return "An unexpected error occurred. Please try again.";
+      const technicalKeywords = [
+        "namespace", "element", "xml", "schema", "anetapi", "unexpected", "syntaxerror",
+        "database", "postgres", "trigger", "sql", "foreign key", "constraint",
+        "column", "table", "null value", "jwt", "unauthorized", "api key", "json", "token"
+      ];
+      if (technicalKeywords.some(k => message.toLowerCase().includes(k))) {
+        return "We encountered an issue processing your payment. Please verify your card details and try again, or contact support if the issue persists.";
+      }
+      return message;
+    }
+
     $(document).ready(function () {
       $("#cardNumber").inputmask("9999 9999 9999 9999", { "clearIncomplete": true });
-      $("#cvvNumber").inputmask("999", { "clearIncomplete": true });
+      $("#cvvNumber").inputmask("9999", { "clearIncomplete": false });
 
       function updateSelectColor(el) {
         if (!el.val()) {
@@ -292,42 +355,235 @@
       $("#closepopup").click(function () {
         $("#popup").hide();
       });
+
+      let currentProject = null;
+      let basePrice = 25.00;
+
+      function setConnectedProject(proj) {
+        currentProject = proj;
+        basePrice = parseFloat(proj.sale_price) || 25.00;
+        $("#optiontext").text("$" + basePrice.toFixed(2));
+        $("#fundraiserNameText").text(proj.name);
+        $("#groupRenewalNotice").html('If <strong>' + escapeHtml(proj.name) + '</strong> decides to re-run their fundraiser next year, we will remind you 30 days before your card expires with an opportunity to continue your support with a card renewal or to cancel.');
+        $("#unconnectedNoticeBox").hide();
+        $("#fundraiserStatusBox").css('display', 'flex');
+      }
+
+      function showUnconnectedUI() {
+        currentProject = null;
+        basePrice = 25.00;
+        $("#optiontext").text("$25.00");
+        $("#fundraiserStatusBox").hide();
+        $("#unconnectedNoticeBox").show();
+        $("#groupRenewalNotice").text("We will remind you 30 days before your card expires with an opportunity to renew or cancel.");
+      }
+
+      // Check Fundraiser Attribution from prior card activations
+      async function checkFundraiserAttribution() {
+        const accountId = window.localStorage.getItem("accountId") || "";
+        if (!accountId || !supabaseClient) {
+          showUnconnectedUI();
+          return;
+        }
+
+        try {
+          // 1. Fetch user's latest token & created date from MSSQL
+          const tokenRes = await $.getJSON("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
+            action: "get_user_token",
+            accountId: accountId
+          });
+
+          if (tokenRes && tokenRes.hasToken && tokenRes.token) {
+            const userToken = tokenRes.token.trim();
+            const createdDate = tokenRes.createdDate;
+
+            // 2. Check Supabase online_sales for modern sales
+            const { data: sale } = await supabaseClient
+              .from('online_sales')
+              .select('project_id, projects(id, name, sale_price, subscriptions_enabled)')
+              .eq('access_code', userToken)
+              .maybeSingle();
+
+            if (sale && sale.projects) {
+              setConnectedProject(sale.projects);
+              return;
+            }
+
+            // 3. Check legacy_code_prefix_mappings
+            const { data: mappings } = await supabaseClient
+              .from('legacy_code_prefix_mappings')
+              .select('prefix, project_id, start_date, end_date, projects(id, name, sale_price, subscriptions_enabled)')
+              .order('created_at', { ascending: false });
+
+            if (mappings && mappings.length > 0) {
+              for (const m of mappings) {
+                if (m.prefix && userToken.toUpperCase().startsWith(m.prefix.toUpperCase())) {
+                  // Check date range if specified
+                  if (m.start_date && createdDate && new Date(createdDate) < new Date(m.start_date)) continue;
+                  if (m.end_date && createdDate && new Date(createdDate) > new Date(m.end_date)) continue;
+
+                  if (m.projects) {
+                    setConnectedProject(m.projects);
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("[FundraiserLookup] Unable to resolve past fundraiser:", err);
+        }
+
+        // If not matched
+        showUnconnectedUI();
+      }
+
+      // Change / Disconnect Fundraiser button
+      $("#changeFundraiserBtn").click(function () {
+        showUnconnectedUI();
+      });
+
+      // Manual Fundraiser ID search
+      $("#applyFundraiserBtn").click(function () {
+        const inputVal = $("#fundraiserLookupInput").val().trim();
+        if (!inputVal) return;
+        lookupCustomFundraiser(inputVal);
+      });
+
+      $("#fundraiserLookupInput").keypress(function (e) {
+        if (e.which === 13) {
+          e.preventDefault();
+          $("#applyFundraiserBtn").click();
+        }
+      });
+
+      async function lookupCustomFundraiser(queryStr) {
+        const clean = (queryStr || "").trim();
+        if (!clean || !supabaseClient) return;
+
+        $("#fundraiserLookupError").hide();
+        $("#applyFundraiserBtn").prop('disabled', true).text("Checking...");
+
+        try {
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(clean);
+          let query = supabaseClient.from('projects').select('id, name, sale_price, subscriptions_enabled');
+          if (isUuid) {
+            query = query.eq('id', clean);
+          } else {
+            query = query.ilike('custom_id', clean);
+          }
+
+          const { data: proj } = await query.maybeSingle();
+          if (proj) {
+            setConnectedProject(proj);
+          } else {
+            $("#fundraiserLookupError").text("No fundraiser found matching that ID. You can double-check with your organization, or continue below without an ID.").show();
+          }
+        } catch (err) {
+          $("#fundraiserLookupError").text("Unable to verify fundraiser ID at this time.").show();
+        } finally {
+          $("#applyFundraiserBtn").prop('disabled', false).text("Connect");
+        }
+      }
+
+      checkFundraiserAttribution();
+
+      // Submit payment
       $("#submit").click(function () {
         if (formValidation()) {
-          submit();
+          submitPayment();
         }
         return false;
       });
 
-      function submit() {
-        var spinner = getSpinner(document.getElementById("paymentcard"));
-        var data = {};
-        data["cardname"] = $("#name").val();
-        data["cardnumber"] = $("#cardNumber").val();
-        data["billingzipcode"] = $("#zipCode").val();
-        data["expirationmonth"] = $("#expirationMonth").val();
-        data["expirationyear"] = $("#expirationYear").val();
-        data["cvvnumber"] = $("#cvvNumber").val();
-        data["referralcode"] = $("#referral").val();
-        data["accountid"] = window.localStorage.getItem("accountId");
-        data["customeremail"] = window.localStorage.getItem("deviceID");
+      function submitPayment() {
+        if (!window.Accept) {
+          displayMessage("Security Error", "Payment security library is still loading. Please check your internet connection and try again.", "OK");
+          return;
+        }
 
-        $.post("https://glasscard.org/dataaccessprod4/createTransactionRequest.ashx",
-          data,
-          function (res) {
-            var resObj = JSON.parse(res);
-            if (resObj.ok) {
-              window.localStorage.setItem("isPremium", true);
-              window.location.href = "premium.html";
-            } else if (resObj.payment) {
-              displayMessage("Error During Account Setup", "Your payment was received but there was an error changing your account. If your account isn't updated in the next hour, please contact us.", "OK");
-              spinner.stop();
-            } else {
-              displayMessage("Error During Payment", "There was an error validating your payment. Check your card or try again later.", "OK");
-              spinner.stop();
+        var spinner = getSpinner(document.getElementById("paymentcard"));
+        var originalBtnText = $("#submit").text();
+        $("#submit").prop('disabled', true).text("Securing Checkout...");
+
+        var name = $("#name").val().trim();
+        var cardNumber = $("#cardNumber").val().replace(/\s+/g, '');
+        var expMonth = $("#expirationMonth").val();
+        var expYear = $("#expirationYear").val();
+        var cvv = $("#cvvNumber").val().trim();
+        var zip = $("#zipCode").val().trim();
+        var accountId = window.localStorage.getItem("accountId") || "";
+        var customerEmail = window.localStorage.getItem("deviceID") || "customer@glasscard.app";
+
+        var cardData = {
+          cardNumber: cardNumber,
+          month: expMonth,
+          year: expYear,
+          cardCode: cvv
+        };
+
+        Accept.dispatchData({ authData: authData, cardData: cardData }, async function (response) {
+          if (response.messages.resultCode === "Error") {
+            var errMsg = "";
+            for (var i = 0; i < response.messages.message.length; i++) {
+              errMsg += response.messages.message[i].text + "\n";
             }
+            spinner.stop();
+            $("#submit").prop('disabled', false).text(originalBtnText);
+            displayMessage("Payment Error", getFriendlyErrorMessage(errMsg), "OK");
+            return;
           }
-        )
+
+          try {
+            $("#submit").text("Processing Subscription...");
+
+            if (!supabaseClient) {
+              throw new Error("Unable to reach subscription service. Please try again.");
+            }
+
+            // 1. Invoke process-subscriptions edge function
+            const { data: payResult, error: payError } = await supabaseClient.functions.invoke('process-subscriptions', {
+              body: {
+                projectId: currentProject ? currentProject.id : null,
+                opaqueData: response.opaqueData,
+                amount: basePrice.toFixed(2),
+                billingZip: zip,
+                billingName: name,
+                customerEmail: customerEmail,
+                qty: 1,
+                productType: 'glass',
+                productName: 'Glass Card (1 Year)'
+              }
+            });
+
+            if (payError || !payResult || !payResult.success) {
+              throw new Error((payResult && payResult.message) || (payError && payError.message) || "Payment transaction failed.");
+            }
+
+            // 2. Activate premium status on legacy MSSQL account
+            if (accountId) {
+              try {
+                await $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
+                  action: "activate_account_premium",
+                  accountId: accountId
+                });
+              } catch (syncErr) {
+                console.warn("[LegacySync] Non-critical error activating legacy account:", syncErr);
+              }
+            }
+
+            // 3. Update localStorage and navigate
+            window.localStorage.setItem("isPremium", "true");
+            spinner.stop();
+            window.location.href = "premium.html";
+
+          } catch (err) {
+            console.error("[Checkout Exception]", err);
+            spinner.stop();
+            $("#submit").prop('disabled', false).text(originalBtnText);
+            displayMessage("Checkout Error", getFriendlyErrorMessage(err.message), "OK");
+          }
+        });
       }
 
       function formValidation() {

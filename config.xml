@@ -77,12 +77,12 @@
     <icon height="58" src="res/ios/icon/icon-small@2x.png" width="58"/>
     <icon height="87" src="res/ios/icon/icon-small@3x.png" width="87"/>
     <icon height="20" src="res/ios/icon/icon-20.png" width="20"/>
-    <icon height="1024" src="res/ios/icon/icon-1024.png" width="1024"/>
     <splash src="res/ios/screen/Default@2x~universal~anyany.png"/>
     <preference name="orientation" value="portrait"/>
     <allow-intent href="*"/>
     <preference name="scheme" value="monaca-app"/>
     <preference name="hostname" value="localhost"/>
+    <icon src="/res/ios/icon/icon-1024.png" width="1024" height="1024"/>
   </platform>
   <engine name="android" spec="^11.0.0"/>
   <preference name="WindowsStorePublisherName" value="My Name"/>

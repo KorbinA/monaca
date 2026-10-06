@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="org.glasscard.glasscard" version="2.0.15">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="org.glasscard.app" version="2.0.15">
   <name>Glass Card</name>
   <description>
 		Product and service discounts.
@@ -59,24 +59,6 @@
     <edit-config file="*-Info.plist" mode="merge" overwrite="true" target="NSLocationAlwaysAndWhenInUseUsageDescription">
       <string>We use your location to show nearby discounts while you’re using Glass Card. We do not collect or track your location in the background.</string>
     </edit-config>
-<<<<<<< HEAD
-    <icon height="120" src="www/GlassCard/Resources/Icon-60@2x.png" width="120"/>
-    <icon height="180" src="www/GlassCard/Resources/Icon-60@3x.png" width="180"/>
-    <icon height="72" src="www/GlassCard/Resources/Icon-72.png" width="72"/>
-    <icon height="144" src="www/GlassCard/Resources/Icon-72@2x.png" width="144"/>
-    <icon height="76" src="www/GlassCard/Resources/Icon-76.png" width="76"/>
-    <icon height="152" src="www/GlassCard/Resources/Icon-76@2x.png" width="152"/>
-    <icon height="167" src="www/GlassCard/Resources/Icon-83.5@2x.png" width="167"/>
-    <icon height="50" src="www/GlassCard/Resources/Icon-50.png" width="50"/>
-    <icon height="100" src="www/GlassCard/Resources/Icon-50@2x.png" width="100"/>
-    <icon height="57" src="www/GlassCard/Resources/Icon-57.png" width="57"/>
-    <icon height="114" src="www/GlassCard/Resources/Icon-57@2x.png" width="114"/>
-    <icon height="29" src="www/GlassCard/Resources/Icon-small.png" width="29"/>
-    <icon height="58" src="www/GlassCard/Resources/Icon-small@2x.png" width="58"/>
-    <icon height="87" src="www/GlassCard/Resources/Icon-small@3x.png" width="87"/>
-    <icon height="40" src="www/GlassCard/Resources/Icon-small-40.png" width="40"/>
-    <icon height="80" src="www/GlassCard/Resources/Icon-small-40@2x.png" width="80"/>
-=======
     <icon height="57" src="res/ios/icon/icon.png" width="57"/>
     <icon height="114" src="res/ios/icon/icon@2x.png" width="114"/>
     <icon height="72" src="res/ios/icon/icon-72.png" width="72"/>
@@ -96,19 +78,11 @@
     <icon height="87" src="res/ios/icon/icon-small@3x.png" width="87"/>
     <icon height="20" src="res/ios/icon/icon-20.png" width="20"/>
     <icon height="1024" src="res/ios/icon/icon-1024.png" width="1024"/>
->>>>>>> 51e8770ac87838ce8b03a600623233f1133c2a5f
     <splash src="res/ios/screen/Default@2x~universal~anyany.png"/>
     <preference name="orientation" value="portrait"/>
     <allow-intent href="*"/>
     <preference name="scheme" value="monaca-app"/>
     <preference name="hostname" value="localhost"/>
-<<<<<<< HEAD
-    <icon src="/res/ios/icon/icon-60.png" width="60" height="60"/>
-    <icon src="/res/ios/icon/icon-20.png" width="20" height="20"/>
-    <icon src="/www/GlassCard/Resources/appicon1024.png" width="1024" height="1024"/>
-    <splash src="/res/ios/screen/Default@2x~universal~anyany.png"/>
-=======
->>>>>>> 51e8770ac87838ce8b03a600623233f1133c2a5f
   </platform>
   <engine name="android" spec="^11.0.0"/>
   <preference name="WindowsStorePublisherName" value="My Name"/>

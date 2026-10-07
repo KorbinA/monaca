@@ -246,12 +246,13 @@
            Tunables
         =========================== */
         var GEO_STORED_FRESH_MS      = 30 * 60 * 1000;   // Treat stored coords as fresh up to 30 min
-        var FIRST_FIX_GATE_MS        = 6000;             // First-run grace window to avoid premature prompt
+        var FIRST_FIX_GATE_MS        = 12000;            // First-run grace window to avoid premature prompt
         var AJAX_TIMEOUT_MS          = 15000;            // Network guard
         var MERCHANTS_CACHE_TTL      = 5 * 60 * 1000;    // Merchant HTML cache TTL (5 min)
         var COORDS_ROUND_PLACES      = 2;                // Round lat/lon for cache key (~1.1km)
         var SPINNER_DELAY_MS         = 800;              // Delay before showing spinner (prevents flash)
-        var FAST_GETPOSITION_TIMEOUT = 3000;             // Quick one-shot GPS timeout
+        var FAST_GETPOSITION_TIMEOUT = 5000;             // Quick one-shot GPS timeout
+        var INITIAL_GETPOSITION_TIMEOUT = 12000;         // Cold-start GPS timeout to allow user response to native prompt
         var FAST_GETPOSITION_MAXAGE  = 5 * 60 * 1000;    // Accept OS cached fix up to 5 min
        
         /* ===========================
@@ -495,12 +496,16 @@
  
           $('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
  
+          var hasStored = isValidCoordinate(localStorage.getItem("latitude")) && isValidCoordinate(localStorage.getItem("longitude"));
+          var reqTimeout = opts.manual ? 10000 : (hasStored ? FAST_GETPOSITION_TIMEOUT : INITIAL_GETPOSITION_TIMEOUT);
+
           // Quick, one-shot position (returns OS cached instantly if recent)
           navigator.geolocation.getCurrentPosition(function(pos){
             if (window.__locationOverrideActive && !opts.manual) return;
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
+              $('#locationModal').addClass('hidden');
               ajaxMerchants({ showInstantCache:true });
               
               $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
@@ -519,15 +524,27 @@
               $('#refreshIndicator').html('');
             }
             
-            $('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
- 
-            // If they clicked manual refresh, or if we have no stored coords:
-            if (opts.manual || !isValidCoordinate(localStorage.getItem("latitude")) || !isValidCoordinate(localStorage.getItem("longitude"))) {
-              showLocationSettingsDialog();
+            var isDenied = (err && err.code === 1); // 1 = PERMISSION_DENIED
+            var hasStoredCoords = tryRenderWithStoredCoords('refreshLocation fallback');
+
+            if (isDenied) {
+              $('#locationStatusText').html('⚠️ Location access denied').css('color', '#ef4444');
+              if (opts.manual || !hasStoredCoords) {
+                showLocationSettingsDialog();
+              }
+            } else if (opts.manual) {
+              $('#locationStatusText').html('⚠️ Unable to detect location').css('color', '#ef4444');
+              if (!hasStoredCoords) {
+                showLocationSettingsDialog();
+              }
+            } else if (hasStoredCoords) {
+              // Stored coords already rendered by tryRenderWithStoredCoords
+            } else {
+              // Cold start timeout/delay while user is responding or GPS locking - keep detecting
+              $('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
             }
- 
-            // Fall back to stored if available, otherwise show location required
-            if (!tryRenderWithStoredCoords('refreshLocation fallback')) {
+
+            if (!hasStoredCoords && (isDenied || opts.manual)) {
               hideSpinner();
               $('#merchants').html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
                 '<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
@@ -535,7 +552,7 @@
                 '</div>');
             }
           }, {
-            timeout: opts.manual ? 10000 : FAST_GETPOSITION_TIMEOUT,
+            timeout: reqTimeout,
             maximumAge: opts.manual ? 0 : FAST_GETPOSITION_MAXAGE,
             enableHighAccuracy: true
           });
@@ -554,14 +571,19 @@
             if (pos && pos.coords) {
               gotAnyFixThisSession = true;
               saveCoords(pos.coords.latitude, pos.coords.longitude);
+              $('#locationModal').addClass('hidden');
               $('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
-              // If merchants are empty (first display), render now
-              if (!$('#merchants').children().length) {
+              // If merchants are empty or showing error message, render deals now
+              var currentText = $('#merchants').text() || '';
+              if (!$('#merchants').children().length || currentText.indexOf('Location Access Required') !== -1) {
                 ajaxMerchants({ showInstantCache:true });
               }
             }
           }, function(err){
             log('watchPosition error:', err && (err.code + ' ' + err.message));
+            if (err && err.code === 1) { // PERMISSION_DENIED
+              $('#locationStatusText').html('⚠️ Location access denied').css('color', '#ef4444');
+            }
           }, {
             maximumAge: FAST_GETPOSITION_MAXAGE, // allow OS cached fixes
             enableHighAccuracy: false

@@ -443,6 +443,11 @@
 
 					$('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
 
+					var storedLat = window.localStorage.getItem("latitude");
+					var storedLon = window.localStorage.getItem("longitude");
+					var hasStoredCoords = isValidCoordinate(storedLat) && isValidCoordinate(storedLon);
+					var reqTimeout = opts.manual ? 10000 : (hasStoredCoords ? 5000 : 12000);
+
 					window.navigator.geolocation.getCurrentPosition(function(pos) {
 						if (pos && pos.coords) {
 							latitude = pos.coords.latitude;
@@ -450,6 +455,7 @@
 							window.localStorage.setItem("latitude", latitude);
 							window.localStorage.setItem("longitude", longitude);
 							window.localStorage.setItem("locationTimestamp", String(Date.now()));
+							$('#locationModal').addClass('hidden');
 							loadList();
 							
 							$('#locationStatusText').html('📍 Near: Current Location').css('color', '#1fab89');
@@ -467,33 +473,46 @@
 							$('#refreshIndicator').html('');
 						}
 						
-						$('#locationStatusText').html('⚠️ Location services are disabled').css('color', '#ef4444');
+						var isDenied = (error && error.code === 1);
+						var currentLat = window.localStorage.getItem("latitude");
+						var currentLon = window.localStorage.getItem("longitude");
+						var hasValidCoords = isValidCoordinate(currentLat) && isValidCoordinate(currentLon);
 
-						var storedLat = window.localStorage.getItem("latitude");
-						var storedLon = window.localStorage.getItem("longitude");
-						if (!isValidCoordinate(storedLat) || !isValidCoordinate(storedLon)) {
+						if (isDenied) {
+							$('#locationStatusText').html('⚠️ Location access denied').css('color', '#ef4444');
+						} else if (opts.manual) {
+							$('#locationStatusText').html('⚠️ Unable to detect location').css('color', '#ef4444');
+						} else if (hasValidCoords) {
+							$('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
+						} else {
+							$('#locationStatusText').html('📍 Detecting location...').css('color', '#64748b');
+						}
+
+						if (!hasValidCoords) {
 							latitude = "";
 							longitude = "";
-							$(target).html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
-								'<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
-								'<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
-								'</div>');
-							spinner.stop();
+							if (isDenied || opts.manual) {
+								$(target).html('<div style="padding: 40px 20px; text-align: center; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">' +
+									'<p style="margin: 0 0 16px; font-weight: bold; font-size: 16px;">Location Access Required</p>' +
+									'<p style="margin: 0; font-size: 14px; line-height: 1.5;">Please enable location permissions in your phone settings to view local deals.</p>' +
+									'</div>');
+								spinner.stop();
+								showLocationSettingsDialog();
+							}
 							return;
 						} else {
-							latitude = storedLat;
-							longitude = storedLon;
-							$('#locationStatusText').html('📍 Using cached location').css('color', '#64748b');
+							latitude = currentLat;
+							longitude = currentLon;
 						}
 						
 						loadList();
 
-						// Show instructions dialog if manual or if we have no stored coords
-						if (opts.manual || !window.localStorage.getItem("latitude") || !window.localStorage.getItem("longitude")) {
+						// Show instructions dialog only if manual failure or explicitly denied
+						if (opts.manual && isDenied) {
 							showLocationSettingsDialog();
 						}
 					}, {
-						timeout: opts.manual ? 10000 : 5000,
+						timeout: reqTimeout,
 						maximumAge: opts.manual ? 0 : 5 * 60 * 1000,
 						enableHighAccuracy: true
 					});

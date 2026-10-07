@@ -982,60 +982,67 @@
             accountId: accountId
           });
 
-          if (tokenRes && tokenRes.hasToken && tokenRes.token) {
-            const userToken = tokenRes.token.trim();
+          if (tokenRes && tokenRes.hasToken) {
+            const tokenList = (tokenRes.tokens && tokenRes.tokens.length > 0) ? tokenRes.tokens : (tokenRes.token ? [tokenRes.token] : []);
             const createdDate = tokenRes.createdDate;
 
-            // 2. Check Supabase online_sales for modern sales
-            const { data: sale } = await supabaseClient
-              .from('online_sales')
-              .select('project_id, projects(id, name, sale_price, subscriptions_enabled)')
-              .eq('access_code', userToken)
-              .maybeSingle();
+            if (tokenList.length > 0) {
+              // Perform parallel batch query for all tokens in a single fast roundtrip
+              const [salesRes, physicalRes] = await Promise.all([
+                supabaseClient
+                  .from('online_sales')
+                  .select('access_code, project_id, projects(id, name, sale_price, subscriptions_enabled)')
+                  .in('access_code', tokenList),
+                supabaseClient
+                  .from('access_codes')
+                  .select('code, project_id, projects(id, name, sale_price, subscriptions_enabled)')
+                  .in('code', tokenList)
+              ]);
 
-            if (sale && sale.projects) {
-              await setConnectedProject(sale.projects);
-              return;
-            }
+              const salesList = salesRes.data || [];
+              const physicalList = physicalRes.data || [];
 
-            // 3. Check public.access_codes for physical/plastic cards generated in Command Center
-            try {
-              const { data: physicalCard } = await supabaseClient
-                .from('access_codes')
-                .select('project_id, projects(id, name, sale_price, subscriptions_enabled)')
-                .eq('code', userToken)
-                .maybeSingle();
+              // Check tokens in order of recency
+              for (let i = 0; i < tokenList.length; i++) {
+                const token = (tokenList[i] || "").trim();
+                if (!token) continue;
 
-              if (physicalCard && physicalCard.projects) {
-                await setConnectedProject(physicalCard.projects);
-                return;
+                const matchedSale = salesList.find(s => s.access_code === token && s.projects);
+                if (matchedSale) {
+                  await setConnectedProject(matchedSale.projects);
+                  return;
+                }
+
+                const matchedPhysical = physicalList.find(p => p.code === token && p.projects);
+                if (matchedPhysical) {
+                  await setConnectedProject(matchedPhysical.projects);
+                  return;
+                }
               }
-            } catch (cardErr) {
-              // access_codes table check failed or not yet created
-            }
 
-            // 4. Check legacy_code_prefix_mappings (silently ignore if table not created yet)
-            try {
-              const { data: mappings, error: mapErr } = await supabaseClient
-                .from('legacy_code_prefix_mappings')
-                .select('prefix, project_id, start_date, end_date, projects(id, name, sale_price, subscriptions_enabled)')
-                .order('created_at', { ascending: false });
+              // Fallback to legacy prefix mappings if not found in modern tables
+              try {
+                const { data: mappings } = await supabaseClient
+                  .from('legacy_code_prefix_mappings')
+                  .select('prefix, project_id, start_date, end_date, projects(id, name, sale_price, subscriptions_enabled)')
+                  .order('created_at', { ascending: false });
 
-              if (!mapErr && mappings && mappings.length > 0) {
-                for (const m of mappings) {
-                  if (m.prefix && userToken.toUpperCase().startsWith(m.prefix.toUpperCase())) {
-                    if (m.start_date && createdDate && new Date(createdDate) < new Date(m.start_date)) continue;
-                    if (m.end_date && createdDate && new Date(createdDate) > new Date(m.end_date)) continue;
-
-                    if (m.projects) {
-                      await setConnectedProject(m.projects);
-                      return;
+                if (mappings && mappings.length > 0) {
+                  for (let i = 0; i < tokenList.length; i++) {
+                    const token = (tokenList[i] || "").trim().toUpperCase();
+                    for (const m of mappings) {
+                      if (m.prefix && token.startsWith(m.prefix.toUpperCase())) {
+                        if (m.start_date && createdDate && new Date(createdDate) < new Date(m.start_date)) continue;
+                        if (m.end_date && createdDate && new Date(createdDate) > new Date(m.end_date)) continue;
+                        if (m.projects) {
+                          await setConnectedProject(m.projects);
+                          return;
+                        }
+                      }
                     }
                   }
                 }
-              }
-            } catch (prefixTableErr) {
-              // Table not yet migrated in Supabase; proceed normally
+              } catch (prefixErr) { }
             }
           }
         } catch (err) {

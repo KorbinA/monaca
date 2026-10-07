@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Activate Your Digital Card</title>
+  <title>Activate / Extend Digital Card</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="stylesheet" href="js/jquery-ui.css" />
   <link href="css/index.css" rel="stylesheet" type="text/css" />
@@ -26,21 +26,6 @@
       margin-bottom: 24px;
     }
 
-    header h1 {
-      margin: 0 0 8px 0;
-      font-size: clamp(20px, 5.5vw, 26px);
-      letter-spacing: .4px;
-      font-weight: 900;
-      color: #0b1b34;
-    }
-
-    header p {
-      margin: 0;
-      color: #5f718a;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
     .input-row {
       display: flex;
       gap: 10px;
@@ -50,12 +35,15 @@
 
     .code-input {
       flex: 1;
-      font-size: 18px;
+      font-size: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       padding: 14px;
       border-radius: 14px;
       border: 1px solid #dbe5f0;
       outline: none;
       letter-spacing: .5px;
+      color: #0b1b34;
+      background: #ffffff;
       transition: box-shadow .15s ease, border-color .15s ease;
     }
 
@@ -73,10 +61,12 @@
       cursor: pointer;
       background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
       color: #fff;
-      min-width: 110px;
+      min-width: 120px;
       font-size: 15px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       box-shadow: 0 8px 20px rgba(22, 177, 135, .2);
       transition: transform .05s ease, opacity .2s ease;
+      white-space: nowrap;
     }
 
     .btn-action[disabled] {
@@ -139,36 +129,27 @@
 <body class="gradient">
   <main class="container">
     <div class="wrap">
+      <section class="card" id="cardSection" style="width: 100%;">
+        <div id="activate_content" style="margin-bottom: 12px;"></div>
 
-
-      <section class="card" id="activate" style="display:none; width: 100%;">
-        <div id="activate_content" style="margin-bottom:12px;"></div>
-
-        <label for="accessCode" style="font-size:13.5px; color:#5f718a; font-weight:700;">Access Code</label>
+        <label id="inputLabel" for="accessCode" style="font-size: 13.5px; color: #5f718a; font-weight: 700; display: block; text-align: left;">Access Code</label>
         <div class="input-row">
           <input id="accessCode" name="unlockCode" class="code-input" type="text" inputmode="text" autocomplete="off"
-            autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="36" placeholder="XXXXXX" />
+            autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="36" placeholder="XXXXXX" />
           <button id="activateBtn" class="btn-action" disabled>Activate</button>
         </div>
 
         <details class="tips">
           <summary>Where is my access code?</summary>
-          <ul class="tip-list" style="margin-left:0px; padding-left:0px; list-style-type: none;">
-            <li style="text-align: left; margin-bottom: 10px;"><strong>Plastic fundraiser card:</strong> your access
-              code is printed on the physical card.</li>
-            <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout
-              confirmation screen and in your emailed receipt.</li>
+          <ul class="tip-list" style="margin-left: 0px; padding-left: 0px; list-style-type: none;">
+            <li style="text-align: left; margin-bottom: 10px;"><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
+            <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
           </ul>
         </details>
 
-        <div class="footer-mini">
-          Don’t have an access code? <a href="getPremium.html"
-            style="color:#2066c7; text-decoration:none; font-weight:800;">Buy a Card Online</a>
+        <div class="footer-mini" id="buyCardLinkWrap">
+          Don’t have an access code? <a href="getPremium.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">Buy a Card Online</a>
         </div>
-      </section>
-
-      <section class="card" id="renew" style="display:none; width: 100%;">
-        <div id="renew_content"> LOADING CONTENT</div>
       </section>
     </div>
   </main>
@@ -178,8 +159,8 @@
       <img src="images/search-grey.png" alt="">
       <span>Discover</span>
     </a>
-    <a class="tab" href="profile.html" aria-label="Account">
-      <img src="images/account-grey.png" alt="">
+    <a class="tab is-active" href="profile.html" aria-label="Account">
+      <img src="images/account-gradient.png" alt="">
       <span>Account</span>
     </a>
   </footer>
@@ -208,12 +189,42 @@
       }
 
       function normalizeCode(s) {
-        return (s || "").replace(/[\s\-]/g, "").trim();
+        return (s || "").replace(/[\s\-]/g, "").trim().toUpperCase();
       }
 
-      function setBusy(isBusy) {
+      function formatFullDate(d) {
+        if (!d || isNaN(d.getTime())) return "";
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+
+      function getCardState() {
+        var isPremium = (window.localStorage.getItem("isPremium") === "true" || window.localStorage.getItem("isPremium") === true);
+        var premiumUntil = window.localStorage.getItem("premiumUntil");
+        var parsedDate = null;
+        var isCurrentlyActive = false;
+
+        if (premiumUntil) {
+          var d = new Date(premiumUntil);
+          if (!isNaN(d.getTime())) {
+            parsedDate = d;
+            if (d >= new Date() && isPremium) {
+              isCurrentlyActive = true;
+            }
+          }
+        }
+
+        return {
+          isCurrentlyActive: isCurrentlyActive,
+          expiryDate: parsedDate,
+          rawUntil: premiumUntil
+        };
+      }
+
+      var defaultBtnText = 'Activate';
+
+      function setBusy(isBusy, text) {
         $('#activateBtn').prop('disabled', isBusy || !normalizeCode($('#accessCode').val()));
-        $('#activateBtn').text(isBusy ? 'Activating…' : 'Activate');
+        $('#activateBtn').text(isBusy ? (text || 'Activating…') : defaultBtnText);
       }
 
       $('#accessCode').on('input', function () {
@@ -223,83 +234,74 @@
       $('#accessCode').on('keydown', function (e) {
         if (e.key === 'Enter') {
           e.preventDefault();
-          $('#activateBtn').click();
+          if (!$('#activateBtn').prop('disabled')) {
+            $('#activateBtn').click();
+          }
         }
       });
 
-      // Check membership status on load
-      try {
-        var isPremium = window.localStorage.getItem("isPremium");
-        var premiumUntil = window.localStorage.getItem("premiumUntil");
-        if ((isPremium === "true" || isPremium === true) && premiumUntil) {
-          var untilDate = new Date(premiumUntil);
-          if (!isNaN(untilDate.getTime()) && untilDate < new Date()) {
-            window.localStorage.setItem("isPremium", false);
-            isPremium = false;
-          }
-        }
-      } catch (e) { }
+      // Render the screen according to active/expired/new status
+      var state = getCardState();
 
-      if (JSON.parse(window.localStorage.getItem("isPremium"))) {
-        $('#renew').show();
-        $('#activate').hide();
-        loadRenew();
-      } else if (window.localStorage.getItem("premiumUntil")) {
-        $('#renew').hide();
-        $('#activate').show();
-        loadActivateExMember();
-      } else {
-        $('#renew').hide();
-        $('#activate').show();
-        loadActivate();
-      }
+      if (state.isCurrentlyActive && state.expiryDate) {
+        // Active card: explain that they can extend 1 year out from current expiration date
+        var currentExpiryStr = formatFullDate(state.expiryDate);
+        var extendedDate = new Date(state.expiryDate.getTime());
+        extendedDate.setFullYear(extendedDate.getFullYear() + 1);
+        var extendedDateStr = formatFullDate(extendedDate);
 
-      function loadActivate() {
+        defaultBtnText = 'Extend Card';
+        $('#activateBtn').text(defaultBtnText);
+        $('#inputLabel').text('New Access Code');
+
         var html =
-          '<div style="text-align: center; margin-bottom: 20px;">' +
-          '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 auto 8px auto; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; width: 100%;">Activate Your Digital Card</h2>' +
-          '  <p style="font-size: 14.5px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>' +
+          '<div style="text-align: center; margin-bottom: 18px;">' +
+          '  <div style="display: inline-block; padding: 5px 14px; background: rgba(22, 177, 135, 0.1); border: 1px solid rgba(22, 177, 135, 0.25); border-radius: 9999px; font-size: 11.5px; font-weight: 800; color: #16b187; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">' +
+          '    Card Currently Active' +
+          '  </div>' +
+          '  <h2 style="font-size: 21px; font-weight: 900; color: #0b1b34; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Add / Extend Your Card</h2>' +
+          '  <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 14px; padding: 14px 16px; margin: 12px 0 16px 0; text-align: left;">' +
+          '    <p style="font-size: 13.5px; color: #166534; line-height: 1.5; margin: 0 0 8px 0;">' +
+          '      Your card currently does not expire until <strong>' + currentExpiryStr + '</strong>.' +
+          '    </p>' +
+          '    <p style="font-size: 13px; color: #15803d; line-height: 1.5; margin: 0;">' +
+          '      If you bought a new fundraiser card, you can enter your code below now to extend your expiration date <strong>1 full year from when your current card expires</strong> (until <strong>' + extendedDateStr + '</strong>).' +
+          '    </p>' +
+          '  </div>' +
           '</div>';
-        $("#activate_content").html(html);
-      }
 
-      function loadActivateExMember() {
+        $('#activate_content').html(html);
+
+      } else if (state.expiryDate) {
+        // Expired card / renewal
+        defaultBtnText = 'Activate';
+        $('#activateBtn').text(defaultBtnText);
+        $('#inputLabel').text('Access Code');
+
         var html =
           '<div style="text-align: center; margin-bottom: 20px;">' +
           '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 auto 8px auto; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; width: 100%;">Enter Access Code</h2>' +
           '  <p style="font-size: 14.5px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>' +
           '</div>';
-        $("#activate_content").html(html);
-      }
 
-      function loadRenew() {
-        var premiumUntil = window.localStorage.getItem('premiumUntil');
-        var expiryStr = "Active";
-        if (premiumUntil) {
-          try {
-            var date = new Date(premiumUntil);
-            if (!isNaN(date.getTime())) {
-              expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-            } else {
-              expiryStr = premiumUntil;
-            }
-          } catch (e) {
-            expiryStr = premiumUntil;
-          }
-        }
+        $('#activate_content').html(html);
+
+      } else {
+        // New user / not active
+        defaultBtnText = 'Activate';
+        $('#activateBtn').text(defaultBtnText);
+        $('#inputLabel').text('Access Code');
+
         var html =
-          '<div style="text-align: center; padding: 10px;">' +
-          '  <h2 style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 auto 8px auto; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; width: 100%;">Premium Active</h2>' +
-          '  <p style="font-size: 14px; color: #5f718a; line-height: 1.5; margin: 0 0 16px 0;">' +
-          '    Your Glass Card Premium membership is active!' +
-          '  </p>' +
-          '  <div style="display: inline-block; padding: 10px 16px; background: rgba(22, 177, 135, 0.08); border: 1px solid rgba(22, 177, 135, 0.2); border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #16b187;">' +
-          '    Valid Until: ' + expiryStr +
-          '  </div>' +
+          '<div style="text-align: center; margin-bottom: 18px;">' +
+          '  <h2 style="font-size: 21px; font-weight: 900; color: #0b1b34; margin: 0 auto 8px auto; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; width: 100%;">Activate Your Digital Card</h2>' +
+          '  <p style="font-size: 14px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>' +
           '</div>';
-        $("#renew_content").html(html);
+
+        $('#activate_content').html(html);
       }
 
+      // Handle Code Activation & Extension
       $('#activateBtn').on('click', function () {
         var raw = $('#accessCode').val();
         var code = normalizeCode(raw);
@@ -311,7 +313,9 @@
           return;
         }
 
-        setBusy(true);
+        var currentState = getCardState();
+        var busyLabel = currentState.isCurrentlyActive ? 'Extending…' : 'Activating…';
+        setBusy(true, busyLabel);
 
         $.get('https://glasscard.org/dataaccessprod4/activateAccessToken.ashx',
           { accesstoken: code, accountid: accountId },
@@ -320,18 +324,53 @@
             try { data = (typeof _data === 'string') ? JSON.parse(_data) : _data; } catch (e) { }
 
             if (data && data.ok) {
-              try { window.localStorage.setItem('isPremium', true); } catch (_) { }
-              window.location.href = "home.html";
+              // Calculate extended expiration date
+              var newExpiryDate;
+              if (currentState.isCurrentlyActive && currentState.expiryDate) {
+                newExpiryDate = new Date(currentState.expiryDate.getTime());
+                newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+              } else {
+                newExpiryDate = new Date();
+                newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+              }
+
+              var newExpiryISO = newExpiryDate.toISOString();
+              var newExpiryFormatted = formatFullDate(newExpiryDate);
+
+              try {
+                window.localStorage.setItem('isPremium', "true");
+                window.localStorage.setItem('premiumUntil', newExpiryISO);
+              } catch (_) { }
+
+              // Update backend account record
+              if (accountId) {
+                $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
+                  action: "activate_account_premium",
+                  accountId: accountId
+                }).always(function () {
+                  if (currentState.isCurrentlyActive) {
+                    displayMessage("Card Extended!", "Success! Your card has been extended for another year until " + newExpiryFormatted + ".", "Continue", "profile.html");
+                  } else {
+                    displayMessage("Card Activated!", "Success! Your card is now active until " + newExpiryFormatted + ".", "Continue", "home.html");
+                  }
+                });
+              } else {
+                if (currentState.isCurrentlyActive) {
+                  displayMessage("Card Extended!", "Success! Your card has been extended for another year until " + newExpiryFormatted + ".", "Continue", "profile.html");
+                } else {
+                  displayMessage("Card Activated!", "Success! Your card is now active until " + newExpiryFormatted + ".", "Continue", "home.html");
+                }
+              }
             } else {
               var msg = (data && data.message)
                 ? data.message
                 : "We couldn’t activate that code. Please check it and try again.";
               displayMessage("Activation Error", msg, "OK");
+              setBusy(false);
             }
           }
         ).fail(function () {
           displayMessage('Network Error', 'We couldn’t reach the server. Please check your connection and try again.', 'OK');
-        }).always(function () {
           setBusy(false);
         });
       });

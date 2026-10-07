@@ -33,7 +33,140 @@
       .ui-dialog-buttonpane { padding: 8px 16px !important; }
       .ui-widget-overlay { background: rgba(0,0,0,0.35) !important; }
    
-      
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      #expiredCardBanner {
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+      }
+      /* Expired Card Renewal Banner */
+      .banner-card-wrapper {
+        position: relative;
+        width: 90%;
+        max-width: 440px;
+        margin: 16px auto 8px auto;
+        box-sizing: border-box;
+        overflow: hidden;
+        border-radius: 20px;
+      }
+      .banner-card {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        -webkit-backdrop-filter: blur(20px) saturate(160%);
+        backdrop-filter: blur(20px) saturate(160%);
+        border: 1px solid rgba(22, 177, 135, 0.25);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        padding: 24px 20px 20px 20px;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #0f172a;
+      }
+      .banner-card__glow-1 {
+        position: absolute;
+        top: -40px;
+        left: -40px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(22, 177, 135, 0.15);
+        filter: blur(35px);
+        z-index: 0;
+        pointer-events: none;
+      }
+      .banner-card__glow-2 {
+        position: absolute;
+        bottom: -40px;
+        right: -40px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.15);
+        filter: blur(35px);
+        z-index: 0;
+        pointer-events: none;
+      }
+      .banner-card__content {
+        position: relative;
+        z-index: 1;
+      }
+      .banner-card__tag {
+        display: inline-block;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 800;
+        color: #16b187;
+        background: rgba(22, 177, 135, 0.08);
+        padding: 4px 10px;
+        border-radius: 9999px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(22, 177, 135, 0.15);
+      }
+      .banner-card__title {
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        margin: 0 0 12px 0;
+        width: 100%;
+        background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .banner-card__text {
+        font-size: 14px;
+        line-height: 1.55;
+        color: #4b5563;
+        margin: 0 0 18px 0;
+      }
+      .savings-gradient {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: inline-block;
+        font-weight: 900;
+      }
+      .banner-card__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .banner-card__btn {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 0;
+        cursor: pointer;
+        padding: 13px 18px;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 15px;
+        text-decoration: none !important;
+        display: block;
+        text-align: center;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      }
+      .banner-card__btn:active {
+        transform: scale(0.985);
+      }
+      .banner-card__btn--primary {
+        background: linear-gradient(135deg, #16b187 0%, #3b82f6 100%);
+        color: #ffffff !important;
+        box-shadow: 0 8px 20px rgba(32, 166, 255, 0.25);
+      }
+      .banner-card__btn--primary:hover {
+        box-shadow: 0 10px 24px rgba(32, 166, 255, 0.3);
+        opacity: 0.98;
+      }
     </style>
 
     <!-- Drop-down helper (fixed type) -->
@@ -62,7 +195,7 @@
               </select>
             </td>
             <td class="header" style="text-align:center; width:34%;">
-              <img id="gcLogo" src="images/black-glass.png" style="width:25%;" alt="Glass Card">
+              <div id="gcLogo" style="display:block; width:100%; height:36px; cursor:pointer; -webkit-tap-highlight-color: transparent;"></div>
             </td>
             <td class="header" style="width:33%;">
               <select class="category" id="radius">
@@ -85,7 +218,7 @@
           </div>
         </div>
       </div>
-
+      <div id="expiredCardBanner" style="display:none;"></div>
       <center>
         <div class="merchants" id="merchants" style="margin-top:1%; margin-bottom:20px;"></div>
       </center>
@@ -536,16 +669,102 @@
         }
       
         /* ===========================
+           Expired Card Renewal Banner
+        =========================== */
+        function checkExpiredCardBanner() {
+          try {
+            var isPremium = window.localStorage.getItem("isPremium");
+            var premiumUntil = window.localStorage.getItem("premiumUntil");
+            if ((isPremium === "true" || isPremium === true) && premiumUntil) {
+              var untilDate = new Date(premiumUntil);
+              if (!isNaN(untilDate.getTime()) && untilDate < new Date()) {
+                window.localStorage.setItem("isPremium", false);
+                isPremium = false;
+              }
+            }
+
+            var isCurrentlyActive = (isPremium === "true" || isPremium === true);
+            if (!isCurrentlyActive && premiumUntil) {
+              loadExpiredBanner();
+            } else {
+              $('#expiredCardBanner').hide().empty();
+            }
+          } catch(e) {
+            console.log("Error checking expired card banner:", e);
+          }
+        }
+
+        function loadExpiredBanner() {
+          var defaultText = "Renew your card today to continue supporting local groups, local businesses, and saving money on every purchase.";
+          var renderBanner = function(text) {
+            var html = 
+              '<div class="banner-card-wrapper">' +
+              '  <div class="banner-card">' +
+              '    <div class="banner-card__glow-1"></div>' +
+              '    <div class="banner-card__glow-2"></div>' +
+              '    <div class="banner-card__content">' +
+              '      <div class="banner-card__tag">Support Local</div>' +
+              '      <h2 class="banner-card__title">Support & Save Again</h2>' +
+              '      <p class="banner-card__text">' + text + '</p>' +
+              '      <div class="banner-card__actions">' +
+              '        <a href="gopremium.html" class="banner-card__btn banner-card__btn--primary">Renew Card</a>' +
+              '      </div>' +
+              '    </div>' +
+              '  </div>' +
+              '</div>';
+            $("#expiredCardBanner").html(html).show();
+          };
+
+          renderBanner(defaultText);
+
+          var deviceID = window.localStorage.getItem("deviceID");
+          if (deviceID) {
+            try {
+              var token = JSON.stringify({ DeviceID: deviceID });
+              token = encrypt(token);
+              $.ajax({
+                url: "https://glasscard.org/dataaccessprod4/getSavings.ashx",
+                type: "POST",
+                data: "Token=" + encodeURIComponent(token),
+                dataType: "text",
+                crossDomain: true,
+                success: function(_data) {
+                  try {
+                    var data = JSON.parse(_data);
+                    if (data && data.Savings) {
+                      var cleanSavings = String(data.Savings).replace(/[^0-9.]/g, '');
+                      var savings = parseFloat(cleanSavings);
+                      if (!isNaN(savings) && savings > 0) {
+                        var savingsText = 'You saved <strong class="savings-gradient">$' + data.Savings + '</strong> with your card last year! Renew today to continue supporting local groups, local businesses, and saving money on every purchase.';
+                        renderBanner(savingsText);
+                      }
+                    }
+                  } catch(e) {
+                    console.log("Error parsing savings:", e);
+                  }
+                }
+              });
+            } catch(e) {
+              console.log("Error encrypting deviceID:", e);
+            }
+          }
+        }
+
+        /* ===========================
            Boot
         =========================== */
         function onDeviceReady() {
           ajaxSavings();
+          checkExpiredCardBanner();
           initSelectionsFromStorage();
           setupChangeHandlers();
           kickGeolocationFlow();
         }
       
         $(document).ready(function(){
+          // Check expired banner immediately
+          checkExpiredCardBanner();
+
           // Try to render something immediately from cache if possible
           tryRenderWithStoredCoords('document ready');
       
@@ -557,6 +776,7 @@
       
           // On back navigation, avoid spinner flash by delaying it
           window.addEventListener('pageshow', function(){
+            checkExpiredCardBanner();
             if (tryRenderWithStoredCoords('pageshow')) {
               refreshLocation();
             }

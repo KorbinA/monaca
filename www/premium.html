@@ -43,15 +43,24 @@
 			}
 		</script>
 		<style type="text/css">
+			html, body {
+				max-width: 100%;
+				overflow-x: hidden;
+			}
 			.banner-card-wrapper {
 				position: relative;
-				width: 92%;
+				width: 90%;
 				max-width: 440px;
 				margin: 20px auto;
+				box-sizing: border-box;
+				overflow: hidden;
+				border-radius: 24px;
 			}
 			.banner-card {
 				position: relative;
 				overflow: hidden;
+				box-sizing: border-box;
+				width: 100%;
 				background: rgba(255, 255, 255, 0.75);
 				-webkit-backdrop-filter: blur(20px) saturate(160%);
 				backdrop-filter: blur(20px) saturate(160%);
@@ -282,9 +291,9 @@
 				function loadLearnMore() {
 					var html = 
 						'<div class="banner-card-wrapper">' +
-						'  <div class="banner-card__glow-1"></div>' +
-						'  <div class="banner-card__glow-2"></div>' +
 						'  <div class="banner-card">' +
+						'    <div class="banner-card__glow-1"></div>' +
+						'    <div class="banner-card__glow-2"></div>' +
 						'    <div class="banner-card__content">' +
 						'      <div class="banner-card__tag">Fundraiser Card</div>' +
 						'      <h2 class="banner-card__title">Activate Your Glass Card</h2>' +
@@ -304,9 +313,9 @@
 					var renderBanner = function(text) {
 						var html = 
 							'<div class="banner-card-wrapper">' +
-							'  <div class="banner-card__glow-1"></div>' +
-							'  <div class="banner-card__glow-2"></div>' +
 							'  <div class="banner-card">' +
+							'    <div class="banner-card__glow-1"></div>' +
+							'    <div class="banner-card__glow-2"></div>' +
 							'    <div class="banner-card__content">' +
 							'      <div class="banner-card__tag">Support Local</div>' +
 							'      <h2 class="banner-card__title">Support & Save Again</h2>' +

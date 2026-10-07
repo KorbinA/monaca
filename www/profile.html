@@ -113,8 +113,8 @@ table.profile td {
 			<table class="profile">
 				<tr class="profile" id="expirationRow" style="cursor:pointer;">
 				  <td class="profile">
-					<a href="#" style="display:block; color:#222831; text-decoration:none;">
-					  Card Expiration: <span id="expirationDate">Loading...</span>
+					<a href="gopremium.html" style="display:block; color:#222831; text-decoration:none;">
+					  <div id="expirationContainer">Loading...</div>
 					</a>
 				  </td>
 				  <td class="profile_icon" style="color:#1fab89; vertical-align:middle; line-height:0;">
@@ -351,25 +351,37 @@ table.profile td {
 					try {
 						var isPremium = window.localStorage.getItem("isPremium");
 						var premiumUntil = window.localStorage.getItem("premiumUntil");
-						var expiryStr = "Not Active";
 						var hasPremium = (isPremium === "true" || isPremium === true);
+						var html = '';
 
 						if (hasPremium && premiumUntil) {
 							var date = new Date(premiumUntil);
 							if (!isNaN(date.getTime())) {
-								expiryStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+								if (date < new Date()) {
+									// Expired
+									window.localStorage.setItem("isPremium", false);
+									var dateStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+									html = '<div style="font-size:14.5px; font-weight:700; color:#dc2626;">Card Expired (' + dateStr + ')</div>' +
+										   '<div style="font-size:11.5px; font-weight:700; color:#dc2626; margin-top:3px;">Tap to renew</div>';
+								} else {
+									var dateStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+									html = '<div style="font-size:14.5px; font-weight:700; color:#0f172a;">Expires: <span style="color:#065f46;">' + dateStr + '</span></div>' +
+										   '<div style="font-size:11.5px; font-weight:700; color:#1fab89; margin-top:3px;">Tap to add a new card</div>';
+								}
 							} else {
-								expiryStr = premiumUntil;
+								html = '<div style="font-size:14.5px; font-weight:700; color:#0f172a;">Expires: <span style="color:#065f46;">' + premiumUntil + '</span></div>' +
+									   '<div style="font-size:11.5px; font-weight:700; color:#1fab89; margin-top:3px;">Tap to add a new card</div>';
 							}
 						} else if (premiumUntil) {
 							var date = new Date(premiumUntil);
-							if (!isNaN(date.getTime())) {
-								expiryStr = "Expired (" + date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ")";
-							} else {
-								expiryStr = "Expired (" + premiumUntil + ")";
-							}
+							var dateStr = (!isNaN(date.getTime())) ? date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : premiumUntil;
+							html = '<div style="font-size:14.5px; font-weight:700; color:#dc2626;">Card Expired (' + dateStr + ')</div>' +
+								   '<div style="font-size:11.5px; font-weight:700; color:#dc2626; margin-top:3px;">Tap to renew</div>';
+						} else {
+							html = '<div style="font-size:14.5px; font-weight:700; color:#64748b;">Not Active</div>' +
+								   '<div style="font-size:11.5px; font-weight:700; color:#1fab89; margin-top:3px;">Tap to activate</div>';
 						}
-						$('#expirationDate').html(expiryStr);
+						$('#expirationContainer').html(html);
 					} catch(err) {
 						console.log("Error displaying expiration date:", err);
 					}
@@ -411,8 +423,7 @@ table.profile td {
 
 				$(document).on("click", "#expirationRow", function(event) {
 					event.preventDefault();
-					var infoMsg = "Want to support another fundraiser? You can purchase a new access code online or via a plastic card. Entering a new code will reactivate or extend your card after the current one expires.";
-					displayMessage("Support Another Fundraiser", infoMsg, "OK");
+					window.location.href = "gopremium.html";
 				});
 
 				// NEW external link handler

@@ -44,38 +44,54 @@
       margin-top: 20px !important;
     }
 
-    /* Force uniform heights and border radiuses on all input elements */
-    .input {
+    /* Force uniform typography, heights, and border radiuses on all input elements */
+    .input,
+    input.input,
+    select.input,
+    textarea.input {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      line-height: normal !important;
       height: 50px !important;
-      box-sizing: border-box;
+      box-sizing: border-box !important;
       border-radius: var(--radius-md) !important;
       border: 1px solid #dbe5f0 !important;
       padding: 14px !important;
+      color: #0b1b34 !important;
+      background-color: #fff !important;
     }
 
     /* Style select dropdowns to match standard input styling exactly */
     select.input {
-      appearance: none;
-      -webkit-appearance: none;
-      background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235f718a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 14px center;
-      background-size: 16px;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235f718a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 14px center !important;
+      background-size: 16px !important;
       padding-right: 38px !important;
-      height: 50px !important;
-      box-sizing: border-box;
-      border-radius: var(--radius-md) !important;
-      border: 1px solid #dbe5f0 !important;
       text-align: left !important;
       text-align-last: left !important;
-      color: #9ca3af;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #0b1b34 !important;
     }
 
     select.input option {
-      color: #0b1b34;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #0b1b34 !important;
+      background: #fff !important;
     }
 
-    .input::placeholder {
+    .input::placeholder,
+    input.input::placeholder {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 400 !important;
       color: #9ca3af !important;
-      opacity: 1;
+      opacity: 1 !important;
     }
 
     /* Left-align all field labels explicitly */
@@ -84,9 +100,10 @@
       display: block !important;
       width: 100% !important;
       margin-bottom: 6px !important;
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      color: var(--muted) !important;
     }
 
     #messagePopup .ui-dialog-content {
@@ -321,8 +338,8 @@
           <div style="display: flex; flex-direction: column; gap: 6px;">
             <label for="fundraiserLookupInput" style="font-size: 12px; font-weight: 700; color: #64748b; margin: 0;">Have a Fundraiser ID to support?</label>
             <div style="display: flex; gap: 8px;">
-              <input type="text" id="fundraiserLookupInput" class="input" style="flex: 1; height: 42px !important; padding: 8px 12px !important; font-size: 14px;" placeholder="e.g. fundraiser ID or code" />
-              <button type="button" id="applyFundraiserBtn" style="background: #2563eb; color: white; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; font-size: 13px; cursor: pointer; height: 42px;">Connect</button>
+              <input type="text" id="fundraiserLookupInput" class="input" style="flex: 1; height: 46px !important; padding: 10px 14px !important; font-size: 15px !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;" placeholder="e.g. fundraiser ID or code" />
+              <button type="button" id="applyFundraiserBtn" style="background: #2563eb; color: white; border: none; border-radius: 12px; padding: 0 18px; font-weight: 700; font-size: 14px; cursor: pointer; height: 46px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Connect</button>
             </div>
             <div id="fundraiserLookupError" style="font-size: 12px; color: #dc2626; margin-top: 4px; display: none;"></div>
           </div>

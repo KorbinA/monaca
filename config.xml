@@ -7,8 +7,8 @@
   <author email="support@glasscardapp.com" href="https://glasscardapp.com">
 		Glass Card
 	</author>
-  <!-- Xcode 16 requires iOS 12+ -->
-  <preference name="deployment-target" value="12.0"/>
+  <!-- iOS Deployment Target (iOS 15+ required for App Store) -->
+  <preference name="deployment-target" value="15.0"/>
   <!-- Keep Cordova/iOS tooling current and compatible with Xcode 15/16 -->
   <engine name="ios" spec="7.1.1"/>
   <plugin name="cordova-plugin-statusbar" spec="^3.0.0"/>
@@ -84,6 +84,7 @@
     <icon height="20" src="res/ios/icon/icon-20.png" width="20"/>
     <icon height="1024" src="res/ios/icon/icon-1024.png" width="1024"/>
     <splash src="res/ios/screen/Default@2x~universal~anyany.png"/>
+    <preference name="deployment-target" value="15.0"/>
     <preference name="orientation" value="portrait"/>
     <allow-intent href="*"/>
     <preference name="scheme" value="monaca-app"/>

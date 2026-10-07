@@ -487,6 +487,14 @@
             </div>
           </div>
 
+          <!-- Email Address (for Receipt & Unlock Code) -->
+          <div class="field" style="margin: 0; display: flex; flex-direction: column;">
+            <label for="custEmail">Email Address (for receipt & unlock code)</label>
+            <div class="control">
+              <input class="input" name="custEmail" id="custEmail" value="" type="email" placeholder="john@example.com">
+            </div>
+          </div>
+
           <!-- Card Number -->
           <div class="field" style="margin: 0; display: flex; flex-direction: column;">
             <label for="cardNumber">Card Number</label>
@@ -574,15 +582,20 @@
           </div>
           -->
 
-          <!-- Reworked Pricing Display at the bottom of the form -->
-          <div
-            style="margin-top: 8px; border-top: 1px solid #e6ecf2; padding-top: 16px; text-align: left; display: flex; justify-content: space-between; align-items: baseline;">
-            <span
-              style="font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Total
-              Due Today</span>
-            <!-- Hardcoded price display -->
-            <div id="optiontext" style="font-size: 24px; font-weight: 900; color: #16b187; margin: 0; padding: 0;">
-              $25.00</div>
+          <!-- Pricing Breakdown & Total Due Today -->
+          <div style="margin-top: 8px; border-top: 1px solid #e6ecf2; padding-top: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+              <span>Glass Card (1 Year)</span>
+              <span id="displayBasePrice">$25.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #64748b; font-weight: 600; margin-bottom: 8px;">
+              <span>Card Processing Fee</span>
+              <span id="displayFee">$1.03</span>
+            </div>
+            <div style="border-top: 1.5px dashed #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: baseline;">
+              <span style="font-size: 13px; font-weight: 800; color: #0b1b34; text-transform: uppercase; letter-spacing: 0.5px;">Total Due Today</span>
+              <div id="optiontext" style="font-size: 22px; font-weight: 900; color: #10b981; margin: 0; padding: 0;">$26.03</div>
+            </div>
           </div>
 
           <!-- Purchase & Refund Policy Agreement Checkbox -->
@@ -726,10 +739,20 @@
       let selectedPersonId = null;
       let selectedPersonName = "";
 
+      function updatePricing() {
+        const subtotal = basePrice;
+        const fee = (subtotal * 0.029) + 0.30;
+        const total = subtotal + fee;
+        $("#displayBasePrice").text("$" + subtotal.toFixed(2));
+        $("#displayFee").text("$" + fee.toFixed(2));
+        $("#optiontext").text("$" + total.toFixed(2));
+        return { subtotal: subtotal, fee: fee, total: parseFloat(total.toFixed(2)) };
+      }
+
       async function setConnectedProject(proj) {
         currentProject = proj;
         basePrice = parseFloat(proj.sale_price) || 25.00;
-        $("#optiontext").text("$" + basePrice.toFixed(2));
+        updatePricing();
         $("#fundraiserNameText").text(proj.name);
         $("#groupRenewalNotice").html('If <strong>' + escapeHtml(proj.name) + '</strong> decides to re-run their fundraiser next year, we will remind you 30 days before your card expires with an opportunity to continue your support with a card renewal or to cancel.');
         $("#unconnectedNoticeBox").hide();
@@ -753,7 +776,7 @@
         selectedTeamId = null;
         selectedPersonId = null;
         selectedPersonName = "";
-        $("#optiontext").text("$25.00");
+        updatePricing();
         $("#fundraiserStatusBox").hide();
         $("#unconnectedNoticeBox").show();
         $("#groupRenewalNotice").text("We will remind you 30 days before your card expires with an opportunity to renew or cancel.");
@@ -1103,6 +1126,12 @@
         }
       }
 
+      // Pre-fill email from logged-in account
+      const defaultEmail = window.localStorage.getItem("deviceID") || window.localStorage.getItem("email") || "";
+      if (defaultEmail && defaultEmail.includes("@")) {
+        $("#custEmail").val(defaultEmail);
+      }
+
       checkFundraiserAttribution();
 
       // Submit payment
@@ -1124,13 +1153,14 @@
         $("#submit").prop('disabled', true).text("Securing Checkout...");
 
         var name = $("#name").val().trim();
+        var email = $("#custEmail").val().trim();
         var cardNumber = $("#cardNumber").val().replace(/\s+/g, '');
         var expMonth = $("#expirationMonth").val();
         var expYear = $("#expirationYear").val();
         var cvv = $("#cvvNumber").val().trim();
         var zip = $("#zipCode").val().trim();
         var accountId = window.localStorage.getItem("accountId") || "";
-        var customerEmail = window.localStorage.getItem("deviceID") || "customer@glasscard.app";
+        var customerEmail = email || window.localStorage.getItem("deviceID") || "customer@glasscard.app";
 
         var cardData = {
           cardNumber: cardNumber,
@@ -1163,12 +1193,15 @@
             var pName = (selectedPersonName || $("#salespersonSearch").val() || "").trim();
             var pId = selectedPersonId;
 
+            const pricing = updatePricing();
+            const totalToCharge = pricing.total.toFixed(2);
+
             // 1. Invoke process-subscriptions edge function
             const { data: payResult, error: payError } = await supabaseClient.functions.invoke('process-subscriptions', {
               body: {
                 projectId: currentProject ? currentProject.id : null,
                 opaqueData: response.opaqueData,
-                amount: basePrice.toFixed(2),
+                amount: totalToCharge,
                 billingZip: zip,
                 billingName: name,
                 customerEmail: customerEmail,
@@ -1199,10 +1232,10 @@
               }
             }
 
-            // 3. Update localStorage and navigate
+            // 3. Update localStorage and navigate to Discover home
             window.localStorage.setItem("isPremium", "true");
             spinner.stop();
-            window.location.href = "premium.html";
+            window.location.href = "home.html";
 
           } catch (err) {
             console.error("[Checkout Exception]", err);
@@ -1216,6 +1249,9 @@
       function formValidation() {
         if (!$("#name").val().trim()) {
           displayMessage("Form Validation Error", "Please provide a Name", "Ok");
+          return false;
+        } else if (!$("#custEmail").val().trim() || !$("#custEmail").val().includes("@") || !$("#custEmail").val().includes(".")) {
+          displayMessage("Form Validation Error", "Please provide a valid Email Address for your receipt and unlock code.", "Ok");
           return false;
         } else if (!$("#cardNumber").val().trim()) {
           displayMessage("Form Validation Error", "Please provide a Card Number", "Ok");

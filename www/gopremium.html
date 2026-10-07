@@ -5,39 +5,68 @@
   <meta charset="utf-8" />
   <title>Activate / Extend Digital Card</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
   <link rel="stylesheet" href="js/jquery-ui.css" />
-  <link href="css/index.css" rel="stylesheet" type="text/css" />
   <link href="css/newStyle.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
   <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
   <style>
-    .wrap {
-      width: 100%;
-      max-width: 480px;
-      padding: 16px;
-      margin: 0 auto;
-      padding-bottom: 80px;
-      /* space for footer */
+    * {
+      box-sizing: border-box;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 24px;
+    html {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      min-height: 100%;
+      background-color: #f3f7ff;
+    }
+
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      min-height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f7ff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 16px 16px 85px 16px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      width: 100%;
+      max-width: min(440px, 100%);
+      margin: 0 auto;
+      box-sizing: border-box;
     }
 
     .input-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 6px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .code-input {
-      flex: 1;
+      flex: 1 1 0;
+      width: 0;
+      min-width: 0;
       font-size: 16px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-      padding: 14px;
+      padding: 13px 14px;
       border-radius: 14px;
       border: 1px solid #dbe5f0;
       outline: none;
@@ -45,28 +74,32 @@
       color: #0b1b34;
       background: #ffffff;
       transition: box-shadow .15s ease, border-color .15s ease;
+      box-sizing: border-box;
     }
 
     .code-input:focus {
       border-color: #b8d3ff;
-      box-shadow: 0 0 0 5px rgba(32, 166, 255, .22);
+      box-shadow: 0 0 0 4px rgba(32, 166, 255, .22);
     }
 
     .btn-action {
       appearance: none;
+      -webkit-appearance: none;
       border: none;
       border-radius: 14px;
-      padding: 14px 20px;
+      padding: 13px 16px;
       font-weight: 800;
       cursor: pointer;
       background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
       color: #fff;
-      min-width: 120px;
+      min-width: 90px;
       font-size: 15px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-      box-shadow: 0 8px 20px rgba(22, 177, 135, .2);
+      box-shadow: 0 6px 18px rgba(22, 177, 135, .2);
       transition: transform .05s ease, opacity .2s ease;
       white-space: nowrap;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .btn-action[disabled] {
@@ -80,11 +113,13 @@
     }
 
     .tips {
-      margin-top: 20px;
+      margin-top: 18px;
       background: #fafafa;
       border: 1px dashed #e6ecf2;
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .tips summary {
@@ -92,7 +127,7 @@
       cursor: pointer;
       font-weight: 700;
       color: #374151;
-      font-size: 13.5px;
+      font-size: 13px;
       outline: none;
     }
 
@@ -105,53 +140,112 @@
       color: #6b7280;
       font-size: 12px;
       line-height: 1.5;
+      list-style: none;
+      padding-left: 0;
     }
 
     .tip-list li {
       margin: 8px 0;
-      padding-left: 0px;
       font-size: 12px;
+      text-align: left;
     }
 
     .footer-mini {
-      margin-top: 20px;
+      margin-top: 18px;
       text-align: center;
       color: #5f718a;
       font-size: 13.5px;
+      width: 100%;
     }
 
     #messagePopup .ui-dialog-content {
       text-align: center;
+    }
+
+    footer.menu {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 64px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
+      border-top: 1px solid #e6ecf2;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 999;
+      box-sizing: border-box;
+    }
+
+    footer.menu .tab {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    footer.menu .tab img {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    footer.menu .tab span {
+      font-size: 11px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    footer.menu .tab.is-active span {
+      color: #16b187;
+      font-weight: 700;
+    }
+
+    @media (max-width: 340px) {
+      .input-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-action {
+        width: 100%;
+      }
     }
   </style>
 </head>
 
 <body class="gradient">
   <main class="container">
-    <div class="wrap">
-      <section class="card" id="cardSection" style="width: 100%;">
-        <div id="activate_content" style="margin-bottom: 12px;"></div>
+    <section class="card" id="cardSection" role="form" aria-labelledby="inputLabel" style="margin: 0 auto; width: 100%;">
+      <div id="activate_content" style="margin-bottom: 12px;"></div>
 
-        <label id="inputLabel" for="accessCode" style="font-size: 13.5px; color: #5f718a; font-weight: 700; display: block; text-align: left;">Access Code</label>
-        <div class="input-row">
-          <input id="accessCode" name="unlockCode" class="code-input" type="text" inputmode="text" autocomplete="off"
-            autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="36" placeholder="XXXXXX" />
-          <button id="activateBtn" class="btn-action" disabled>Activate</button>
-        </div>
+      <label id="inputLabel" for="accessCode" style="font-size: 13.5px; color: #5f718a; font-weight: 700; display: block; text-align: left;">Access Code</label>
+      <div class="input-row">
+        <input id="accessCode" name="unlockCode" class="code-input" type="text" inputmode="text" autocomplete="off"
+          autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="36" placeholder="XXXXXX" />
+        <button id="activateBtn" class="btn-action" disabled>Activate</button>
+      </div>
 
-        <details class="tips">
-          <summary>Where is my access code?</summary>
-          <ul class="tip-list" style="margin-left: 0px; padding-left: 0px; list-style-type: none;">
-            <li style="text-align: left; margin-bottom: 10px;"><strong>Physical card:</strong> your access code is printed on the back of your card.</li>
-            <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
-          </ul>
-        </details>
+      <details class="tips">
+        <summary>Where is my access code?</summary>
+        <ul class="tip-list" style="margin-left: 0px; padding-left: 0px; list-style-type: none;">
+          <li style="text-align: left; margin-bottom: 10px;"><strong>Physical card:</strong> your access code is printed on the back of your card.</li>
+          <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
+        </ul>
+      </details>
 
-        <div class="footer-mini" id="buyCardLinkWrap">
-          Don’t have an access code? <a href="getPremium.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">Buy a Card Online</a>
-        </div>
-      </section>
-    </div>
+      <div class="footer-mini" id="buyCardLinkWrap">
+        Don’t have an access code? <a href="getPremium.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">Buy a Card Online</a>
+      </div>
+    </section>
   </main>
 
   <footer class="menu" role="navigation">

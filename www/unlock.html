@@ -1,130 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>Activate Your Digital Card</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="js/jquery-ui.css" />
   <link href="css/index.css" rel="stylesheet" type="text/css" />
+  <link href="css/newStyle.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
   <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
   <style>
-    :root{
-      --accent:#0b5fff;
-      --ok:#1fab89;
-      --text:#0b1b34;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-    }
-    html,body{height:100%;}
-    body{
-      margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color:var(--text); background:#fff;
-    }
-    .wrap{
-      max-width: 720px; padding: 24px; margin: 0 auto;
-    }
-    header{
-      text-align:center; margin: 32px 0 18px 0;
-    }
-    header h1{
-      margin:0 0 8px 0; font-size: clamp(22px, 6vw, 28px); letter-spacing:.4px;
-    }
-    header p{
-      margin:0; color:var(--muted); font-size:14px;
+    * {
+      box-sizing: border-box;
     }
 
-    .card{
-      border:1px solid var(--border); border-radius:14px; padding:18px;
-      box-shadow: 0 6px 18px rgba(0,0,0,.04);
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      min-height: 100svh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #0b1b34;
     }
 
-    .input-row{
-      display:flex; gap:10px; align-items:center; margin-top:8px;
+    .wrap {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px;
+      margin: 0 auto;
+      box-sizing: border-box;
     }
-    .code-input{
-      flex:1; font-size:18px; padding:14px 14px; border-radius:12px;
-      border:1px solid var(--border); outline:none;
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    header h1 {
+      margin: 0 0 8px 0;
+      font-size: clamp(20px, 5.5vw, 26px);
+      letter-spacing: .4px;
+      font-weight: 900;
+      color: #0b1b34;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin: 0;
+      color: #5f718a;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e6ecf2;
+      border-radius: var(--radius-xl, 20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+      padding: 20px 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .code-input {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #dbe5f0;
+      outline: none;
       letter-spacing: .5px;
-    }
-    .code-input:focus{
-      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(11,95,255,.12);
-    }
-    .btn{
-      appearance:none; border:none; border-radius:12px; padding:14px 16px; font-weight:600; cursor:pointer;
-      background:var(--accent); color:#fff; min-width:120px;
-    }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
-    .hint{
-      margin-top:10px; color:var(--muted); font-size:13px;
+      color: #0b1b34;
+      background: #ffffff;
+      transition: box-shadow .15s ease, border-color .15s ease;
     }
 
-    .tips{
-  margin-top:18px; background:#fafafa; border:1px dashed var(--border);
-  border-radius:12px; padding:12px;
-}
-.tips summary{
-  list-style:none; cursor:pointer; font-weight:600; color:#374151;
-  font-size:13px;                    /* smaller title */
-}
-.tips summary::-webkit-details-marker{ display:none; }
-.tip-list{
-  margin:8px 0 0 0;  color:#374151; font-size:8px; line-height:1.35;
-}
-.tip-list li{ margin:8px 0; padding-left:0px; }
+    .code-input:focus {
+      border-color: #b8d3ff;
+      box-shadow: 0 0 0 4px rgba(32, 166, 255, .22);
+    }
 
+    .btn-action {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
+      color: #fff;
+      min-width: 100px;
+      font-size: 15px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      box-shadow: 0 6px 18px rgba(22, 177, 135, .2);
+      transition: transform .05s ease, opacity .2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
 
-    /* Inline dialog (reusing jQuery UI dialog styles already loaded elsewhere) */
-    #messagePopup .ui-dialog-content{ text-align:center; }
+    .btn-action[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
-    /* Tiny helper row below */
-    .footer-mini{
-      margin-top:18px; text-align:center; color:var(--muted); font-size:12px;
+    .btn-action:active:not([disabled]) {
+      transform: translateY(1px);
+    }
+
+    .tips {
+      margin-top: 18px;
+      background: #fafafa;
+      border: 1px dashed #e6ecf2;
+      border-radius: 12px;
+      padding: 12px 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .tips summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: #374151;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .tips summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .tip-list {
+      margin: 8px 0 0 0;
+      padding-left: 0;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.5;
+      list-style: none;
+    }
+
+    .tip-list li {
+      margin: 8px 0;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .footer-mini {
+      margin-top: 18px;
+      text-align: center;
+      color: #5f718a;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    #messagePopup .ui-dialog-content {
+      text-align: center;
     }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <header>
-      <h1>ACTIVATE YOUR DIGITAL CARD</h1>
-      <p>Enter the access code that came with your purchase to unlock your account.</p>
-    </header>
-    <br>
-    <br>
 
-    <section class="card">
-      <label for="accessCode" style="font-size:14px; color:#374151; font-weight:600;">Access Code</label>
-      <div class="input-row">
-        <input
-  id="accessCode"
-  name="unlockCode"               
-  class="code-input"
-  type="text"
-  inputmode="text"
-  autocomplete="off"               
-  autocapitalize="none"     
-  autocorrect="off"
-  spellcheck="false"
-  maxlength="36"
-  placeholder="XXXXXX"
-/>
+<body class="gradient">
+  <main class="container">
+    <div class="wrap">
+      <header>
+        <h1>Activate Your Digital Card</h1>
+        <p>Enter the access code that came with your purchase to unlock your account.</p>
+      </header>
 
-        <button id="activateBtn" class="btn" disabled>Activate</button>
-      </div>
+      <section class="card">
+        <label for="accessCode" style="font-size: 13.5px; color: #5f718a; font-weight: 700; display: block; text-align: left;">Access Code</label>
+        <div class="input-row">
+          <input
+            id="accessCode"
+            name="unlockCode"
+            class="code-input"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            autocorrect="off"
+            spellcheck="false"
+            maxlength="36"
+            placeholder="XXXXXX"
+          />
+          <button id="activateBtn" class="btn-action" disabled>Activate</button>
+        </div>
 
-      <details class="tips">
-        <summary>Where is my access code?</summary>
-        <ul class="tip-list" style="margin-left:0px; padding-left:0px;">
-          <li style="font-size:16px; text-align: left;"><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
-          <li style="font-size:16px; text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
-        </ul>
-      </details>
+        <details class="tips">
+          <summary>Where is my access code?</summary>
+          <ul class="tip-list">
+            <li><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
+            <li><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
+          </ul>
+        </details>
 
-      <div class="footer-mini">
-        Don’t have a code? <a href="location-services.html" style="color:var(--accent); text-decoration:none; font-weight:600;">SKIP.</a>
-      </div>
-    </section>
-  </div>
+        <div class="footer-mini">
+          Don’t have a code? <a href="location-services.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">SKIP</a>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <!-- Lightweight dialog target reused by pages in the app -->
   <div id="messagePopup" title="" style="display:none;">
@@ -133,17 +232,16 @@
 
   <script type="text/javascript">
     (function () {
-      // Minimal dialog helper to match your existing pattern
       function displayMessage(title, message, buttonText, url) {
         $('#messageText').html(message);
         $('#messagePopup').dialog({
           closeOnEscape: false,
-          open: function(event, ui) {
+          open: function (event, ui) {
             $(this).siblings('.ui-dialog-titlebar').remove();
           },
-          buttons:[{
+          buttons: [{
             text: buttonText || "OK",
-            click: function(){
+            click: function () {
               $(this).dialog("close");
               if (url) window.location.href = url;
             }
@@ -151,10 +249,8 @@
         });
       }
 
-      // Utilities
       function normalizeCode(s) {
-        // Trim, remove spaces and dashes; leave letters/digits untouched.
-        return (s || "").replace(/[\s\-]/g, "").trim();
+        return (s || "").replace(/[\s\-]/g, "").trim().toUpperCase();
       }
 
       function setBusy(isBusy) {
@@ -162,24 +258,22 @@
         $('#activateBtn').text(isBusy ? 'Activating…' : 'Activate');
       }
 
-      // Enable button only when something meaningful is typed
-      $('#accessCode').on('input', function(){
+      $('#accessCode').on('input', function () {
         $('#activateBtn').prop('disabled', !normalizeCode(this.value));
       });
 
-      // Submit via Enter
-      $('#accessCode').on('keydown', function(e){
+      $('#accessCode').on('keydown', function (e) {
         if (e.key === 'Enter') {
           e.preventDefault();
-          $('#activateBtn').click();
+          if (!$('#activateBtn').prop('disabled')) {
+            $('#activateBtn').click();
+          }
         }
       });
 
-      // Autofocus the input
-      setTimeout(function(){ $('#accessCode').focus(); }, 50);
+      setTimeout(function () { $('#accessCode').focus(); }, 150);
 
-      // Main activate handler (same endpoint as the old page)
-      $('#activateBtn').on('click', function(){
+      $('#activateBtn').on('click', function () {
         var raw = $('#accessCode').val();
         var code = normalizeCode(raw);
         if (!code) return;
@@ -192,31 +286,47 @@
 
         setBusy(true);
 
-        // NOTE: exact same server call the existing page uses
         $.get('https://glasscard.org/dataaccessprod4/activateAccessToken.ashx',
           { accesstoken: code, accountid: accountId },
           function (_data) {
             var data = {};
-            try { data = (typeof _data === 'string') ? JSON.parse(_data) : _data; } catch(e){}
+            try { data = (typeof _data === 'string') ? JSON.parse(_data) : _data; } catch (e) { }
 
             if (data && data.ok) {
-  try { window.localStorage.setItem('isPremium', true); } catch(_){}
-  window.location.href = "location-services.html";
-} else {
-  var msg = (data && data.message)
-    ? data.message
-    : "We couldn’t activate that code. Please check it and try again.";
-  displayMessage("Activation Error", msg, "OK");
-}
+              var newExpiryDate = new Date();
+              newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
 
+              try {
+                window.localStorage.setItem('isPremium', "true");
+                window.localStorage.setItem('premiumUntil', newExpiryDate.toISOString());
+              } catch (_) { }
+
+              // Sync backend
+              if (accountId) {
+                $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
+                  action: "activate_account_premium",
+                  accountId: accountId
+                }).always(function () {
+                  window.location.href = "location-services.html";
+                });
+              } else {
+                window.location.href = "location-services.html";
+              }
+            } else {
+              var msg = (data && data.message)
+                ? data.message
+                : "We couldn’t activate that code. Please check it and try again.";
+              displayMessage("Activation Error", msg, "OK");
+              setBusy(false);
+            }
           }
-        ).fail(function(){
+        ).fail(function () {
           displayMessage('Network Error', 'We couldn’t reach the server. Please check your connection and try again.', 'OK');
-        }).always(function(){
           setBusy(false);
         });
       });
     })();
   </script>
 </body>
+
 </html>

@@ -563,7 +563,8 @@
             </div>
           </div>
 
-          <!-- Referral Code -->
+          <!-- Referral Code (Commented Out) -->
+          <!--
           <div class="field" style="margin: 0; display: flex; flex-direction: column;">
             <label for="referral">Referral Code (Optional)</label>
             <div class="control">
@@ -571,6 +572,7 @@
                 placeholder="Optional code">
             </div>
           </div>
+          -->
 
           <!-- Reworked Pricing Display at the bottom of the form -->
           <div
@@ -671,7 +673,7 @@
 
     $(document).ready(function () {
       $("#cardNumber").inputmask("9999 9999 9999 9999", { "clearIncomplete": true });
-      $("#cvvNumber").inputmask("9999", { "clearIncomplete": false });
+      $("#cvvNumber").inputmask({ mask: "999[9]", greedy: false, clearIncomplete: false });
 
       function updateSelectColor(el) {
         if (!el.val()) {
@@ -1183,12 +1185,14 @@
               throw new Error((payResult && payResult.message) || (payError && payError.message) || "Payment transaction failed.");
             }
 
-            // 2. Activate premium status on legacy MSSQL account
+            // 2. Activate premium status on legacy MSSQL account & link generated access code for renewal attribution
             if (accountId) {
               try {
+                const primaryCode = (payResult && payResult.accessCodes) ? payResult.accessCodes.split(',')[0].trim() : "";
                 await $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
                   action: "activate_account_premium",
-                  accountId: accountId
+                  accountId: accountId,
+                  token: primaryCode
                 });
               } catch (syncErr) {
                 console.warn("[LegacySync] Non-critical error activating legacy account:", syncErr);
@@ -1222,8 +1226,8 @@
         } else if (!$("#expirationYear").val().trim()) {
           displayMessage("Form Validation Error", "Please provide an Expiration Year", "Ok");
           return false;
-        } else if (!$("#cvvNumber").val().trim()) {
-          displayMessage("Form Validation Error", "Please provide a Security Code", "Ok");
+        } else if (!$("#cvvNumber").val().trim() || $("#cvvNumber").val().trim().length < 3 || $("#cvvNumber").val().trim().length > 4) {
+          displayMessage("Form Validation Error", "Please provide a valid 3 or 4-digit Security Code (CVV)", "Ok");
           return false;
         } else if (!$("#zipCode").val().trim()) {
           displayMessage("Form Validation Error", "Please provide a Zip Code", "Ok");

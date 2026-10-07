@@ -409,7 +409,18 @@ table.profile td {
 								if (data && data.status === "AccountConnected") {
 									try {
 										window.localStorage.setItem("isPremium", data.isPremium);
-										window.localStorage.setItem("premiumUntil", data.premiumUntil);
+										var curUntil = window.localStorage.getItem("premiumUntil");
+										var curDate = curUntil ? new Date(curUntil) : null;
+										var srvDate = data.premiumUntil ? new Date(data.premiumUntil) : null;
+
+										// Preserve whichever date is further in the future
+										if (curDate && !isNaN(curDate.getTime())) {
+											if (srvDate && !isNaN(srvDate.getTime()) && srvDate > curDate) {
+												window.localStorage.setItem("premiumUntil", data.premiumUntil);
+											}
+										} else if (data.premiumUntil) {
+											window.localStorage.setItem("premiumUntil", data.premiumUntil);
+										}
 										window.localStorage.setItem("accountId", data.accountId);
 									} catch(e) {}
 									updateExpirationDisplay();

@@ -5,120 +5,37 @@
   <meta charset="utf-8" />
   <title>Activate Your Digital Card</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
   <link rel="stylesheet" href="js/jquery-ui.css" />
-  <link href="css/index.css" rel="stylesheet" type="text/css" />
   <link href="css/newStyle.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
   <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="js/jquery-1.8.9.ui.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
-      min-height: 100svh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #0b1b34;
-    }
-
-    .wrap {
-      width: 100%;
-      max-width: 480px;
-      padding: 16px;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
-    header h1 {
-      margin: 0 0 8px 0;
-      font-size: clamp(20px, 5.5vw, 26px);
-      letter-spacing: .4px;
-      font-weight: 900;
-      color: #0b1b34;
-      text-transform: uppercase;
-    }
-
-    header p {
-      margin: 0;
-      color: #5f718a;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #e6ecf2;
-      border-radius: var(--radius-xl, 20px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
-      padding: 20px 16px;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      margin: 0 auto;
-    }
-
     .input-row {
       display: flex;
       gap: 8px;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 6px;
       width: 100%;
-      box-sizing: border-box;
-    }
-
-    .code-input {
-      flex: 1;
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid #dbe5f0;
-      outline: none;
-      letter-spacing: .5px;
-      color: #0b1b34;
-      background: #ffffff;
-      transition: box-shadow .15s ease, border-color .15s ease;
-    }
-
-    .code-input:focus {
-      border-color: #b8d3ff;
-      box-shadow: 0 0 0 4px rgba(32, 166, 255, .22);
     }
 
     .btn-action {
       appearance: none;
       -webkit-appearance: none;
       border: none;
-      border-radius: 12px;
-      padding: 12px 18px;
+      border-radius: 14px;
+      padding: 13px 18px;
       font-weight: 800;
       cursor: pointer;
       background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
       color: #fff;
-      min-width: 100px;
+      min-width: 90px;
       font-size: 15px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       box-shadow: 0 6px 18px rgba(22, 177, 135, .2);
       transition: transform .05s ease, opacity .2s ease;
       white-space: nowrap;
       flex-shrink: 0;
-      box-sizing: border-box;
     }
 
     .btn-action[disabled] {
@@ -138,7 +55,6 @@
       border-radius: 12px;
       padding: 12px 14px;
       width: 100%;
-      box-sizing: border-box;
     }
 
     .tips summary {
@@ -173,31 +89,42 @@
       margin-top: 18px;
       text-align: center;
       color: #5f718a;
-      font-size: 13px;
+      font-size: 13.5px;
       width: 100%;
     }
 
     #messagePopup .ui-dialog-content {
       text-align: center;
     }
+
+    @media (max-width: 330px) {
+      .input-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-action {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
 <body class="gradient">
   <main class="container">
-    <div class="wrap">
-      <header>
-        <h1>Activate Your Digital Card</h1>
-        <p>Enter the access code that came with your purchase to unlock your account.</p>
-      </header>
+    <section class="card" role="form" aria-labelledby="unlockTitle" style="margin: 0 auto; width: 100%;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 id="unlockTitle" style="font-size: 20px; font-weight: 800; color: #0b1b34; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Activate Your Digital Card</h2>
+        <p style="font-size: 14px; color: #5f718a; line-height: 1.5; margin: 0;">Enter the access code that came with your purchase to unlock your account.</p>
+      </div>
 
-      <section class="card">
+      <div class="field" style="margin-top: 16px;">
         <label for="accessCode" style="font-size: 13.5px; color: #5f718a; font-weight: 700; display: block; text-align: left;">Access Code</label>
         <div class="input-row">
           <input
             id="accessCode"
             name="unlockCode"
-            class="code-input"
+            class="input"
             type="text"
             inputmode="text"
             autocomplete="off"
@@ -206,23 +133,24 @@
             spellcheck="false"
             maxlength="36"
             placeholder="XXXXXX"
+            style="flex: 1; min-width: 0; padding: 13px 14px; font-size: 16px;"
           />
           <button id="activateBtn" class="btn-action" disabled>Activate</button>
         </div>
+      </div>
 
-        <details class="tips">
-          <summary>Where is my access code?</summary>
-          <ul class="tip-list">
-            <li><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
-            <li><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
-          </ul>
-        </details>
+      <details class="tips">
+        <summary>Where is my access code?</summary>
+        <ul class="tip-list">
+          <li><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
+          <li><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
+        </ul>
+      </details>
 
-        <div class="footer-mini">
-          Don’t have a code? <a href="location-services.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">SKIP</a>
-        </div>
-      </section>
-    </div>
+      <div class="footer-mini">
+        Don’t have a code? <a href="location-services.html" style="color: #2066c7; text-decoration: none; font-weight: 800;">SKIP</a>
+      </div>
+    </section>
   </main>
 
   <!-- Lightweight dialog target reused by pages in the app -->
@@ -305,7 +233,8 @@
               if (accountId) {
                 $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
                   action: "activate_account_premium",
-                  accountId: accountId
+                  accountId: accountId,
+                  premiumUntil: newExpiryDate.toISOString()
                 }).always(function () {
                   window.location.href = "location-services.html";
                 });

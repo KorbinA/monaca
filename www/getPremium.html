@@ -250,22 +250,137 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
-      border-radius: 16px;
-      background: rgba(6, 95, 70, 0.08);
-      border: 1px solid rgba(6, 95, 70, 0.2);
-      color: #065f46;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
     }
 
     .selection-clear-btn:hover {
+      color: #ef4444;
       background: #fee2e2;
-      border-color: #fca5a5;
-      color: #dc2626;
+    }
+
+    /* Modern Policy Modal Overlay & Sheet */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .modal-sheet {
+      background: #ffffff;
+      width: 100%;
+      max-width: 520px;
+      max-height: 85vh;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-sheet-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .modal-sheet-header h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0b1b34;
+      letter-spacing: -0.2px;
+    }
+
+    .modal-close-icon {
+      background: #e2e8f0;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #475569;
+      padding: 0;
+      transition: background 0.15s ease;
+    }
+
+    .modal-close-icon:hover {
+      background: #cbd5e1;
+      color: #0b1b34;
+    }
+
+    .modal-sheet-body {
+      padding: 22px;
+      overflow-y: auto;
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .modal-sheet-body p {
+      margin-bottom: 14px;
+    }
+
+    .modal-sheet-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-sheet-footer {
+      padding: 14px 22px;
+      border-top: 1px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .modal-done-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .modal-done-btn:hover {
+      background: #0369a1;
     }
   </style>
 </head>
@@ -282,22 +397,22 @@
           <div id="descriptiontext"></div>
         </header>
 
-        <!-- Fundraiser Attribution Status -->
+        <!-- Organization Attribution Status -->
         <div id="fundraiserStatusBox" style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; flex-direction: column; gap: 14px;">
           <div style="display: flex; align-items: center; justify-content: space-between; background: #ecfdf5; border-radius: 10px; padding: 10px 14px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #10b981; border-radius: 50%; color: white; font-weight: bold; font-size: 13px;">✓</span>
-              <div>
-                <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #059669; letter-spacing: 0.5px;">Supporting Fundraiser</div>
-                <div id="fundraiserNameText" style="font-size: 15px; font-weight: 800; color: #065f46;"></div>
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; min-width: 24px; min-height: 24px; flex-shrink: 0; background: #10b981; border-radius: 50%; color: white; font-weight: bold; font-size: 13px;">✓</span>
+              <div style="min-width: 0;">
+                <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #059669; letter-spacing: 0.5px;">Supporting Organization</div>
+                <div id="fundraiserNameText" style="font-size: 15px; font-weight: 800; color: #065f46; word-break: break-word;"></div>
               </div>
             </div>
-            <button type="button" id="changeFundraiserBtn" style="background: transparent; border: none; font-size: 12px; color: #059669; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px;">Change</button>
+            <button type="button" id="changeFundraiserBtn" style="background: transparent; border: none; font-size: 12px; color: #059669; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px; flex-shrink: 0; margin-left: 8px;">Change</button>
           </div>
 
           <!-- Team and Salesperson Lookup Section -->
           <div class="support-section" style="margin-top: 0;">
-            <span class="support-header">Support a Team or Salesperson</span>
+            <span class="support-header">Support a Team or Representative</span>
 
             <div id="teamFieldWrap" class="field" style="display: none; margin-bottom: 12px;">
               <label for="teamSelect">Select Team (Optional)</label>
@@ -307,9 +422,9 @@
             </div>
 
             <div class="field" style="margin-bottom: 0;">
-              <label for="salespersonSearch">Salesperson Name (Optional)</label>
+              <label for="salespersonSearch">Representative Name (Optional)</label>
               <div class="autocomplete-wrapper">
-                <input type="text" id="salespersonSearch" class="input" placeholder="Search roster or enter salesperson name..." autocomplete="off">
+                <input type="text" id="salespersonSearch" class="input" placeholder="Search roster or enter representative name..." autocomplete="off">
                 <div id="salespersonDropdown" class="autocomplete-dropdown"></div>
               </div>
               <div style="font-size: 11.5px; color: #64748b; margin-top: 5px; text-align: left;">If you were referred by an individual, search or type their name above.</div>
@@ -317,10 +432,10 @@
 
             <div id="selectionStatus" class="selection-status-badge general">
               <div class="status-left-wrap">
-                <span id="statusIconWrap" style="display: none; width: 18px; height: 18px; border-radius: 50%; background: #d1fae5; align-items: center; justify-content: center;">
+                <span id="statusIconWrap" style="display: none; width: 18px; height: 18px; min-width: 18px; min-height: 18px; flex-shrink: 0; border-radius: 50%; background: #d1fae5; align-items: center; justify-content: center;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </span>
-                <span id="statusText">Supporting the general fundraiser organization.</span>
+                <span id="statusText">Supporting the general partner organization.</span>
               </div>
               <button type="button" id="clearSelectionBtn" class="selection-clear-btn" style="display: none;" title="Clear selection">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -330,15 +445,15 @@
           </div>
         </div>
 
-        <!-- Unconnected Notice & Optional Fundraiser ID Input -->
+        <!-- Unconnected Notice & Optional Organization ID Input -->
         <div id="unconnectedNoticeBox" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 16px; margin-bottom: 20px; display: none;">
           <div style="font-size: 13px; color: #475569; line-height: 1.45; margin-bottom: 10px;">
-            This purchase is not currently connected to a school or team fundraiser.
+            This purchase is not currently connected to a specific group or school organization.
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px;">
-            <label for="fundraiserLookupInput" style="font-size: 12px; font-weight: 700; color: #64748b; margin: 0;">Have a Fundraiser ID to support?</label>
+            <label for="fundraiserLookupInput" style="font-size: 12px; font-weight: 700; color: #64748b; margin: 0;">Have an Organization or Group ID to support?</label>
             <div style="display: flex; gap: 8px;">
-              <input type="text" id="fundraiserLookupInput" class="input" style="flex: 1; height: 46px !important; padding: 10px 14px !important; font-size: 15px !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;" placeholder="e.g. fundraiser ID or code" />
+              <input type="text" id="fundraiserLookupInput" class="input" style="flex: 1; height: 46px !important; padding: 10px 14px !important; font-size: 15px !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;" placeholder="e.g. organization ID or code" />
               <button type="button" id="applyFundraiserBtn" style="background: #2563eb; color: white; border: none; border-radius: 12px; padding: 0 18px; font-weight: 700; font-size: 14px; cursor: pointer; height: 46px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Connect</button>
             </div>
             <div id="fundraiserLookupError" style="font-size: 12px; color: #dc2626; margin-top: 4px; display: none;"></div>
@@ -463,23 +578,28 @@
           </div>
 
           <button type="button" id="submit" class="btn" style="margin-top: 8px;">Confirm Payment</button>
-
-          <!-- Subscription Disclaimer Fine Print -->
-          <div id="subscriptionDisclaimer"
-            style="font-size: 12px; color: #64748b; text-align: left; margin-top: 8px; line-height: 1.5; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
-            * Your purchase includes an automatic annual card renewal. Renewed cards are optional. <span id="groupRenewalNotice">We will remind you 30 days before your card expires with an opportunity to renew or cancel.</span>
-          </div>
         </form>
       </section>
     </div>
   </main>
 
-  <!-- Modal Policy Popup -->
-  <div id="popup" class="popup"
-    style="display:none; width:100%; height:100%; position:fixed; top:0; left:0; background:white; overflow-y:auto; z-index:1000; padding: 20px;">
-    <a href="#" id="closepopup" style="position:absolute; top:15px; right:15px;"><img src="images/icon_X.png"
-        style="width:25px;"></a>
-    <div id="policytext" style="max-width: 600px; margin: 40px auto 80px auto; color: #0b1b34; line-height: 1.6;"></div>
+  <!-- Modern Modal Policy Popup -->
+  <div id="popup" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-sheet-header">
+        <h3>Purchase & Refund Policy</h3>
+        <button type="button" id="closepopup" class="modal-close-icon" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="policytext" class="modal-sheet-body"></div>
+      <div class="modal-sheet-footer">
+        <button type="button" id="modalDoneBtn" class="modal-done-btn">I Understand</button>
+      </div>
+    </div>
   </div>
 
   <footer class="menu" role="navigation">
@@ -554,17 +674,29 @@
       if (window.localStorage.getItem("premiumUntil")) {
         $("#descriptiontext").html("<p>Renew your card today to continue supporting local groups, local businesses, and saving money on every purchase.</p>");
       } else {
-        $("#descriptiontext").html("<p>Unlock exclusive local deals, support fundraising groups, and save money on every purchase. You will have one year from today to use the discounts and freebies on the card.</p>");
+        $("#descriptiontext").html("<p>Unlock exclusive local deals, support local community groups, and save money on every purchase. You will have one year from today to use the discounts and perks on the card.</p>");
       }
 
-      var defaultPolicy = "<h3>Purchase & Refund Policy</h3><p>All sales of the digital Glass Card are final. Since digital items are immediately accessible upon purchase, we cannot offer refunds once a card has been activated or purchased. If you experience any technical issues with your card, please contact us at support@glasscardapp.com and we will be happy to assist you.</p>";
+      var defaultPolicy = "<p><strong>Merchant Savings Pass:</strong> All sales of the Glass Card annual pass are final. The Glass Card grants immediate access to in-person offers and complimentary items (such as food, drinks, and dining deals) redeemable at participating local merchant storefronts.</p><p><strong>Local Community Commitment:</strong> Because proceeds from this card purchase are immediately allocated to support local community partner organizations and school programs, purchases cannot be cancelled or refunded once processed.</p><p><strong>Customer Support:</strong> If you experience any technical difficulties activating or viewing your card, please contact our support team at <a href='mailto:support@glasscardapp.com' style='color:#0284c7; font-weight:700; text-decoration:underline;'>support@glasscardapp.com</a> and we will be happy to assist you.</p>";
       $("#policytext").html(defaultPolicy);
 
-      $("#policybutton").click(function () {
-        $("#popup").show();
-      });
-      $("#closepopup").click(function () {
+      function openPolicyModal() {
+        $("#popup").css('display', 'flex');
+      }
+      function closePolicyModal() {
         $("#popup").hide();
+      }
+
+      $("#policybutton").click(function () {
+        openPolicyModal();
+      });
+      $("#closepopup, #modalDoneBtn").click(function () {
+        closePolicyModal();
+      });
+      $("#popup").click(function (e) {
+        if (e.target === this) {
+          closePolicyModal();
+        }
       });
 
       let currentProject = null;
@@ -936,10 +1068,10 @@
           if (proj) {
             setConnectedProject(proj);
           } else {
-            $("#fundraiserLookupError").text("No fundraiser found matching that ID. You can double-check with your organization, or continue below without an ID.").show();
+            $("#fundraiserLookupError").text("No organization found matching that ID. You can double-check with your group, or continue below without an ID.").show();
           }
         } catch (err) {
-          $("#fundraiserLookupError").text("Unable to verify fundraiser ID at this time.").show();
+          $("#fundraiserLookupError").text("Unable to verify organization ID at this time.").show();
         } finally {
           $("#applyFundraiserBtn").prop('disabled', false).text("Connect");
         }
@@ -994,10 +1126,10 @@
           }
 
           try {
-            $("#submit").text("Processing Subscription...");
+            $("#submit").text("Processing Payment...");
 
             if (!supabaseClient) {
-              throw new Error("Unable to reach subscription service. Please try again.");
+              throw new Error("Unable to reach payment service. Please try again.");
             }
 
             // Resolve any typed person name if not selected directly

@@ -142,7 +142,7 @@
         <details class="tips">
           <summary>Where is my access code?</summary>
           <ul class="tip-list" style="margin-left: 0px; padding-left: 0px; list-style-type: none;">
-            <li style="text-align: left; margin-bottom: 10px;"><strong>Plastic fundraiser card:</strong> your access code is printed on the physical card.</li>
+            <li style="text-align: left; margin-bottom: 10px;"><strong>Physical card:</strong> your access code is printed on the back of your card.</li>
             <li style="text-align: left;"><strong>Purchased online:</strong> your access code appears on the checkout confirmation screen and in your emailed receipt.</li>
           </ul>
         </details>
@@ -265,7 +265,7 @@
           '      Your card currently does not expire until <strong>' + currentExpiryStr + '</strong>.' +
           '    </p>' +
           '    <p style="font-size: 13px; color: #15803d; line-height: 1.5; margin: 0;">' +
-          '      If you bought a new fundraiser card, you can enter your code below now to extend your expiration date <strong>1 full year from when your current card expires</strong> (until <strong>' + extendedDateStr + '</strong>).' +
+          '      If you bought a new card or have a renewal code, you can enter your code below now to extend your expiration date <strong>1 full year from when your current card expires</strong> (until <strong>' + extendedDateStr + '</strong>).' +
           '    </p>' +
           '  </div>' +
           '</div>';
@@ -346,7 +346,8 @@
               if (accountId) {
                 $.post("https://glasscard.org/dataaccess/glass_db_manager.ashx", {
                   action: "activate_account_premium",
-                  accountId: accountId
+                  accountId: accountId,
+                  premiumUntil: newExpiryISO
                 }).always(function () {
                   if (currentState.isCurrentlyActive) {
                     displayMessage("Card Extended!", "Success! Your card has been extended for another year until " + newExpiryFormatted + ".", "Continue", "profile.html");

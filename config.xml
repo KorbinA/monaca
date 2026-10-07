@@ -49,8 +49,13 @@
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
       <application android:exported="true"/>
     </edit-config>
-    <preference name="AndroidWindowSplashScreenBackground" value="#fff"/>
+    <preference name="AndroidWindowSplashScreenBackground" value="#ffffff"/>
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/screen/window_splashscreen_icon.png"/>
+    <splash density="port-mdpi" src="res/android/screen/splash-port-mdpi.png"/>
+    <splash density="port-hdpi" src="res/android/screen/splash-port-hdpi.png"/>
+    <splash density="port-xhdpi" src="res/android/screen/splash-port-xhdpi.png"/>
+    <splash density="port-xxhdpi" src="res/android/screen/splash-port-xxhdpi.png"/>
+    <splash density="port-xxxhdpi" src="res/android/screen/splash-port-xxxhdpi.png"/>
   </platform>
   <platform name="ios">
     <edit-config file="*-Info.plist" mode="merge" overwrite="true" target="NSLocationWhenInUseUsageDescription">

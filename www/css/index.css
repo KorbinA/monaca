@@ -31,9 +31,20 @@ body {margin:0px;
 	background:none;
   min-height: 100vh;   /* legacy fallback */
   min-height: 100dvh; 
- 
-	
 	}
+
+/* Solid black status bar background for Edge-to-Edge displays */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background-color: #000000;
+  z-index: 999999;
+  pointer-events: none;
+}
 
   /* iOS WKWebView override */
 @supports (-webkit-touch-callout: none) {

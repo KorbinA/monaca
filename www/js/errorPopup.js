@@ -47,3 +47,10 @@ function displayMessage(title, message, buttonText, url) {
         }]
     });
 }
+
+document.addEventListener("deviceready", function() {
+    if (window.StatusBar) {
+        StatusBar.overlaysWebView(true);
+        StatusBar.styleLightContent();
+    }
+}, false);

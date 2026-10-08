@@ -110,7 +110,10 @@ window.monaca = window.monaca || {};
     document.addEventListener('deviceready', function(){
         window.monaca.isDeviceReady = true;
         if (window.StatusBar) {
-            StatusBar.overlaysWebView(true);
+            StatusBar.overlaysWebView(false);
+            if (StatusBar.backgroundColorByHexString) {
+                StatusBar.backgroundColorByHexString("#ffffff");
+            }
             if (StatusBar.styleDefault) {
                 StatusBar.styleDefault();
             }

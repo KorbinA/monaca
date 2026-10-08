@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom theme applied to the Cordova Activity after splash screen -->
+    <style name="Theme.App.GlassCard" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Enable light status bar (renders dark text and dark icons: battery, wifi, clock) -->
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- Status bar background color (pure white) -->
+        <item name="android:statusBarColor">#ffffff</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!-- Light navigation bar (dark navigation icons on white bar) -->
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">#ffffff</item>
+    </style>
+</resources>

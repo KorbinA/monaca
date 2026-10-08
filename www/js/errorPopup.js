@@ -50,7 +50,10 @@ function displayMessage(title, message, buttonText, url) {
 
 document.addEventListener("deviceready", function() {
     if (window.StatusBar) {
-        StatusBar.overlaysWebView(true);
+        StatusBar.overlaysWebView(false);
+        if (StatusBar.backgroundColorByHexString) {
+            StatusBar.backgroundColorByHexString("#ffffff");
+        }
         if (StatusBar.styleDefault) {
             StatusBar.styleDefault();
         }

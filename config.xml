@@ -17,9 +17,9 @@
   <preference name="webviewbounce" value="true"/>
   <preference name="prerendered-icon" value="true"/>
   <preference name="stay-in-webview" value="false"/>
-  <preference name="StatusBarOverlaysWebView" value="true"/>
+  <preference name="StatusBarOverlaysWebView" value="false"/>
   <preference name="StatusBarBackgroundColor" value="#ffffff"/>
-  <preference name="StatusBarStyle" value="darkcontent"/>
+  <preference name="StatusBarStyle" value="default"/>
   <preference name="NavigationBarBackgroundColor" value="#ffffff"/>
   <preference name="detect-data-types" value="true"/>
   <preference name="exit-on-suspend" value="false"/>
@@ -37,6 +37,11 @@
   <plugin name="cordova-plugin-appversion" spec="~1.0.0"/>
   <plugin name="cordova-plugin-device" spec="~1.0.0"/>
   <platform name="android">
+    <resource-file src="res/android/values/styles.xml" target="app/src/main/res/values/glasscard_styles.xml"/>
+    <preference name="AndroidPostSplashScreenTheme" value="@style/Theme.App.GlassCard"/>
+    <preference name="StatusBarOverlaysWebView" value="false"/>
+    <preference name="StatusBarBackgroundColor" value="#ffffff"/>
+    <preference name="StatusBarStyle" value="default"/>
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
       <application android:usesCleartextTraffic="true"/>
     </edit-config>
@@ -49,9 +54,6 @@
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
       <application android:exported="true"/>
     </edit-config>
-    <preference name="StatusBarOverlaysWebView" value="true"/>
-    <preference name="StatusBarBackgroundColor" value="#ffffff"/>
-    <preference name="StatusBarStyle" value="darkcontent"/>
     <preference name="AndroidWindowSplashScreenBackground" value="#ffffff"/>
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/screen/window_splashscreen_icon.png"/>
     <splash density="port-mdpi" src="res/android/screen/splash-port-mdpi.png"/>

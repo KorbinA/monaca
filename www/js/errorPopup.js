@@ -51,6 +51,8 @@ function displayMessage(title, message, buttonText, url) {
 document.addEventListener("deviceready", function() {
     if (window.StatusBar) {
         StatusBar.overlaysWebView(true);
-        StatusBar.styleLightContent();
+        if (StatusBar.styleDefault) {
+            StatusBar.styleDefault();
+        }
     }
 }, false);

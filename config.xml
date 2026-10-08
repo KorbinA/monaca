@@ -49,6 +49,9 @@
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
       <application android:exported="true"/>
     </edit-config>
+    <preference name="StatusBarOverlaysWebView" value="false"/>
+    <preference name="StatusBarBackgroundColor" value="#000000"/>
+    <preference name="StatusBarStyle" value="lightcontent"/>
     <preference name="AndroidWindowSplashScreenBackground" value="#ffffff"/>
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/screen/window_splashscreen_icon.png"/>
     <splash density="port-mdpi" src="res/android/screen/splash-port-mdpi.png"/>

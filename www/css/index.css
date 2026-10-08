@@ -49,11 +49,10 @@ div.container {
 
 div.categoryContainer {
 	width:100%;
-	padding:3% 0%;
+	padding:4px 0 6px 0;
 	background:white;
 	/*box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.2);*/
 	border-bottom:none;
-	
 }
 
 div.overlay {
@@ -1098,11 +1097,9 @@ td.header {
 	font-family:Kano;
 	letter-spacing:1pt;
 	text-align:center;
-	font-size:;
-	padding-top:3%;
-	padding-bottom:2%;
-	
-	
+	vertical-align:middle;
+	padding-top:2px;
+	padding-bottom:4px;
 }
 
 table.icons {

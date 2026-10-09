@@ -67,7 +67,8 @@
       -webkit-appearance: none;
       border: none;
       border-radius: 14px;
-      padding: 13px 18px;
+      height: 48px;
+      padding: 0 20px;
       font-weight: 800;
       cursor: pointer;
       background: linear-gradient(135deg, #16b187 0%, #11cfa3 45%, #2aa7ff 100%);
@@ -79,6 +80,9 @@
       white-space: nowrap;
       flex-shrink: 0;
       box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-action[disabled] {
@@ -147,8 +151,17 @@
         align-items: stretch;
       }
 
+      .input-row .input,
+      .input-row #accessCode {
+        width: 100% !important;
+        flex: 0 0 48px !important;
+        height: 48px !important;
+      }
+
       .btn-action {
         width: 100%;
+        flex: 0 0 48px !important;
+        height: 48px !important;
       }
     }
   </style>
@@ -177,7 +190,7 @@
             spellcheck="false"
             maxlength="36"
             placeholder="XXXXXX"
-            style="flex: 1 1 160px; min-width: 140px; padding: 13px 14px; font-size: 16px; box-sizing: border-box;"
+            style="flex: 1 1 auto; min-width: 140px; height: 48px !important; padding: 0 14px; font-size: 16px; box-sizing: border-box;"
           />
           <button id="activateBtn" class="btn-action" disabled>Activate</button>
         </div>

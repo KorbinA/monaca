@@ -53,6 +53,7 @@
 
     .input-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       align-items: center;
       margin-top: 6px;
@@ -140,7 +141,7 @@
       text-align: center;
     }
 
-    @media (max-width: 340px) {
+    @media (max-width: 380px) {
       .input-row {
         flex-direction: column;
         align-items: stretch;
@@ -176,7 +177,7 @@
             spellcheck="false"
             maxlength="36"
             placeholder="XXXXXX"
-            style="flex: 1 1 0; width: 0; min-width: 0; padding: 13px 14px; font-size: 16px; box-sizing: border-box;"
+            style="flex: 1 1 160px; min-width: 140px; padding: 13px 14px; font-size: 16px; box-sizing: border-box;"
           />
           <button id="activateBtn" class="btn-action" disabled>Activate</button>
         </div>
